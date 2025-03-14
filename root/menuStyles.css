@@ -1,0 +1,52 @@
+
+        details summary {
+            list-style: none;
+            cursor: pointer;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            transition: background-color 0.3s ease;
+        }
+
+
+        details summary:hover {
+            background-color: #e2e8f0;
+        }
+
+
+        details[open] summary {
+            background-color: #cbd5e0;
+        }
+
+
+        details ul {
+            margin-top: 0.5rem;
+            padding-left: 1rem;
+            border-left: 2px solid #cbd5e0; 
+        }
+
+
+        details ul li a {
+            display: block;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+
+        details ul li a:hover {
+            background-color: #e2e8f0;
+            color: #3182ce;
+        }
+
+.content {
+    display: flex;
+    gap: 2rem; 
+}
+
+.sidebar {
+    width: 25%; 
+}
+
+.main-content {
+    flex-grow: 1; 
+}
