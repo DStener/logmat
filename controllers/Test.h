@@ -1,7 +1,7 @@
 #pragma once
 
 #include <drogon/HttpController.h>
-#include "modules/database.h"
+#include "database.hpp"
 
 using namespace drogon;
 

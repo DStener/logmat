@@ -1,5 +1,4 @@
 #include <drogon/drogon.h>
-#include "database.h"
 
 #if WIN32
 static const std::string ROOTDIR = "../../../root";
@@ -24,9 +23,6 @@ int main()
         .addDbClient(config)
         .setDocumentRoot(ROOTDIR)
         .addListener("0.0.0.0", 5555); // Set HTTP listner address and port
-
-
-    DataBaseBBBBB::testBEST();
 
     drogon::app().run();
 

@@ -1,7 +1,7 @@
 #pragma once
 
 #include <drogon/drogon.h>
-#include "DTO_declaration.hpp"
+#include "struct_declaration.hpp"
 
 using namespace drogon;
 

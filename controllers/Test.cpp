@@ -1,31 +1,30 @@
 #include "Test.h"
 
 #include "DTO.hpp"
-#include "DTO_declaration.hpp"
+#include "struct_declaration.hpp"
 
 
 
 
 void Test::TestDB(const HttpRequestPtr& req, callback_func &&callback)
 {
+    Picture dog{
+        "Dog",
+        476893,
+        "/etc/dog"
+    };
+
+
+    DB::get()->Insert(dog);
+
+
     Json::Value ret;
-    // Json::Value::
 
+    // ret["message"] = DTO::InsertSQL(dog);
 
-    // ret["message"] = DB::get()->printPictureTable();
-    // ret["message"] = DTO::GetName(t);
-    // ret["message"] = DTO::CreateTableSQL<Role>();
-    // ret["message"] = DTO::GetName<ref<User>>();
-    // DB::get()->SelectFrom<Picture>();
-
-    // for(DTORow<Picture> value : DB::get()->SelectFrom<Picture>()){
-    //     Json::Value _cash;
-    //     std::stringstream stream;
-    //     stream << value.second.name;
-    //     _cash["name"] = stream.str();
-    //     // ret.append(DTO::ToJson(value.second));
-    //     ret.append(_cash);
-    // }
+    for(auto& value : DB::get()->Select<Picture>()){
+        ret.append(DTO::ToJson(value.second));
+    }
 
 
     auto resp = HttpResponse::newHttpJsonResponse( ret);

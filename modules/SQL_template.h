@@ -5,50 +5,36 @@
 #include <string>
 
 
+#define ASSIGNING(RetType, InType, field_name) \
+RetType& operator=(InType t) \
+{ \
+    field_name = t; \
+    return *this; \
+}
+
 class SQL
 {
 public:
+
     // SQL REFERENCES
     template <typename T>
     struct ref {
         std::size_t id;
-
-        ref& operator=(std::size_t num)
-        {
-            id = num;
-            return *this;
-        }
-
-        // operator std::string() const{
-        //     return std::to_string(id);
-        // }
+        ASSIGNING(ref, std::size_t, id)
     };
-
 
     // SQL UNIQUE
     template <typename T>
     struct unique {
         T value;
-
-        unique& operator=(T t)
-        {
-            value = t;
-            return *this;
-        }
-        // operator std::string() const{
-        //     return std::to_string(id);
-        // }
+        ASSIGNING(unique, T, value)
     };
 
     // SQL NOT NULL
     template <typename T>
     struct notnull {
         T value;
-        notnull& operator=(T t)
-        {
-            value = t;
-            return *this;
-        }
+        ASSIGNING(notnull, T, value)
     };
 
     // Strutct of Ref
@@ -100,48 +86,60 @@ private:
     struct get_type_struct { static constexpr T value; };
 
     template <typename T>
-    struct get_type_struct<const ref<T>&> { static constexpr T value; };
+    struct get_type_struct<ref<T>> { static constexpr T value; };
     template <typename T>
-    struct get_type_struct<const unique<T>&> { static constexpr T value; };
+    struct get_type_struct<unique<T>> { static constexpr T value; };
     template <typename T>
-    struct get_type_struct<const notnull<T>&> { static constexpr T value; };
+    struct get_type_struct<notnull<T>> { static constexpr T value; };
 
     template <typename T>
-    struct get_type_struct<const unique<ref<T>>&> { static constexpr T value; };
+    struct get_type_struct<unique<ref<T>>> { static constexpr T value; };
     template <typename T>
-    struct get_type_struct<const notnull<ref<T>>&> { static constexpr T value; };
+    struct get_type_struct<notnull<ref<T>>> { static constexpr T value; };
 
     template <typename T>
-    struct get_type_struct<const ref<unique<T>>&> { static constexpr T value; };
+    struct get_type_struct<ref<unique<T>>> { static constexpr T value; };
     template <typename T>
-    struct get_type_struct<const notnull<unique<T>>&> { static constexpr T value; };
+    struct get_type_struct<notnull<unique<T>>> { static constexpr T value; };
 
     template <typename T>
-    struct get_type_struct<const ref<notnull<T>>&> { static constexpr T value; };
+    struct get_type_struct<ref<notnull<T>>> { static constexpr T value; };
     template <typename T>
-    struct get_type_struct<const unique<notnull<T>>&> { static constexpr T value; };
+    struct get_type_struct<unique<notnull<T>>> { static constexpr T value; };
 
     template <typename T>
-    struct get_type_struct<const notnull<unique<ref<T>>>&> { static constexpr T value; };
+    struct get_type_struct<notnull<unique<ref<T>>>> { static constexpr T value; };
     template <typename T>
-    struct get_type_struct<const unique<notnull<ref<T>>>&> { static constexpr T value; };
+    struct get_type_struct<unique<notnull<ref<T>>>> { static constexpr T value; };
 
     template <typename T>
-    struct get_type_struct<const ref<notnull<unique<T>>>&> { static constexpr T value; };
+    struct get_type_struct<ref<notnull<unique<T>>>> { static constexpr T value; };
     template <typename T>
-    struct get_type_struct<const notnull<ref<unique<T>>>&> { static constexpr T value; };
+    struct get_type_struct<notnull<ref<unique<T>>>> { static constexpr T value; };
 
     template <typename T>
-    struct get_type_struct<const unique<ref<notnull<T>>>&> { static constexpr T value; };
+    struct get_type_struct<unique<ref<notnull<T>>>> { static constexpr T value; };
     template <typename T>
-    struct get_type_struct<const ref<unique<notnull<T>>>&> { static constexpr T value; };
+    struct get_type_struct<ref<unique<notnull<T>>>> { static constexpr T value; };
 
 public:
 
     template <typename T>
-    using getType = decltype(SQL::get_type_struct<T>::value);
+    using getType = decltype(SQL::get_type_struct<std::remove_cvref<T>::type>::value);
 
 };
+
+
+namespace SQL_ATTRIB
+{
+    template <typename T>
+    using REFERENCES = SQL::ref<T>;
+    template <typename T>
+    using UNIQUE = SQL::unique<T>;
+    template <typename T>
+    using NOTNULL = SQL::notnull<T>;
+
+}
 
 
 template <typename T>
@@ -165,7 +163,11 @@ std::ostream& operator<<(std::ostream& os, const SQL::notnull<T>& obj)
     return os;
 }
 
-
+template <typename T>
+std::string to_string(const SQL::unique<T>& obj)
+{
+    return std::to_string(obj.value);
+}
 
 
 template <typename T>
@@ -175,8 +177,3 @@ std::string to_string(const SQL::notnull<T>& obj)
 }
 
 
-template <typename T>
-std::string to_string(const SQL::unique<T>& obj)
-{
-    return std::to_string(obj.value);
-}

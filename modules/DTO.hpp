@@ -1,7 +1,7 @@
 #pragma once
 
 #include "field_reflection.hpp"
-#include "SQL_template.h"
+#include "sql_template.h"
 
 #include <cctype>
 #include <iostream>
@@ -21,7 +21,7 @@ template <typename T>
 using DTORow = std::pair<std::size_t,T>;
 
 template <typename T>
-using ResponseList = std::list<DTORow<T>>;
+using ResponseVec = std::vector<DTORow<T>>;
 
 class DTO
 {
@@ -50,18 +50,44 @@ public:
         return ret;
     }
 
-    // Return SQL command to create teable based on DTO strucr T
+    // Return SQL command to create Teable based on DTO strucr T
     template <typename T, field_referenceable U = std::remove_cvref_t<T>>
     static std::string CreateTableSQL()
     {
-        // T _cash;
         std::string sql{"CREATE TABLE IF NOT EXISTS"};
         sql += " " + DTO::GetName<T>();
-        sql += " ( id SERIAL PRIMARY KEY";
+        sql += " ( id INTEGER PRIMARY KEY AUTOINCREMENT ";
 
-        DTO::fillSQL<T>(sql,  std::make_index_sequence<field_count<U>>());
+        DTO::fillSQLCreateTable<T>(sql,  std::make_index_sequence<field_count<U>>());
 
-        sql += ");";
+        sql += " );";
+        return sql;
+    }
+
+    // Return SQL command to insert to Teable DTO strucr T
+    template <typename T, field_referenceable U = std::remove_cvref_t<T>>
+    static std::string InsertSQL(T& s)
+    {
+        // T _cash;
+        std::string sql{"INSERT INTO"};
+        sql += " " + DTO::GetName<T>();
+        sql += " ( ";
+
+        std::string values{};
+
+        for_each_field(s, [&sql, &values](std::string_view field, auto value)
+        {
+           // ERROR: if convert directly to std::string<
+           // without std::stringstream
+           std::stringstream stream;
+           stream << value;
+
+           sql += std::string{field} + ", ";
+           values += "\"" + stream.str() +"\", ";
+           // ret[std::string(field)] = stream.s/tr();
+        });
+
+        sql = sql.substr(0,sql.size() - 2) + " ) VALUES ( " + values.substr(0,values.size() - 2) + " );";
         return sql;
     }
 
@@ -76,16 +102,16 @@ public:
 
     // Convert orm::Result (SQL Response) to DTO
     template <typename T, field_referenceable U = std::remove_cvref_t<T>>
-    static ResponseList<T> CreateFromSQLResult(const drogon::orm::Result& result)
+    static ResponseVec<T> CreateFromSQLResult(const drogon::orm::Result& result)
     {
-        ResponseList<T> list{};
+        ResponseVec<T> vec{};
         for(const auto& row : result)
         {
             DTORow<T> _cash{row.at("id").as<size_t>(), T()};
             DTO::fillFromSQLResult(_cash, row, std::make_index_sequence<field_count<U>>());
-            list.push_back(_cash);
+            vec.push_back(_cash);
         }
-        return list;
+        return vec;
     }
 
 
@@ -107,23 +133,33 @@ private:
     }
 
 
-    // Fill
+    // Fill from SQL Result
     template <typename T, std::size_t... Is, field_referenceable U = std::remove_cvref_t<T>>
     static constexpr void fillFromSQLResult(DTORow<T>& t, const drogon::orm::Row& row, std::index_sequence<Is...>)
     {
-        // The function of searching for values in the request body
-        // and assigning them to the DTO
-        auto func = [&row, &t](const std::string& name, auto& field)
+        // The function of convert Row::Field to DTO::field
+        auto func = [&row](const std::string_view& name, const auto& field)
         {
-            using type_dec = std::remove_cvref<SQL::getType<decltype(field)>>::type;
+            using type_dec = std::remove_cvref_t<SQL::getType<decltype(field)>>;
 
-            if (std::is_same_v<type_dec, int> ||
-                std::is_same_v<type_dec, std::size_t>) {
-                field = row[name].as<std::size_t>();
-            } else if(std::is_same_v<type_dec, std::string>) {
-                field = row[name].as<std::string>();
-            } else if(std::is_same_v<type_dec, std::time_t>) {
-                // str += " TIMESTAMP";
+            // If type is SQL::notnull<T> or SQL::unique<T> then get inside field
+            if constexpr (SQL::isUnique<decltype(field)>::value || SQL::isNotNull<decltype(field)>::value)
+            {
+                auto& fieldPtr = get_field<0>(field);
+                //Repeat if type is SQL::notnull<T> or SQL::unique<T>
+                if constexpr (SQL::isUnique<decltype(fieldPtr)>::value || SQL::isNotNull<decltype(fieldPtr)>::value)
+                {
+                    auto& fieldPtr2 = get_field<0>(fieldPtr);
+                    const_cast<std::remove_cvref_t<decltype(fieldPtr2)>&>(fieldPtr2) =\
+                        row[std::string{name}].as<type_dec>();
+
+                } else {
+                    const_cast<std::remove_cvref_t<decltype(fieldPtr)>&>(fieldPtr) =\
+                        row[std::string{name}].as<type_dec>();
+                }
+            } else {
+                const_cast<std::remove_cvref_t<decltype(field)>&>(field) =\
+                    row[std::string{name}].as<type_dec>();
             }
         };
         // The C++ "brute force" macro
@@ -132,7 +168,7 @@ private:
 
 
     template <typename T, std::size_t... Is, field_referenceable U = std::remove_cvref_t<T>>
-    static constexpr void fillSQL(std::string& str, std::index_sequence<Is...>)
+    static constexpr void fillSQLCreateTable(std::string& str, std::index_sequence<Is...>)
     {
         // Convert c++ representation to SQL
         auto func = [&str](const std::string_view& name,
