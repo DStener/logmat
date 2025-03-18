@@ -11,15 +11,16 @@
 #include <string_view>
 #include <trantor/utils/Logger.h>
 #include <cmath>
+#include <chrono>
 #include <type_traits>
 #include <drogon/drogon.h>
 
 // #include <cxxabi.h>
 using namespace field_reflection;
+using time_p = std::chrono::utc_clock::time_point;
 
 template <typename T>
 using DTORow = std::pair<std::size_t,T>;
-
 template <typename T>
 using ResponseVec = std::vector<DTORow<T>>;
 
@@ -87,13 +88,18 @@ public:
 
             sql += std::string{field} + ", ";
 
-            if (std::is_same_v<type_dec, std::string>) {
-                values += "\"" + stream.str() +"\", ";
-            } else {
-                values += stream.str() +", ";
+            if constexpr (std::is_same_v<type_dec, std::string> ||
+                          std::is_same_v<type_dec, time_p>)
+            {
+                values += std::format("\"{}\", ", stream.str());
             }
-            });
-            sql = sql.substr(0,sql.size() - 2) + " ) VALUES ( " + values.substr(0,values.size() - 2) + " );";
+            else
+            {
+                values += std::format("{}, ", stream.str());
+            }
+        });
+
+        sql = sql.substr(0,sql.size() - 2) + " ) VALUES ( " + values.substr(0,values.size() - 2) + " );";
         return sql;
     }
 
@@ -130,9 +136,26 @@ private:
         // and assigning them to the DTO
         auto func = [&str](const std::string_view& name, auto& field)
         {
+            using type_dec = std::remove_cvref_t<SQL::getType<decltype(field)>>;
+
             size_t start = str.find(name) + name.size() + 1;
             size_t size = str.find("&", start) - start;
-            field = std::string(str.substr(start, size));
+
+            // field = std::string();
+            auto substr = std::string{str.substr(start, size)};
+            if constexpr (std::is_same_v<type_dec, int> ||
+                          std::is_same_v<type_dec, std::size_t>)
+            {
+                field = std::stoi(substr);
+            }
+            else if constexpr(std::is_same_v<type_dec, std::string>)
+            {
+                field = substr;
+            }
+            else if constexpr(std::is_same_v<type_dec, time_p>)
+            {
+                std::istringstream{substr} >> std::chrono::parse("%Y-%m-%d", field);
+            }
         };
         // The C++ "brute force" macro
         (func(field_name<T, Is>, get_field<Is>(t)), ...);
@@ -144,59 +167,25 @@ private:
     static constexpr void fillFromSQLResult(DTORow<T>& t, const drogon::orm::Row& row, std::index_sequence<Is...>)
     {
         // The function of convert Row::Field to DTO::field
-        auto func = [&row](const std::string_view& name, const auto& field)
+        auto func = [&row](const std::string_view& name, auto& field)
         {
             using type_dec = std::remove_cvref_t<SQL::getType<decltype(field)>>;
-            if constexpr (SQL::isRef<decltype(field)>::value)
+
+            if constexpr (SQL::isRef<const std::remove_cvref_t<decltype(field)>&>::value)
             {
-                using type_dec = SQL::ref<type_dec>;
+                SQL::REMOVE_ATTRIB(field) =\
+                    row[std::string{name}].as<size_t>();
             }
-
-            if constexpr (SQL::isUnique<decltype(field)>::value || SQL::isNotNull<decltype(field)>::value)
+            else if constexpr (std::is_same_v<type_dec, time_p>)
             {
-                auto& fieldPtr = get_field<0>(field);
-                //Repeat if type is SQL::notnull<T> or SQL::unique<T>
-                if constexpr (SQL::isUnique<decltype(fieldPtr)>::value || SQL::isNotNull<decltype(fieldPtr)>::value)
-                {
-                    auto& fieldPtr2 = get_field<0>(fieldPtr);
-                    // REFERENCE
-                    if constexpr (SQL::isRef<decltype(field)>::value)
-                    {
-                        const_cast<std::remove_cvref_t<decltype(fieldPtr2)>&>(fieldPtr2).id =\
-                            row[std::string{name}].as<std::size_t>();
-                    } else {
-                        const_cast<std::remove_cvref_t<decltype(fieldPtr2)>&>(fieldPtr2) =\
-                            row[std::string{name}].as<type_dec>();
-                    }
-
-
-                } else {
-                    // REFERENCE
-                    if constexpr (SQL::isRef<decltype(field)>::value)
-                    {
-                        const_cast<std::remove_cvref_t<decltype(fieldPtr)>&>(fieldPtr).id =\
-                            row[std::string{name}].as<std::size_t>();
-                    } else {
-                        const_cast<std::remove_cvref_t<decltype(fieldPtr)>&>(fieldPtr) =\
-                            row[std::string{name}].as<type_dec>();
-                    }
-                }
-            } else {
-                // REFERENCE
-                if constexpr (SQL::isRef<decltype(field)>::value)
-                {
-                    const_cast<std::remove_cvref_t<decltype(field)>&>(field).id =\
-                        row[std::string{name}].as<std::size_t>();
-                } else {
-                    const_cast<std::remove_cvref_t<decltype(field)>&>(field) =\
-                        row[std::string{name}].as<type_dec>();
-                }
-
-
-                // const_cast<std::remove_cvref_t<decltype(field)>&>(field) =\
-                //     row[std::string{name}].as<type_dec>();
+                std::istringstream{row[std::string{name}].c_str()} >>\
+                    std::chrono::parse("%Y-%m-%d %H:%M:%S", SQL::REMOVE_ATTRIB(field));
             }
-
+            else
+            {
+                SQL::REMOVE_ATTRIB(field) =\
+                    row[std::string{name}].as<type_dec>();
+            }
         };
         // The C++ "brute force" macro
         (func(field_name<T, Is>, get_field<Is>(t.second)), ...);
@@ -220,13 +209,16 @@ private:
             str += std::string{name};
 
             // SQL Attrib
-            if (SQL::isUnique<decltype(type)>::value) {
+            if (SQL::isUnique<decltype(type)>::value)
+            {
                 ending += " UNIQUE";
             }
-            if (SQL::isNotNull<decltype(type)>::value) {
+            if (SQL::isNotNull<decltype(type)>::value)
+            {
                 ending += " NOT NULL";
             }
-            if (SQL::isRef<decltype(type)>::value) {
+            if (SQL::isRef<decltype(type)>::value)
+            {
                 ending += " INTEGER ";
 
                 reference += std::format(
@@ -237,11 +229,16 @@ private:
             }
 
             if (std::is_same_v<type_dec, int> ||
-                std::is_same_v<type_dec, std::size_t>) {
+                std::is_same_v<type_dec, std::size_t>)
+            {
                 str += " INTEGER";
-            } else if(std::is_same_v<type_dec, std::string>) {
+            }
+            else if(std::is_same_v<type_dec, std::string>)
+            {
                 str += " VARCHAR";
-            } else if(std::is_same_v<type_dec, std::time_t>) {
+            }
+            else if(std::is_same_v<type_dec, time_p>)
+            {
                 str += " TIMESTAMP";
             }
             str += ending;

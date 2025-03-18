@@ -28,7 +28,8 @@ private:
                                const std::string& c_password,
                                std::string& message);
 
-    static bool checkAge(const std::string& strDate, std::string& message);
+    static bool checkAge(const time_p& birthday,
+                         std::string& message);
 
     RegisterRequest() = delete;
     ~RegisterRequest() = delete;

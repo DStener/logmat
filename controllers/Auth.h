@@ -1,15 +1,13 @@
 #pragma once
 
-#include "DTO.hpp"
-
 #include <drogon/HttpController.h>
-#include "database.hpp"
-
 #include <drogon/HttpController.h>
 #include <drogon/HttpRequest.h>
-
 #include <drogon/HttpResponse.h>
 #include <drogon/HttpTypes.h>
+
+#include "System/DTO.hpp"
+#include "System/database.hpp"
 
 using namespace drogon;
 

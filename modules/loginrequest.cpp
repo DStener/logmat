@@ -1,7 +1,8 @@
 #include "loginrequest.h"
-#include "database.hpp"
+#include "System/database.hpp"
 
 #include <algorithm>
+#include <chrono>
 
 using namespace API;
 
@@ -15,8 +16,12 @@ std::size_t LoginRequest::getUserByToken(std::string token, ReturnDTO& ret)
     // If there is no cookie with the token
     if(!token.size()) { return 0; }
 
+    // Get vector of struct Token where field token is qual to the sample
     auto tokens = DB::get()->Select<Token>(std::format("token == \"{}\"", token));
     if(!tokens.size()) { return 0;}
+
+    // Checking for expired token lifetime
+    if(tokens[0].second.time < std::chrono::utc_clock::now()) { return 0; }
 
     ret.code = drogon::k200OK;
     return tokens[0].second.user.id;
@@ -32,8 +37,14 @@ ReturnDTO LoginRequest::loginUser(const LoginDTO& info)
 
     std::cout << "COUNT: " << arr.size();
 
+    // info.password)
+
+    // Calculate hash
+    std::stringstream hash{};
+    hash << std::hash<std::string>{}(info.password);
+
     // Check correct data
-    if(arr.size() == 0 || arr[0].second.password != info.password) {
+    if(arr.size() == 0 || arr[0].second.password != hash.str()) {
         ret.code = HttpStatusCode::k415UnsupportedMediaType;
         ret.message = "Некорректный логин или пароль";
         return ret;
@@ -64,12 +75,12 @@ ReturnDTO LoginRequest::loginUser(const LoginDTO& info)
     ret.message = stream.str();
     return ret;
 }
-// LoginRequest::LoginRequest() {}
 
 Token LoginRequest::generateToken()
 {
     Token t{};
-    t.time = 0;
+    t.time = std::chrono::utc_clock::now() + std::chrono::months(18);
+    // t.time = std::chrono::utc_clock::from_sys(std::chrono::months(18)) + std::chrono::utc_clock::now();
 
     std::srand(std::time(0));
     for(int i = 0; i < 32; ++i ) {

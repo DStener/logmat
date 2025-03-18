@@ -1,5 +1,5 @@
 #pragma once
-#include "DTO.hpp"
+#include "System/DTO.hpp"
 #include "struct_declaration.hpp"
 #include <drogon/Cookie.h>
 #include <drogon/HttpTypes.h>

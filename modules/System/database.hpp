@@ -4,7 +4,7 @@
 #include <drogon/drogon.h>
 #include <memory>
 
-#include "DTO.hpp"
+#include "System/DTO.hpp"
 #include "struct_declaration.hpp"
 
 using namespace drogon;
@@ -22,12 +22,6 @@ private:
 
         this->Create<User>();
         this->Create<Token>();
-        this->Create<Picture>();
-
-        // clientPtr->execSqlAsyncFuture(DTO::CreateTableSQL<User>());
-        // clientPtr->execSqlAsyncFuture(DTO::CreateTableSQL<Token>());
-
-        // clientPtr->execSqlAsyncFuture(DTO::CreateTableSQL<Picture>());
     }
 
 public:
@@ -45,11 +39,9 @@ public:
     template<typename T>
     void Create()
     {
-        auto f = clientPtr->execSqlAsyncFuture(DTO::CreateTableSQL<T>());
         try
         {
-            f.get();
-            std::cout << "info: " << DTO::GetName<T>() << "create sucsess" << std::endl;
+            clientPtr->execSqlSync(DTO::CreateTableSQL<T>());
         }
         catch (const orm::DrogonDbException &e)
         {
@@ -58,7 +50,6 @@ public:
         }
         // return vec;
     }
-
 
     template<typename T>
     ResponseVec<T> Select() { return Select<T>(WHERE()); }
@@ -82,18 +73,15 @@ public:
         return vec;
     }
 
-
-
     template<typename T>
     bool Delete(std::string condition)
     {
-        condition = (condition.size() > 0)? " WHERE " + condition : "";
-        auto f = clientPtr->execSqlAsyncFuture("DELETE FROM " +
-                                               DTO::GetName<T>() +
-                                               condition);
         try
         {
-            f.get();
+            condition = (condition.size() > 0)? " WHERE " + condition : "";
+            clientPtr->execSqlSync("DELETE FROM " +
+                                   DTO::GetName<T>() +
+                                   condition);
             return true;
         }
         catch (const orm::DrogonDbException &e)
@@ -109,7 +97,7 @@ public:
     {
         try
         {
-            auto result = clientPtr->execSqlSync(DTO::InsertSQL(s));
+            clientPtr->execSqlSync(DTO::InsertSQL(s));
         }
         catch (const orm::DrogonDbException &e)
         {
@@ -121,4 +109,3 @@ public:
 };
 
 using DB = DataBase;
-

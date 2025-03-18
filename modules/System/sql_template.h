@@ -57,6 +57,18 @@ public:
     };
 
     // Strutct of Ref
+    // template <typename T>
+    // struct isRef { static constexpr bool value = false; };
+    // template <typename T>
+    // struct isRef<ref<T>&> { static constexpr bool value = true; };
+    // template <typename T>
+    // struct isRef<unique<ref<T>>&> { static constexpr bool value = true; };
+    // template <typename T>
+    // struct isRef<notnull<ref<T>>&> { static constexpr bool value = true; };
+    // template <typename T>
+    // struct isRef<unique<notnull<ref<T>>>&> { static constexpr bool value = true; };
+    // template <typename T>
+    // struct isRef<notnull<unique<ref<T>>>&> { static constexpr bool value = true; };
     template <typename T>
     struct isRef { static constexpr bool value = false; };
     template <typename T>
@@ -96,6 +108,20 @@ public:
     struct isNotNull<const ref<unique<notnull<T>>>&> { static constexpr bool value = true; };
     template <typename T>
     struct isNotNull<const unique<ref<notnull<T>>>&> { static constexpr bool value = true; };
+
+    template <typename T>
+    static auto& REMOVE_ATTRIB(T& t)
+    {
+        if constexpr (SQL::isRef<const std::remove_cvref_t<T>&>::value)
+        {
+            return *reinterpret_cast<SQL::ref<size_t>*>(&t);
+        }
+        else
+        {
+            // *reinterpret_cast<type_dec*>(&field)
+            return *reinterpret_cast<std::remove_cvref_t<SQL::getType<T>>*>(&t);
+        }
+    }
 
 
 private:
@@ -144,7 +170,7 @@ private:
 public:
 
     template <typename T>
-    using getType = decltype(SQL::get_type_struct<std::remove_cvref<T>::type>::value);
+    using getType = decltype(SQL::get_type_struct<std::remove_cvref_t<T>>::value);
 
 };
 
@@ -157,7 +183,6 @@ namespace SQL_ATTRIB
     using UNIQUE = SQL::unique<T>;
     template <typename T>
     using NOTNULL = SQL::notnull<T>;
-
 }
 
 

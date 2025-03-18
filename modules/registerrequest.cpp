@@ -1,6 +1,6 @@
 #include "registerrequest.h"
 
-#include "database.hpp"
+#include "System/database.hpp"
 
 #define CHECK(conditions, txt) { \
     if(conditions) { \
@@ -27,12 +27,15 @@ ReturnDTO RegisterRequest::newUser(RegisterDTO& info)
         return ret;
     }
 
-    User user {
-        info.username,
-        info.email,
-        info.birthday,
-        info.password
-    };
+    // Calcuulate password hash
+    std::stringstream hash{};
+    hash << std::hash<std::string>{}(info.password);
+
+    User user {};
+    SQL::REMOVE_ATTRIB(user.username) = info.username;
+    SQL::REMOVE_ATTRIB(user.email) = info.email;
+    SQL::REMOVE_ATTRIB(user.birthday) = info.birthday;
+    SQL::REMOVE_ATTRIB(user.password) = hash.str();
 
     // Add user to DB
     DB::get()->Insert(user);
@@ -96,24 +99,16 @@ bool RegisterRequest::checkCPassword(const std::string& password,
 }
 
 // Age verification for more than 14 years
-bool RegisterRequest::checkAge(const std::string& strDate,
+bool RegisterRequest::checkAge(const time_p& birthday,
                                     std::string& message)
 {
     using namespace std::chrono;
     bool flag = true;
-    time_t rawtime = time( nullptr );
-    struct tm birthday = *localtime(&rawtime);
-    // Conver strDate to struct tm
-    birthday.tm_year = std::stoi(strDate.substr(0,4)) - 1900;
-    birthday.tm_mon = std::stoi(strDate.substr(5,2)) - 1;
-    birthday.tm_mday = std::stoi(strDate.substr(8,2));
-    // Reverse conversion
-    rawtime = std::difftime(time(nullptr), mktime(&birthday));
-    struct tm delta = *localtime(&rawtime);
-    CHECK(rawtime < 0,
+
+    CHECK(birthday > utc_clock::now(),
           "Некорректная дата. ")
-    CHECK(static_cast<uint32_t>(delta.tm_year - 70) < 14u,
+    CHECK(utc_clock::now() - birthday < years(14),
           "Сайтом разрешено пользоваться с 14 лет. ")
+
     return flag;
 }
-

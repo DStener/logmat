@@ -2,23 +2,26 @@
 
 #include <string>
 #include <drogon/drogon.h>
-#include "DTO.hpp"
+#include <chrono>
+
+#include "System/sql_template.h"
+
+using time_p = std::chrono::utc_clock::time_point;
 
 // For SQL
 using namespace SQL_ATTRIB;
 
 #define SERVICE_FIELDS  \
-    std::time_t created_at; \
+    time_p created_at; \
     REFERENCES<User> created_by; \
-    std::time_t deleted_at; \
+    time_p deleted_at; \
     REFERENCES<User> deleted_by; \
-
 
 // DB
 struct User {
     NOTNULL<UNIQUE<std::string>> username;
     NOTNULL<UNIQUE<std::string>> email;
-    NOTNULL<std::string> birthday;
+    NOTNULL<time_p> birthday;
     NOTNULL<std::string> password;
 };
 
@@ -50,16 +53,9 @@ struct RoleAndPermission {
 
 struct Token {
     NOTNULL<UNIQUE<std::string>> token;
-    std::time_t time;
+    time_p time;
     REFERENCES<User> user;
 };
-
-struct Picture {
-    NOTNULL<UNIQUE<std::string>> name;
-    std::size_t size;
-    std::string path;
-};
-
 
 struct ReturnDTO {
     drogon::HttpStatusCode code;
@@ -71,7 +67,7 @@ struct RegisterDTO {
     std::string email;
     std::string password;
     std::string c_password;
-    std::string birthday;
+    time_p birthday;
 };
 
 struct LoginDTO {

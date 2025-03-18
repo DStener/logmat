@@ -1,5 +1,5 @@
 #include "Auth.h"
-#include "DTO.hpp"
+#include "System/DTO.hpp"
 #include "registerrequest.h"
 #include "struct_declaration.hpp"
 #include "loginrequest.h"
@@ -53,7 +53,8 @@ void Auth::Login(const HttpRequestPtr& req, callback_func &&callback)
     // Create token cookie
     Cookie cookie("token", "invalid");
 
-    if (ret.code == drogon::k200OK) {
+    if (ret.code == drogon::k200OK)
+    {
         cookie.setValue(ret.message);
         ret.message = "";
     }
@@ -77,10 +78,15 @@ void Auth::Info(const HttpRequestPtr& req, callback_func &&callback)
 
     auto user_id = LoginRequest::getUserByToken(req->getCookie("token"), ret);
 
-    if(ret.code == drogon::k200OK) {
+    if(ret.code == drogon::k200OK)
+    {
         auto userinfo = DB::get()->Select<User>(std::format("id == {}", user_id))[0].second;
+        userinfo.password = "X";
+
         response = HttpResponse::newHttpJsonResponse(DTO::ToJson(userinfo));
-    } else {
+    }
+    else
+    {
         response = HttpResponse::newHttpJsonResponse(DTO::ToJson(ret));
     }
 
@@ -97,8 +103,9 @@ void Auth::Logout(const HttpRequestPtr& req, callback_func &&callback)
 
     LoginRequest::getUserByToken(req->getCookie("token"), ret);
 
-    if(ret.code == drogon::k200OK) {
-        DB::get()->Delete<Token>(std::format("tokens == {}", req->getCookie("token")));
+    if(ret.code == drogon::k200OK)
+    {
+        DB::get()->Delete<Token>(std::format("token == \"{}\"", req->getCookie("token")));
     }
 
     response = HttpResponse::newHttpJsonResponse(DTO::ToJson(ret));
@@ -115,7 +122,8 @@ void Auth::LogoutAll(const HttpRequestPtr& req, callback_func &&callback)
 
     auto user_id = LoginRequest::getUserByToken(req->getCookie("token"), ret);
 
-    if(ret.code == drogon::k200OK) {
+    if(ret.code == drogon::k200OK)
+    {
         DB::get()->Delete<Token>(std::format("user == {}", user_id));
     }
 
@@ -133,15 +141,19 @@ void Auth::getTokens(const HttpRequestPtr& req, callback_func &&callback)
 
     auto user_id = LoginRequest::getUserByToken(req->getCookie("token"), ret);
 
-    if(ret.code == drogon::k200OK) {
+    if(ret.code == drogon::k200OK)
+    {
         Json::Value json;
 
-        for(auto& row : DB::get()->Select<Token>(std::format("user == {}", user_id))) {
+        for(auto& row : DB::get()->Select<Token>(std::format("user == {}", user_id)))
+        {
             json.append(DTO::ToJson(row.second));
         }
 
         response = HttpResponse::newHttpJsonResponse(json);
-    } else {
+    }
+    else
+    {
         response = HttpResponse::newHttpJsonResponse(DTO::ToJson(ret));
     }
 
