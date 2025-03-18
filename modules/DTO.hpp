@@ -55,12 +55,13 @@ public:
     static std::string CreateTableSQL()
     {
         std::string sql{"CREATE TABLE IF NOT EXISTS"};
+        std::string references{};
         sql += " " + DTO::GetName<T>();
         sql += " ( id INTEGER PRIMARY KEY AUTOINCREMENT ";
 
-        DTO::fillSQLCreateTable<T>(sql,  std::make_index_sequence<field_count<U>>());
+        DTO::fillSQLCreateTable<T>(sql, references, std::make_index_sequence<field_count<U>>());
 
-        sql += " );";
+        sql += references + " );";
         return sql;
     }
 
@@ -75,19 +76,24 @@ public:
 
         std::string values{};
 
-        for_each_field(s, [&sql, &values](std::string_view field, auto value)
+        for_each_field(s, [&sql, &values](std::string_view field, auto& value)
         {
-           // ERROR: if convert directly to std::string<
-           // without std::stringstream
-           std::stringstream stream;
-           stream << value;
+            using type_dec = std::remove_cvref_t<SQL::getType<decltype(value)>>;
 
-           sql += std::string{field} + ", ";
-           values += "\"" + stream.str() +"\", ";
-           // ret[std::string(field)] = stream.s/tr();
-        });
+            // ERROR: if convert directly to std::string<
+            // without std::stringstream
+            std::stringstream stream;
+            stream << value;
 
-        sql = sql.substr(0,sql.size() - 2) + " ) VALUES ( " + values.substr(0,values.size() - 2) + " );";
+            sql += std::string{field} + ", ";
+
+            if (std::is_same_v<type_dec, std::string>) {
+                values += "\"" + stream.str() +"\", ";
+            } else {
+                values += stream.str() +", ";
+            }
+            });
+            sql = sql.substr(0,sql.size() - 2) + " ) VALUES ( " + values.substr(0,values.size() - 2) + " );";
         return sql;
     }
 
@@ -141,8 +147,11 @@ private:
         auto func = [&row](const std::string_view& name, const auto& field)
         {
             using type_dec = std::remove_cvref_t<SQL::getType<decltype(field)>>;
+            if constexpr (SQL::isRef<decltype(field)>::value)
+            {
+                using type_dec = SQL::ref<type_dec>;
+            }
 
-            // If type is SQL::notnull<T> or SQL::unique<T> then get inside field
             if constexpr (SQL::isUnique<decltype(field)>::value || SQL::isNotNull<decltype(field)>::value)
             {
                 auto& fieldPtr = get_field<0>(field);
@@ -150,17 +159,44 @@ private:
                 if constexpr (SQL::isUnique<decltype(fieldPtr)>::value || SQL::isNotNull<decltype(fieldPtr)>::value)
                 {
                     auto& fieldPtr2 = get_field<0>(fieldPtr);
-                    const_cast<std::remove_cvref_t<decltype(fieldPtr2)>&>(fieldPtr2) =\
-                        row[std::string{name}].as<type_dec>();
+                    // REFERENCE
+                    if constexpr (SQL::isRef<decltype(field)>::value)
+                    {
+                        const_cast<std::remove_cvref_t<decltype(fieldPtr2)>&>(fieldPtr2).id =\
+                            row[std::string{name}].as<std::size_t>();
+                    } else {
+                        const_cast<std::remove_cvref_t<decltype(fieldPtr2)>&>(fieldPtr2) =\
+                            row[std::string{name}].as<type_dec>();
+                    }
+
 
                 } else {
-                    const_cast<std::remove_cvref_t<decltype(fieldPtr)>&>(fieldPtr) =\
-                        row[std::string{name}].as<type_dec>();
+                    // REFERENCE
+                    if constexpr (SQL::isRef<decltype(field)>::value)
+                    {
+                        const_cast<std::remove_cvref_t<decltype(fieldPtr)>&>(fieldPtr).id =\
+                            row[std::string{name}].as<std::size_t>();
+                    } else {
+                        const_cast<std::remove_cvref_t<decltype(fieldPtr)>&>(fieldPtr) =\
+                            row[std::string{name}].as<type_dec>();
+                    }
                 }
             } else {
-                const_cast<std::remove_cvref_t<decltype(field)>&>(field) =\
-                    row[std::string{name}].as<type_dec>();
+                // REFERENCE
+                if constexpr (SQL::isRef<decltype(field)>::value)
+                {
+                    const_cast<std::remove_cvref_t<decltype(field)>&>(field).id =\
+                        row[std::string{name}].as<std::size_t>();
+                } else {
+                    const_cast<std::remove_cvref_t<decltype(field)>&>(field) =\
+                        row[std::string{name}].as<type_dec>();
+                }
+
+
+                // const_cast<std::remove_cvref_t<decltype(field)>&>(field) =\
+                //     row[std::string{name}].as<type_dec>();
             }
+
         };
         // The C++ "brute force" macro
         (func(field_name<T, Is>, get_field<Is>(t.second)), ...);
@@ -168,10 +204,10 @@ private:
 
 
     template <typename T, std::size_t... Is, field_referenceable U = std::remove_cvref_t<T>>
-    static constexpr void fillSQLCreateTable(std::string& str, std::index_sequence<Is...>)
+    static constexpr void fillSQLCreateTable(std::string& str, std::string& reference, std::index_sequence<Is...>)
     {
         // Convert c++ representation to SQL
-        auto func = [&str](const std::string_view& name,
+        auto func = [&str, &reference](const std::string_view& name,
                            const auto& type)
         {
             // Declaring type
@@ -191,9 +227,13 @@ private:
                 ending += " NOT NULL";
             }
             if (SQL::isRef<decltype(type)>::value) {
-                ending += " INTEGER REFERENCE ";
-                ending += type_name<type_dec>;
-                ending += " (id)";
+                ending += " INTEGER ";
+
+                reference += std::format(
+                    ", FOREIGN KEY({}) REFERENCES {}(id)",
+                    std::string{name},
+                    type_name<type_dec>
+                );
             }
 
             if (std::is_same_v<type_dec, int> ||

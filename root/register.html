@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="../js/reg.js"></script>
+    <link rel="stylesheet" href="../css/styles.css">
+    <title>Register form</title>
+    
+</head>
+<body>
+
+    <form action="/api/auth/register" method="POST">
+
+        <h3>Register form</h3>
+
+        <label for="username">Username</label>
+        <input type="text" name="username" id="username" required/>
+
+        <label for="email">Email</label>
+        <input type="email" name="email" id="email" required/>
+
+
+        <label for="password">Password</label>
+        <input type="password" name="password" id="password" required/>
+
+        <label for="c_password">Repeat the password</label>
+        <input type="password" name="c_password" id="c_password" required/>
+
+        <label for="birthday">Birthday</label>
+        <input type="date" name="birthday" id="birthday" required/>
+
+        
+        <input type="submit"/>
+
+
+    </form>
+</body>
+</html>

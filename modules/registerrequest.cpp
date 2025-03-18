@@ -1,5 +1,7 @@
 #include "registerrequest.h"
 
+#include "database.hpp"
+
 #define CHECK(conditions, txt) { \
     if(conditions) { \
         message += txt; \
@@ -24,9 +26,16 @@ ReturnDTO RegisterRequest::newUser(RegisterDTO& info)
         ret.code = HttpStatusCode::k415UnsupportedMediaType;
         return ret;
     }
+
+    User user {
+        info.username,
+        info.email,
+        info.birthday,
+        info.password
+    };
+
     // Add user to DB
-    // DB::createUser(info.username, info.email,
-    //                info.birthday, info.password);
+    DB::get()->Insert(user);
     return ret;
 }
 // Check correct username
@@ -41,8 +50,8 @@ bool RegisterRequest::checkUsername(const std::string& username,
           "Имя должно начинаться с заглавной буквы. ");
     CHECK(username.size() < 7,
           "Имя должно быть не меньше 7 символов. ");
-    // CHECK(DB::hasUser(username),
-    //       "Данной имя используется другим аккаунтом. ")
+    CHECK(DB::get()->Select<User>(std::format("username == \"{}\"", username)).size() != 0,
+          "Данной имя используется другим аккаунтом. ")
     return flag;
 }
 // Check the correct email
@@ -53,8 +62,8 @@ bool RegisterRequest::checkEmail(const std::string& email,
     const std::regex pattern(R"([a-zA-Z0-9._]{1,}%40[a-zA-Z0-9._]{1,}\.[a-zA-Z]{2,3})");
     CHECK(!std::regex_match(email, pattern),
           "Некорректная электронная почта. ")
-    // CHECK(DB::hasEmail(email),
-    //       "Данная почта используется для другого аккаунта")
+    CHECK(DB::get()->Select<User>(std::format("email == \"{}\"", email)).size() != 0,
+          "Данная почта используется для другого аккаунта")
     return flag;
 }
 // Check correct password

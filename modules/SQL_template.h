@@ -10,7 +10,23 @@ RetType& operator=(InType t) \
 { \
     field_name = t; \
     return *this; \
+} \
+RetType& operator+=(InType t) \
+{ \
+        field_name += t; \
+        return *this; \
+} \
+RetType& operator-=(InType t) \
+{ \
+        field_name -= t; \
+        return *this; \
 }
+
+#define COMPARE(InType, field_name) \
+bool operator==(InType t) { return field_name == t; } \
+bool operator!=(InType t) { return field_name != t; } \
+bool operator>(InType t) { return field_name > t; } \
+bool operator<(InType t) { return field_name < t; }
 
 class SQL
 {
@@ -21,6 +37,7 @@ public:
     struct ref {
         std::size_t id;
         ASSIGNING(ref, std::size_t, id)
+        COMPARE(std::size_t, id)
     };
 
     // SQL UNIQUE
@@ -28,6 +45,7 @@ public:
     struct unique {
         T value;
         ASSIGNING(unique, T, value)
+        COMPARE(T, value)
     };
 
     // SQL NOT NULL
@@ -35,6 +53,7 @@ public:
     struct notnull {
         T value;
         ASSIGNING(notnull, T, value)
+        COMPARE(T, value)
     };
 
     // Strutct of Ref

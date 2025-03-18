@@ -1,0 +1,30 @@
+body {
+    width: 100%;
+    height: 100%;
+    position: fixed;
+    top: 0;
+    left: 0;
+    display: flex;
+    align-items: center;
+    align-content: center;
+    justify-content: center;
+    overflow: auto;
+    background-color: white;
+}
+
+form {
+    width: 300px;
+    /* height: 600px; */
+    background: whitesmoke;
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+    gap: 5px;
+    input {
+        margin-bottom: 10px;
+    }
+    input[type="submit"] {
+        height: 40px;
+        margin-top: 50px;
+    }
+}
