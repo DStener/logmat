@@ -128,6 +128,11 @@ public:
             {
                 ::SQL::REMOVE_ATTRIB(value) = std::stoi(substr);
             }
+            else if constexpr (std::is_same_v<type_dec, float> ||
+                          std::is_same_v<type_dec, double>)
+            {
+                ::SQL::REMOVE_ATTRIB(value) = std::stod(substr);
+            }
             else if constexpr(std::is_same_v<type_dec, std::string>)
             {
                 ::SQL::REMOVE_ATTRIB(value) = substr;
@@ -251,7 +256,9 @@ public:
 
                 if constexpr (std::is_same_v<type_dec, int> ||
                               std::is_same_v<type_dec, std::size_t> ||
-                              std::is_same_v<type_dec, id_t>)
+                              std::is_same_v<type_dec, id_t> ||
+                              std::is_same_v<type_dec, float> ||
+                              std::is_same_v<type_dec, double>)
                 {
                     return (t == 0);
                 }
@@ -351,6 +358,11 @@ private:
                 std::is_same_v<type_dec, std::size_t>)
             {
                 str += " INTEGER";
+            }
+            else if (std::is_same_v<type_dec, float> ||
+                std::is_same_v<type_dec, double>)
+            {
+                str += " REAL";
             }
             else if(std::is_same_v<type_dec, std::string>)
             {

@@ -3,6 +3,7 @@
 #include "System/database.hpp"
 #include "Request/register.hpp"
 #include "Request/login.hpp"
+#include "System/utils.h"
 
 
 void Director::Signin(const HttpRequestPtr& req, callback_func &&callback)
@@ -55,17 +56,66 @@ void Director::Signup(const HttpRequestPtr& req, callback_func &&callback)
 {
     HttpViewData data;
 
+    // Generate new Captcha
+    auto captcha = API::Utils::generateCaptcha();
+    ::Captcha capt{};
+    capt.uid = std::time(nullptr);
+    capt.answer = captcha.first;
+
+
+    DB::get()->Insert(capt);
+
+    // Create captcha cookie
+    Cookie cookie_capt("captcha", std::format("{}", capt.uid));
+    cookie_capt.setPath("/");
+
+
+
     // If it's a simple page opening
     if(!req->getBody().size())
     {
         data.insert("message_visibility", "\"visibility: hidden;\"");
+        data.insert("captcha", captcha.second);
         data.insert("message_txt", "NULL");
 
         auto response = HttpResponse::newHttpViewResponse("signup.csp", data);
+        response->addCookie(cookie_capt);
         callback(response);
 
         return;
     }
+
+    // Check Captcha
+    auto info = DTO::CreateFromRequestBody<::Captcha>(req->getBody());
+    auto capts =\
+        DB::get()->Select<::Captcha>(std::format("uid == \"{}\"", req->getCookie("captcha")));
+
+    if(!capts.size() || capts[0].second.answer != info.answer)
+    {
+        data.insert("message_visibility", "\"visibility: visible;\"");
+        data.insert("captcha", captcha.second);
+        data.insert("message_txt", "Некорректный ответ на Captcha");
+
+        auto response = HttpResponse::newHttpViewResponse("signup.csp", data);
+        response->setStatusCode(drogon::k415UnsupportedMediaType);
+        response->addCookie(cookie_capt);
+        callback(response);
+
+        return;
+    }
+
+
+    // Delete old captcha answer
+    if(req->getCookie("captcha") != "" && req->getCookie("captcha") != " ")
+    {
+        auto capts =\
+            DB::get()->Select<::Captcha>(std::format("uid == \"{}\"", req->getCookie("captcha")));
+        if(capts.size())
+        {
+            DB::get()->Delete<::Captcha>(capts[0].first);
+        }
+    }
+
 
     auto reg = Request::Register(req, callback);
 
@@ -73,16 +123,18 @@ void Director::Signup(const HttpRequestPtr& req, callback_func &&callback)
     if(reg.message.size())
     {
         data.insert("message_visibility", "\"visibility: visible;\"");
+        data.insert("captcha", captcha.second);
         data.insert("message_txt", reg.message);
 
         auto response = HttpResponse::newHttpViewResponse("signup.csp", data);
         response->setStatusCode(drogon::k415UnsupportedMediaType);
+        response->addCookie(cookie_capt);
         callback(response);
 
         return;
     }
 
-    auto response = HttpResponse::newRedirectionResponse("/");
+    auto response = HttpResponse::newRedirectionResponse("/signin");
     callback(response);
 }
 
@@ -127,6 +179,6 @@ void Director::ReviewsPut(const HttpRequestPtr& req, callback_func &&callback, s
     // std::cout << count << std::endl;
 
     auto response = HttpResponse::newRedirectionResponse(
-                std::format("{}?count={}", req->getPath(), ((!count)? 5 : count)));
+                std::format("{}?count={}", req->getPath(), count));
     callback(response);
 }

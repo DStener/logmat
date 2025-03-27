@@ -19,6 +19,7 @@
 #include "Migration/ChangeLog.hpp"
 #include "Migration/Image.hpp"
 #include "Migration/Review.hpp"
+#include "Migration/Captcha.hpp"
 
 using namespace drogon;
 
@@ -46,6 +47,7 @@ private:
         // Web ldb
         Migration::Image::up();
         Migration::Review::up();
+        Migration::Captcha::up();
     }
 
 public:

@@ -81,7 +81,7 @@ private:
             return false;
         }
 
-        if(!isupper(info.username.size() < 7))
+        if(info.username.size() < 7)
         {
             message = "Имя должно быть не меньше 7 символов.";
             return false;

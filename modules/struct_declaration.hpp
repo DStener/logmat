@@ -82,6 +82,11 @@ struct Review {
     std::string text;
 };
 
+struct Captcha {
+    size_t uid;
+    double answer;
+};
+
 
 struct ReturnDTO {
     drogon::HttpStatusCode code;
