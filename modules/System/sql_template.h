@@ -1,8 +1,11 @@
 #pragma once
 
+#include "System/utils.h"
+
 #include <list>
 #include <iostream>
 #include <string>
+#include <json/json.h>
 
 
 #define ASSIGNING(RetType, InType, field_name) \
@@ -35,9 +38,9 @@ public:
     // SQL REFERENCES
     template <typename T>
     struct ref {
-        std::size_t id;
-        ASSIGNING(ref, std::size_t, id)
-        COMPARE(std::size_t, id)
+        id_t id;
+        ASSIGNING(ref, id_t, id)
+        COMPARE(id_t, id)
     };
 
     // SQL UNIQUE
@@ -127,7 +130,7 @@ public:
 private:
 
     // Get type
-    template <typename T>
+    template <class T>
     struct get_type_struct { static constexpr T value; };
 
     template <typename T>

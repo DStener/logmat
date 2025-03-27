@@ -5,8 +5,8 @@
 #include <chrono>
 
 #include "System/sql_template.h"
+#include "System/utils.h"
 
-using time_p = std::chrono::utc_clock::time_point;
 
 // For SQL
 using namespace SQL_ATTRIB;
@@ -21,8 +21,18 @@ using namespace SQL_ATTRIB;
 struct User {
     NOTNULL<UNIQUE<std::string>> username;
     NOTNULL<UNIQUE<std::string>> email;
+    time_p time2FA;
     NOTNULL<time_p> birthday;
     NOTNULL<std::string> password;
+};
+
+struct ChangeLog {
+    NOTNULL<std::string> name_table;
+    NOTNULL<std::string> name_field;
+    NOTNULL<id_t> id_row;
+    NOTNULL<std::string> before;
+    NOTNULL<std::string> after;
+    SERVICE_FIELDS
 };
 
 struct Role {
@@ -57,6 +67,13 @@ struct Token {
     REFERENCES<User> user;
 };
 
+
+
+
+
+
+
+
 struct ReturnDTO {
     drogon::HttpStatusCode code;
     std::string message;
@@ -73,4 +90,5 @@ struct RegisterDTO {
 struct LoginDTO {
     std::string username;
     std::string password;
+    std::string code;
 };

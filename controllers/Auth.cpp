@@ -1,8 +1,8 @@
 #include "Auth.h"
 #include "System/DTO.hpp"
-#include "registerrequest.h"
+#include "Request/register.hpp"
 #include "struct_declaration.hpp"
-#include "loginrequest.h"
+#include "Request/login.hpp"
 // #include "include/System.hpp"
 
 #include <drogon/Cookie.h>
@@ -22,141 +22,109 @@ using namespace API;
 // URL: http://localhost:5555/register.html
 void Auth::Register(const HttpRequestPtr& req, callback_func &&callback)
 {
-    // Convert request body to RegisterDTO
-    auto info = \
-        DTO::CreateFromRequestBody<RegisterDTO>(req->getBody());
-
-    // Create new user if all conditions are met
-    auto ret = API::RegisterRequest::newUser(info);
-
-    auto response = \
-        HttpResponse::newHttpJsonResponse(DTO::ToJson(ret));
-
-    response->setStatusCode(ret.code);
-
-    callback(response);
+    // Convert request body to and register
+    auto info = DTO::CreateFromRequestBody<RegisterDTO>(req->getBody());
+    auto ret = Request::Register(info, req, callback);
 }
-
 
 // URL: http://localhost:5555/api/auth/login
 // URL: http://localhost:5555/login.html
 void Auth::Login(const HttpRequestPtr& req, callback_func &&callback)
-    
 {
-    // Convert request body to LoginDTO
-    auto info = \
-        DTO::CreateFromRequestBody<LoginDTO>(req->getBody());
-
-    // Login new user if is try
-    auto ret = API::LoginRequest::loginUser(info);
-    
-    // Create token cookie
-    Cookie cookie("token", "invalid");
-
-    if (ret.code == drogon::k200OK)
-    {
-        cookie.setValue(ret.message);
-        ret.message = "";
-    }
-
-    // Create response
-    auto response = \
-        HttpResponse::newHttpJsonResponse(DTO::ToJson(ret));
-    
-    response->addCookie(cookie);
-    response->setStatusCode(ret.code);
-
-    callback(response);
+    // Convert request body to LoginDTO and login
+    auto info = DTO::CreateFromRequestBody<LoginDTO>(req->getBody());
+    Request::Login(info, req, callback);
 }
-
 
 // URL: http://localhost:5555/api/auth/me
 void Auth::Info(const HttpRequestPtr& req, callback_func &&callback)
 {
-    HttpResponsePtr response;
-    ReturnDTO ret {drogon::k200OK};
+    // Login and check Permission
+    auto login = Request::Login(req, callback);
+    if(!login.id) { return; }
 
-    auto user_id = LoginRequest::getUserByToken(req->getCookie("token"), ret);
+    // Get info about current user
+    auto userinfo = DB::get()->Select<User>(std::format("id == {}", login.id))[0].second;
+    userinfo.password = "X";
 
-    if(ret.code == drogon::k200OK)
-    {
-        auto userinfo = DB::get()->Select<User>(std::format("id == {}", user_id))[0].second;
-        userinfo.password = "X";
-
-        response = HttpResponse::newHttpJsonResponse(DTO::ToJson(userinfo));
-    }
-    else
-    {
-        response = HttpResponse::newHttpJsonResponse(DTO::ToJson(ret));
-    }
-
-    response->setStatusCode(ret.code);
+    auto response = HttpResponse::newHttpJsonResponse(DTO::ToJson(userinfo));
+    response->setStatusCode(drogon::k200OK);
     callback(response);
 }
-
 
 // URL: http://localhost:5555/api/auth/out
 void Auth::Logout(const HttpRequestPtr& req, callback_func &&callback)
 {
-    HttpResponsePtr response;
-    ReturnDTO ret {drogon::k200OK};
+    // Login and check Permission
+    auto login = Request::Login(req, callback);
+    if(!login.id) { return; }
 
-    LoginRequest::getUserByToken(req->getCookie("token"), ret);
+    auto id = DB::get()->Select<::Token>(
+        std::format("token == \"{}\"", req->getCookie("token")))[0].first;
+    // Delete current token
+    DB::get()->Delete<::Token>(id);
 
-    if(ret.code == drogon::k200OK)
-    {
-        DB::get()->Delete<Token>(std::format("token == \"{}\"", req->getCookie("token")));
-    }
-
-    response = HttpResponse::newHttpJsonResponse(DTO::ToJson(ret));
-    response->setStatusCode(ret.code);
-
+    auto response = HttpResponse::newHttpResponse();
+    response->setStatusCode(drogon::k200OK);
     callback(response);
 }
 
 // URL: http://localhost:5555/api/auth/out_all
 void Auth::LogoutAll(const HttpRequestPtr& req, callback_func &&callback)
 {
-    HttpResponsePtr response;
-    ReturnDTO ret {drogon::k200OK};
+    // Login and check Permission
+    auto login = Request::Login(req, callback);
+    if(!login.id) { return; }
 
-    auto user_id = LoginRequest::getUserByToken(req->getCookie("token"), ret);
-
-    if(ret.code == drogon::k200OK)
+    // Delete all tokens by the user
+    auto tokens = DB::get()->Select<::Token>(std::format("user == {}", login.id));
+    for(auto& row : tokens)
     {
-        DB::get()->Delete<Token>(std::format("user == {}", user_id));
+        DB::get()->Delete<Token>(row.first);
     }
 
-    response = HttpResponse::newHttpJsonResponse(DTO::ToJson(ret));
-    response->setStatusCode(ret.code);
-
+    auto response = HttpResponse::newHttpResponse();
+    response->setStatusCode(drogon::k200OK);
     callback(response);
 }
 
 // URL: http://localhost:5555/api/auth/tokens
 void Auth::getTokens(const HttpRequestPtr& req, callback_func &&callback)
 {
-    HttpResponsePtr response;
-    ReturnDTO ret {drogon::k200OK};
+    // Login and check Permission
+    auto login = Request::Login(req, callback);
+    if(!login.id) { return; }
 
-    auto user_id = LoginRequest::getUserByToken(req->getCookie("token"), ret);
-
-    if(ret.code == drogon::k200OK)
+    Json::Value json;
+    for(auto& row : DB::get()->Select<Token>(std::format("user == {}", login.id)))
     {
-        Json::Value json;
-
-        for(auto& row : DB::get()->Select<Token>(std::format("user == {}", user_id)))
-        {
-            json.append(DTO::ToJson(row.second));
-        }
-
-        response = HttpResponse::newHttpJsonResponse(json);
-    }
-    else
-    {
-        response = HttpResponse::newHttpJsonResponse(DTO::ToJson(ret));
+        json.append(DTO::ToJson(row));
     }
 
-    response->setStatusCode(ret.code);
+    auto response = HttpResponse::newHttpJsonResponse(json);
+    response->setStatusCode(drogon::k200OK);
+    callback(response);
+}
+
+///////////////////////////////// 2FA //////////////////////////////////////////
+
+void Auth::Switch2FA(const HttpRequestPtr& req, callback_func &&callback)
+{
+    // Login and check Permission
+    auto login = Request::Login(req, callback);
+    if(!login.id) { return; }
+
+    login.Switch2FA();
+}
+
+void Auth::Get2FAKey(const HttpRequestPtr& req, callback_func &&callback)
+{
+    auto login = Request::Login(req, callback);
+    if(!login.id) { return; }
+
+    Json::Value json(login.Get2FAKey());
+
+    auto response = HttpResponse::newHttpJsonResponse(json);
+    response->setStatusCode(drogon::k200OK);
     callback(response);
 }

@@ -1,10 +1,7 @@
 #include <drogon/drogon.h>
 
-#if WIN32
+
 static const std::string ROOTDIR = "../../root";
-#else
-static const std::string ROOTDIR = "../root";
-#endif
 
 
 int main()
