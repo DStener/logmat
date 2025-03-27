@@ -13,16 +13,30 @@ using callback_func = std::function<void (const HttpResponsePtr &)>;
 
 #define MAX_TOKEN 32
 #undef CHECK_AND_CALLBACK
-#define CHECK_AND_CALLBACK(condition)                           \
-if(condition) {                                                 \
-    Json::Value json("Пожалуйста, войдите в систему");          \
-                                                                \
-    auto response = HttpResponse::newHttpJsonResponse(json);    \
-    response->setStatusCode(drogon::k406NotAcceptable);         \
-    callback(response);                                         \
-                                                                \
-    return;                                                     \
+#define CHECK_AND_CALLBACK(condition, txt)                                      \
+if(condition)                                                                   \
+{                                                                               \
+    if(info.asJSON == "true")                                                   \
+    {                                                                           \
+        Json::Value json(txt);                                                  \
+                                                                                \
+        auto response = HttpResponse::newHttpJsonResponse(json);                \
+        response->setStatusCode(drogon::k415UnsupportedMediaType);              \
+        callback(response);                                                     \
+    }                                                                           \
+    else                                                                        \
+    {                                                                           \
+        HttpViewData data;                                                      \
+        data.insert("message_visibility", "\"visibility: visible;\"");          \
+        data.insert("message_txt", txt);                                        \
+                                                                                \
+        auto response = HttpResponse::newHttpViewResponse("signin.csp", data);  \
+        response->setStatusCode(drogon::k415UnsupportedMediaType);              \
+        callback(response);                                                     \
+    }                                                                           \
+    return;                                                                     \
 }
+
 #undef FORBIDEN_CALLBACK
 #define FORBIDEN_CALLBACK                                       \
     Json::Value json(permission);                               \
@@ -36,8 +50,10 @@ class Login
 {
 public:
     id_t id;
+    std::string message;
 
 private:
+    LoginDTO info;
     HttpRequestPtr reqest;
     callback_func& callback;
 
@@ -46,33 +62,42 @@ public:
     Login(const HttpRequestPtr& req, callback_func& callback)
         : id(0), reqest(req), callback(callback)
     {
+        info = DTO::CreateFromRequestBody<LoginDTO>(req->getBody());
         auto token = reqest->getCookie("token");
 
         // If there is no cookie with the token
-        CHECK_AND_CALLBACK(!token.size());
+        if(!token.size())
+        {
+            message = "Пожалуйста, войдите в систему";
+            return;
+        }
 
         // Get vector of struct Token where field token is qual to the sample
         auto tokens = DB::get()->Select<::Token>(std::format("token == \"{}\"", token));
-        CHECK_AND_CALLBACK(!tokens.size());
+        if(!tokens.size())
+        {
+            message = "Пожалуйста, войдите в систему";
+            return;
+        }
 
         // Checking for expired token lifetime
-        CHECK_AND_CALLBACK(tokens[0].second.time < std::chrono::system_clock::now());
+        if(tokens[0].second.time < std::chrono::system_clock::now())
+        {
+            message = "Пожалуйста, войдите в систему";
+            return;
+        }
 
         id = tokens[0].second.user.id;
     }
 
     Login(LoginDTO& info, const HttpRequestPtr& req, callback_func& callback)
-        : id(0), reqest(req), callback(callback)
+        : id(0), info(info), reqest(req), callback(callback)
     {
         auto arr = DB::get()->Select<::User>(std::format("username == \"{}\"", info.username));
 
         if(arr.size() == 0)
         {
-            Json::Value json("Некорректный логин или пароль.");
-
-            auto response = HttpResponse::newHttpJsonResponse(json);
-            response->setStatusCode(drogon::k415UnsupportedMediaType);
-            callback(response);
+            message = "Некорректный логин или пароль.";
             return;
         }
 
@@ -85,11 +110,7 @@ public:
 
             if(info.code != TOTP(open_key))
             {
-                Json::Value json("Некорректный логин или ключ.");
-
-                auto response = HttpResponse::newHttpJsonResponse(json);
-                response->setStatusCode(drogon::k415UnsupportedMediaType);
-                callback(response);
+                message = "Некорректный логин или ключ.";
                 return;
             }
         }
@@ -103,26 +124,20 @@ public:
             // Check correct data
             if(arr.size() == 0 || arr[0].second.password != hash.str())
             {
-                Json::Value json("Некорректный логин или пароль.");
-
-                auto response = HttpResponse::newHttpJsonResponse(json);
-                response->setStatusCode(drogon::k415UnsupportedMediaType);
-                callback(response);
+                message = "Некорректный логин или пароль.";
                 return;
             }
+
         }
 
         // If username and password are correct,
         // AND the token limit has not been exceeded
         // then create token
         auto tokens = DB::get()->Select<Token>(std::format("user == {}", arr[0].first));
+
         if(tokens.size() >= MAX_TOKEN)
         {
-            Json::Value json("Достигнут лимит по активным сессиям.");
-
-            auto response = HttpResponse::newHttpJsonResponse(json);
-            response->setStatusCode(drogon::k415UnsupportedMediaType);
-            callback(response);
+            message = "Достигнут лимит по активным сессиям.";
             return;
         }
 
@@ -140,16 +155,7 @@ public:
         std::stringstream stream;
         stream << t.token;
 
-        // Create token cookie
-        Cookie cookie("token", stream.str());
-        cookie.setPath("/");
-
-        // Create response
-        auto response = HttpResponse::newHttpResponse();
-        response->setStatusCode(drogon::k200OK);
-        response->addCookie(cookie);
-
-        callback(response);
+        message = stream.str();
     }
 
     bool hasPermission(const std::string& permission)

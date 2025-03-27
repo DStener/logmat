@@ -14,6 +14,12 @@ int main()
         "master",
         0
     };
+
+    drogon::app().enableReusePort(true);
+    // drogon::app().enableDynamicViewsLoading({"../../views"});
+    // drogon::app().enableDynamicViewsLoading()
+
+
     // Configure and setup instance
     // URL: http://0.0.0.0:5555/
     drogon::app()

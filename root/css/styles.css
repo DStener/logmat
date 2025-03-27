@@ -25,6 +25,27 @@ form {
     }
     input[type="submit"] {
         height: 40px;
-        margin-top: 50px;
+        margin-top: 30px;
     }
+}
+.error_message
+{
+    color: maroon;
+    background: lightpink;
+    /* text-align: center; */
+    padding: 5px 7px;
+    border: solid;
+
+    font: caption;
+    font-size: 0.8rem;
+    
+    border-width: 1px;
+    border-color: lightcoral;
+    border-radius: 7px;
+}
+a 
+{
+    font: caption;
+    font-size: 0.8rem;
+    text-align: center;
 }

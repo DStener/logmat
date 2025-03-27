@@ -3,14 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <script src="../js/reg.js"></script>
-    <link rel="stylesheet" href="../css/styles.css">
+    <link rel="stylesheet" href="/css/styles.css">
     <title>Login form</title>
     
 </head>
 <body>
 
-    <form action="/api/auth/login" method="POST">
+    <form action="/signin" method="POST">
 
         <h3>Login form</h3>
 
@@ -19,8 +18,9 @@
 
         <label for="password">Password</label>
         <input type="password" name="password" id="password" required/>
-        
-        
+
+        <lable class ="error_message" style=[[message_visibility]]>[[message_txt]]</lable>
+
         <input type="submit"/>
         <a href="/signup">Зарегистрироваться</a>
 

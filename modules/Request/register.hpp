@@ -8,41 +8,34 @@
 using namespace drogon;
 using callback_func = std::function<void (const HttpResponsePtr &)>;
 
-using namespace drogon;
-
-#undef CHECK_AND_CALLBACK
-#define CHECK_AND_CALLBACK(condition, txt)                      \
-if(condition) {                                                 \
-    Json::Value json(txt);                                      \
-                                                                \
-    auto response = HttpResponse::newHttpJsonResponse(json);    \
-    response->setStatusCode(drogon::k415UnsupportedMediaType);  \
-    callback(response);                                         \
-                                                                \
-    return false;                                               \
-}
 
 namespace Request {
 class Register
 {
 public:
     id_t id;
+    std::string message;
 
 private:
     HttpRequestPtr reqest;
     callback_func& callback;
+    RegisterDTO info;
 
 public:
 
-    Register(RegisterDTO& info, const HttpRequestPtr& req, callback_func& callback)
-                 : id(0), reqest(req), callback(callback)
+    Register(const HttpRequestPtr& req, callback_func& callback)
+        : id(0), reqest(req), callback(callback)
     {
+        info = DTO::CreateFromRequestBody<RegisterDTO>(req->getBody());
+
+        bool asJson = (info.asJSON == "true");
+
         // Check condition
-        if(!checkUsername(info.username) ||
-           !checkEmail(info.email) ||
-           !checkPassword(info.password) ||
-           !checkCPassword(info.password, info.c_password) ||
-           !checkAge(info.birthday))
+        if(!checkUsername(asJson) ||
+           !checkEmail(asJson) ||
+           !checkPassword(asJson) ||
+           !checkCPassword(asJson) ||
+           !checkAge(asJson))
         {
             return;
         }
@@ -67,77 +60,122 @@ public:
         // Linking the user to the role
         ::UserAndRole user_role{{id_user}, {id_role}};
         DB::get()->Insert(user_role);
-
-        auto response = HttpResponse::newHttpResponse();
-        response->setStatusCode(drogon::k201Created);
-        callback(response);
     }
 
 private:
 
-    bool checkUsername(const std::string& username)
+    bool checkUsername(bool& asJson)
     {
         const std::regex latin(R"(([A-Z]|[a-z]){1,})");
 
-        CHECK_AND_CALLBACK(!std::regex_match(username,latin),
-              "Имя должно содержать только буквы латинского алфавита. ");
-        CHECK_AND_CALLBACK(!isupper(username[0]),
-              "Имя должно начинаться с заглавной буквы. ");
-        CHECK_AND_CALLBACK(username.size() < 7,
-              "Имя должно быть не меньше 7 символов. ");
-        CHECK_AND_CALLBACK(DB::get()->Select<User>(std::format("username == \"{}\"", username)).size() != 0,
-              "Данной имя используется другим аккаунтом. ")
+
+        if(!std::regex_match(info.username,latin))
+        {
+            message = "Имя должно содержать только буквы латинского алфавита.";
+            return false;
+        }
+
+        if(!isupper(info.username[0]))
+        {
+            message = "Имя должно начинаться с заглавной буквы.";
+            return false;
+        }
+
+        if(!isupper(info.username.size() < 7))
+        {
+            message = "Имя должно быть не меньше 7 символов.";
+            return false;
+        }
+
+        if(DB::get()->Select<User>(std::format("username == \"{}\"", info.username)).size() != 0)
+        {
+            message = "Данной имя используется другим аккаунтом.";
+            return false;
+        }
 
         return true;
     }
 
-    bool checkEmail(const std::string& email)
+    bool checkEmail(bool& asJson)
     {
         const std::regex pattern(R"([a-zA-Z0-9._]{1,}%40[a-zA-Z0-9._]{1,}\.[a-zA-Z]{2,3})");
 
-        CHECK_AND_CALLBACK(!std::regex_match(email, pattern),
-              "Некорректная электронная почта. ")
-        CHECK_AND_CALLBACK(DB::get()->Select<User>(std::format("email == \"{}\"", email)).size() != 0,
-              "Данная почта используется для другого аккаунта")
+
+        if(!std::regex_match(info.email, pattern))
+        {
+            message = "Некорректная электронная почта.";
+            return false;
+        }
+
+        if(DB::get()->Select<User>(std::format("email == \"{}\"", info.email)).size() != 0)
+        {
+            message = "Данная почта используется для другого аккаунта";
+            return false;
+        }
 
         return true;
     }
 
-    bool checkPassword(const std::string& password)
+    bool checkPassword(bool& asJson)
     {
         const std::regex one_number(R"([0-9])");
         const std::regex one_upper_char(R"([A-Z])");
         const std::regex one_lower_char(R"([A-Z])");
 
-        CHECK_AND_CALLBACK(password.size() <= 8,
-              "Минимальная длина пароля 8 символов. ")
-        CHECK_AND_CALLBACK(!std::regex_search(password, one_number),
-              "Пароль не содержит цифр. ")
-        CHECK_AND_CALLBACK(!std::regex_search(password, one_upper_char),
-              "Пароль не содержит символов в верхнем регистре. ")
-        CHECK_AND_CALLBACK(!std::regex_search(password, one_lower_char),
-              "Пароль не содержит символов в нижнем регистре. ")
+
+        if(info.password.size() <= 8)
+        {
+            message = "Минимальная длина пароля 8 символов.";
+            return false;
+        }
+
+        if(!std::regex_search(info.password, one_number))
+        {
+            message = "Пароль не содержит цифр.";
+            return false;
+        }
+
+        if(!std::regex_search(info.password, one_upper_char))
+        {
+            message = "Пароль не содержит символов в верхнем регистре.";
+            return false;
+        }
+
+        if(!std::regex_search(info.password, one_lower_char))
+        {
+            message = "Пароль не содержит символов в нижнем регистре.";
+            return false;
+        }
 
         return true;
     }
 
-    bool checkCPassword(const std::string& password,
-                        const std::string& c_password)
+    bool checkCPassword(bool& asJson)
     {
-        CHECK_AND_CALLBACK(password.compare(c_password) != 0,
-              "Значения паролей не совпадают. ")
+        if(info.password.compare(info.c_password) != 0)
+        {
+            message = "Значения паролей не совпадают.";
+            return false;
+        }
 
         return true;
     }
 
-    bool checkAge(const time_p& birthday)
+    bool checkAge(bool& asJson)
     {
         using namespace std::chrono;
 
-        CHECK_AND_CALLBACK(birthday > system_clock::now(),
-              "Некорректная дата. ")
-        CHECK_AND_CALLBACK(system_clock::now() - birthday < years(14),
-              "Сайтом разрешено пользоваться с 14 лет. ")
+        if(info.birthday > system_clock::now())
+        {
+            message = "Некорректная дата.";
+            return false;
+        }
+
+        if(system_clock::now() - info.birthday < years(14))
+        {
+            message = "Сайтом разрешено пользоваться с 14 лет.";
+            return false;
+        }
 
         return true;
     }

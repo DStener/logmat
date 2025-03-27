@@ -1,0 +1,67 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+    <%inc
+        #include "System/utils.h"
+        #include "struct_declaration.hpp"
+    %>
+    <%c++
+        auto images=@@.get<ResponseVec<::Image>>("images");
+    %>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <title>Контакты</title>
+        <link rel="stylesheet" href="style.css">
+        <link rel="stylesheet" href="fancybox-3.5.7/dist/jquery.fancybox.min.css">
+        <script src="fancybox-3.5.7/dist/jquery.fancybox.min.js"></script>
+    </head>
+    <body>
+
+        <header>
+
+            <a class="tab" href="/">Главная</a>
+            <a class="tab" href="#">Галерея</a>
+            <a class="tab" href="/reviews">Отзывы</a>
+            <a class="tab" href="/contacts.html">Контакты</a>
+            
+        </header>
+
+        
+        <div class="place">
+
+            <div class="img-background heading-box">
+                <h2 class="h2-main-style">Онлайн фотоэкспозиция</h2>
+            </div>
+            
+            <div class="out-gallary-box">
+                <div class="in-box in-gallary-box">
+                    <%c++ for(auto& row : images){%>
+                        <%c++ std::string path = std::format("/data/image/{}", row.first);%>
+                        <a data-fancybox="images" href={%path%}  data-caption={%row.second.name%}><img src={%path%} width="200" height="222"/></a>
+                    <%c++}%>        
+                </div>
+            </div>
+        </div>
+
+
+        <footer>
+            <div class="in-box">
+
+                <h3 class="h3-main-style">Присоединяйся, пилот!</h3>
+                <p class="p-main-style">ООО "New Aerial Horizon", все права защищены.</p>
+                
+                <hr>
+
+                <ul>
+                    <li>Адрес: г. Ханты-Мансийск, ул. Чехова, 16</li>
+                    <li>Контактный номер: +7 909 037-89-98</li>
+                    <li>Электронная почта: mail@horizon.com</li>
+                </ul>
+
+                <p class="p-main-style">&copy Стенер Даниил Евгеньевич</p>
+            </div>
+        </footer>
+
+    </body>
+</html>

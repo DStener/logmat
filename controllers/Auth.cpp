@@ -22,9 +22,24 @@ using namespace API;
 // URL: http://localhost:5555/register.html
 void Auth::Register(const HttpRequestPtr& req, callback_func &&callback)
 {
-    // Convert request body to and register
-    auto info = DTO::CreateFromRequestBody<RegisterDTO>(req->getBody());
-    auto ret = Request::Register(info, req, callback);
+    auto reg = Request::Register(req, callback);
+
+    // If there is any error
+    if(reg.message.size())
+    {
+        Json::Value json(reg.message);
+
+        auto response = HttpResponse::newHttpJsonResponse(json);
+        response->setStatusCode(drogon::k415UnsupportedMediaType);
+        callback(response);
+
+        return;
+    }
+
+    // If everything is fine
+    auto response = HttpResponse::newHttpResponse();
+    response->setStatusCode(drogon::k201Created);
+    callback(response);
 }
 
 // URL: http://localhost:5555/api/auth/login
@@ -33,7 +48,31 @@ void Auth::Login(const HttpRequestPtr& req, callback_func &&callback)
 {
     // Convert request body to LoginDTO and login
     auto info = DTO::CreateFromRequestBody<LoginDTO>(req->getBody());
-    Request::Login(info, req, callback);
+    auto login = Request::Login(info, req, callback);
+
+    // If there is any error
+    if(!login.id)
+    {
+        Json::Value json(login.message);
+
+        auto response = HttpResponse::newHttpJsonResponse(json);
+        response->setStatusCode(drogon::k415UnsupportedMediaType);
+        callback(response);
+
+        return;
+    }
+
+    // If everything is fine
+    // Create token cookie
+    Cookie cookie("token", login.message);
+    cookie.setPath("/");
+
+    // Create response
+    auto response = HttpResponse::newHttpResponse();
+    response->setStatusCode(drogon::k200OK);
+    response->addCookie(cookie);
+
+    callback(response);
 }
 
 // URL: http://localhost:5555/api/auth/me

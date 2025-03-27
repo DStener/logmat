@@ -17,6 +17,8 @@
 #include "Migration/RoleAndPermission.hpp"
 #include "Migration/UserAndRole.hpp"
 #include "Migration/ChangeLog.hpp"
+#include "Migration/Image.hpp"
+#include "Migration/Review.hpp"
 
 using namespace drogon;
 
@@ -39,8 +41,11 @@ private:
         Migration::RoleAndPermission::up();
         Migration::UserAndRole::up();
 
-
         Migration::ChangeLog::up();
+
+        // Web ldb
+        Migration::Image::up();
+        Migration::Review::up();
     }
 
 public:

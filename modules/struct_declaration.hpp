@@ -68,10 +68,19 @@ struct Token {
 };
 
 
+struct Image {
+    NOTNULL<UNIQUE<std::string>> name;
+    NOTNULL<std::string> path;
+    size_t size;
+};
 
 
-
-
+struct Review {
+    REFERENCES<User> user_id;
+    time_p time;
+    size_t rating;
+    std::string text;
+};
 
 
 struct ReturnDTO {
@@ -84,6 +93,7 @@ struct RegisterDTO {
     std::string email;
     std::string password;
     std::string c_password;
+    std::string asJSON;
     time_p birthday;
 };
 
@@ -91,4 +101,5 @@ struct LoginDTO {
     std::string username;
     std::string password;
     std::string code;
+    std::string asJSON;
 };
