@@ -197,8 +197,6 @@ public:
                             nanoseconds(std::stoi(str.substr(str.rfind('.') + 1))) +
                             current_zone()->get_info(time_p()).offset;
 #endif
-                        
-                        std::cout << str << " - " << field << std::endl;
                     }
                     else
                     {
@@ -258,50 +256,6 @@ public:
                 DTO::FOREACH_TWO(from, to, func,
                                  std::make_index_sequence<size::value>());
             }
-            // template <typename T>
-            // static bool NotNull(T& t)
-            // {
-            //     bool flag = false;
-            //     DTO::for_each(t, [&flag](std::string_view field, auto& value)
-            //     {
-            //         using type = const std::remove_cvref_t<decltype(value)>&;
-
-            //         if (!::SQL::isNotNull<type>::value) { return; }
-
-            //         flag |= isNull(value);
-            //     });
-            //     return !flag;
-            // }
-
-            // template <typename T>
-            // static std::string UpdateNotNull(T& s)
-            // {
-            //     std::string sql{};
-            //     DTO::for_each(s, [&sql](std::string_view field, auto& value)
-            //     {
-            //         // std::cout << std::format("{}: [{}] = {}", isNull(value), field, DTO::SQL::to_string(value)) << std::endl;
-            //         if (isNull(value)) { return; }
-            //         sql += std::format("{} = {}, ", field, DTO::SQL::to_string(value));
-            //     });
-            //     // if (sql.size() == 0) return sql;
-            //     return sql.substr(0,sql.size() - 2);
-            //     // return  std::string_view{"sql"};
-            // }
-
-            // template <typename T>
-            // static std::string UniqueSQL(T& t)
-            // {
-            //     std::string sql;
-            //     DTO::for_each(t, [&sql](std::string_view field, auto& value)
-            //     {
-            //         using type = const std::remove_cvref_t<decltype(value)>&;
-
-            //         // if (!::SQL::isUnique<type>::value) { return; }
-
-            //         sql += std::format(" {} == {} OR ", field, DTO::SQL::to_string(value));
-            //     });
-            //     return sql.substr(0,sql.size() - 3);
-            // }
 
             template <typename T>
             static bool isNull(T& t)
