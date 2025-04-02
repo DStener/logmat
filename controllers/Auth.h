@@ -1,4 +1,4 @@
-#pragma once
+    #pragma once
 
 #include <drogon/HttpController.h>
 #include <drogon/HttpController.h>
@@ -28,6 +28,7 @@ public:
         METHOD_ADD(Auth::LogoutAll, "/out_all", Post); // authorized
         METHOD_ADD(Auth::Switch2FA, "/2fa/switch", Post); // authorized
         METHOD_ADD(Auth::Get2FAKey, "/2fa/key", Get); // authorized
+        METHOD_ADD(Auth::Is2FAEnbaled, "/2fa/enabled?username={}", Get); // authorized
     METHOD_LIST_END
 
     //Declaring methods
@@ -39,6 +40,8 @@ public:
     void getTokens(const HttpRequestPtr& req, callback_func &&callback);
     void Switch2FA(const HttpRequestPtr& req, callback_func &&callback);
     void Get2FAKey(const HttpRequestPtr& req, callback_func &&callback);
+    void Is2FAEnbaled(const HttpRequestPtr& req, callback_func &&callback,
+                      std::string username);
 
     // token
 };

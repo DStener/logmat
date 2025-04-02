@@ -3,43 +3,40 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="../css/styles.css">
+    <script src="/js/register.js"></script>
+    <link rel="stylesheet" href="/css/styles.css">
     <title>Register form</title>
     
 </head>
 <body>
+    <div class="out-box background-landscape">
+        <form class="dialog" id="register_dialog">
 
-    <form action="/api/auth/register" method="POST">
+            <a href="/" class="logo"><i><b>log</b >Mat</i></a>
+            <h2>Регистрация</h2>
 
-        <h3>Register form</h3>
+            <label for="username">Имя пользователя</label>
+            <input type="text" name="username" id="username" required/>
 
-        <label for="username">Username</label>
-        <input type="text" name="username" id="username" required/>
-
-        <label for="email">Email</label>
-        <input type="email" name="email" id="email" required/>
-
-
-        <label for="password">Password</label>
-        <input type="password" name="password" id="password" required/>
-
-        <label for="c_password">Repeat the password</label>
-        <input type="password" name="c_password" id="c_password" required/>
-
-        <label for="birthday">Birthday</label>
-        <input type="date" name="birthday" id="birthday" required/>
-        
-        <hr>
-        <label for="captcha">Captcha</label>
-        <label for="captcha">0+3 = </label>
-        <input type="number" name="captcha" id="captcha" required/>
-        <hr>
-        
-        <lable class ="error_message" style="visibility: visible;">Имя должно содержать только буквы латинского алфавита.</lable>
-        
-        <input type="submit"/>
+            <label for="email">Email</label>
+            <input type="email" name="email" id="email" required/>
 
 
-    </form>
+            <label for="password">Пароль</label>
+            <input type="password" name="password" id="password" required/>
+
+            <label for="c_password">Подтверждение пароля</label>
+            <input type="password" name="c_password" id="c_password" required/>
+
+            <label for="birthday">Дата рождения</label>
+            <input type="date" name="birthday" id="birthday" required/>
+            
+            <lable class="error_message" id="err_mes"style="display: none;">ERROR</lable>
+            
+            <input type="submit" value="Зарегистрироваться"/>
+
+            <a href="/login.html" class="link">Вход</a>
+        </form>
+    </div>
 </body>
 </html>

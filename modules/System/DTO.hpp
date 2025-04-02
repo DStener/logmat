@@ -1,8 +1,6 @@
 #pragma once
 
 #include "System/utils.h"
-#include "System/field_reflection.hpp"
-#include "sql_template.h"
 
 
 #include <cctype>
@@ -17,164 +15,206 @@
 #include <type_traits>
 #include <drogon/drogon.h>
 
-// #include <cxxabi.h>
-
-using namespace field_reflection;
+#include <boost/fusion/adapted.hpp>
+#include <boost/fusion/mpl.hpp>
+#include <boost/core/type_name.hpp>
 
 class DTO
 {
 public:
+    ///////////////////////// MAIN DTO METHOD //////////////////////////////////
+    template <typename T, typename Func>
+    static void for_each(T& t, Func f)
+    {
+        using size = boost::fusion::extension::struct_size<T>;
+        DTO::FOREACH(t, f, std::make_index_sequence<size::value>());
+    }
+
 
     // Get DTO struct name
     template <typename T>
     static std::string GetName()
     {
-        return std::string{field_reflection::type_name<T>};
+        return std::string{boost::core::type_name<T>()};
     }
 
-    // Convert DTO to Json::Value
-    template <typename T>
-    static Json::Value ToJson(T s)
-    {
-        Json::Value ret;
-        for_each_field(s, [&ret](std::string_view field, auto value)
+    /////////////////////////// JSON METHODS ///////////////////////////////////
+    class JSON {
+    public:
+        // Convert DTO to Json::Value
+        template <typename T>
+        static Json::Value From(T s)
         {
-            if(DTO::SQL::CheckField::isSecret(field)) { return; }
+            Json::Value json;
 
-            // ERROR: if convert directly to std::string<
-            // without std::stringstream
-            std::stringstream stream;
-            stream << value;
+            DTO::JSON::Fill(s, json);
 
-            ret[std::string(field)] = stream.str();
-        });
-        return ret;
-    }
-
-    template <typename T>
-    static Json::Value ToJson(DTORow<T> s)
-    {
-        Json::Value ret;
-        ret["id"] = s.first;
-        for_each_field(s.second, [&ret](std::string_view field, auto value)
-        {
-            if(DTO::SQL::CheckField::isSecret(field)) { return; }
-
-            // ERROR: if convert directly to std::string<
-            // without std::stringstream
-            std::stringstream stream;
-            stream << value;
-
-            ret[std::string(field)] = stream.str();
-        });
-        return ret;
-    }
-
-
-
-    // Return SQL command to create Teable based on DTO strucr T
-    template <typename T, field_referenceable U = std::remove_cvref_t<T>>
-    static std::string CreateTableSQL()
-    {
-        std::string sql{"CREATE TABLE IF NOT EXISTS"};
-        std::string references{};
-        sql += " " + DTO::GetName<T>();
-        sql += " ( id INTEGER PRIMARY KEY AUTOINCREMENT ";
-
-        DTO::fillSQLCreateTable<T>(sql, references, std::make_index_sequence<field_count<U>>());
-
-        sql += references + " );";
-        return sql;
-    }
-
-    // Return SQL command to insert to Teable DTO strucr T
-    template <typename T, field_referenceable U = std::remove_cvref_t<T>>
-    static std::string InsertSQL(T& s)
-    {
-        // T _cash;
-        std::string sql{"INSERT OR IGNORE INTO"};
-        sql += " " + DTO::GetName<T>();
-        sql += " ( ";
-
-        std::string values{};
-
-        for_each_field(s, [&sql, &values](std::string_view field, auto& value)
-        {
-            sql += std::string{field} + ", ";
-            values += std::format("{},", DTO::SQL::to_string(value));
-        });
-
-        return sql.substr(0,sql.size() - 2) + " ) VALUES ( " + values.substr(0,values.size() - 1) + " );";
-    }
-
-    // Convert request Body to DTO
-    template <typename T>
-    static T CreateFromRequestBody(const std::string_view& str)
-    {
-        T s;
-        for_each_field(s, [&str](std::string_view field, auto& value)
-        {
-            using type_dec = std::remove_cvref_t<::SQL::getType<decltype(value)>>;
-
-            if (str.find(field) == std::string_view::npos) { return; }
-
-            size_t start = str.find(field) + field.size() + 1;
-            size_t size = str.find("&", start) - start;
-
-            auto substr = std::string{str.substr(start, size)};
-            if constexpr (std::is_same_v<type_dec, int> ||
-                          std::is_same_v<type_dec, std::size_t> ||
-                          std::is_same_v<type_dec, id_t>)
-            {
-                ::SQL::REMOVE_ATTRIB(value) = std::stoi(substr);
-            }
-            else if constexpr (std::is_same_v<type_dec, float> ||
-                          std::is_same_v<type_dec, double>)
-            {
-                ::SQL::REMOVE_ATTRIB(value) = std::stod(substr);
-            }
-            else if constexpr(std::is_same_v<type_dec, std::string>)
-            {
-                ::SQL::REMOVE_ATTRIB(value) = substr;
-            }
-            else if constexpr(std::is_same_v<type_dec, time_p>)
-            {
-                using namespace std::chrono;
-
-                time_t rawtime = time(nullptr);
-                std::tm time = *localtime(&rawtime);
-
-                std::istringstream stream{substr};
-                stream >> std::get_time(&time, "%Y-%m-%d");
-
-                ::SQL::REMOVE_ATTRIB(value) = system_clock::from_time_t(std::mktime(&time));
-            }
-        });
-        return s;
-    }
-
-
-    // Convert orm::Result (SQL Response) to DTO
-    template <typename T, field_referenceable U = std::remove_cvref_t<T>>
-    static ResponseVec<T> CreateFromSQLResult(const drogon::orm::Result& result)
-    {
-        ResponseVec<T> vec{};
-        for(const auto& row : result)
-        {
-            DTORow<T> _cash{row.at("id").as<id_t>(), T()};
-            DTO::fillFromSQLResult(_cash, row, std::make_index_sequence<field_count<U>>());
-            vec.push_back(_cash);
+            return json;
         }
-        return vec;
-    }
 
+        // Convert pair<id_t, DTO> to Json::Value
+        template <typename T>
+        static Json::Value From(DTORow<T> s)
+        {
+            Json::Value json;
+            json["id"] = s.first;
+
+            DTO::JSON::Fill(s.second, json);
+
+            return json;
+        }
+    private:
+        template <typename T>
+        static void Fill(T& t, Json::Value& json)
+        {
+            DTO::for_each(t, [&json](std::string_view field, auto value)
+            {
+                if(DTO::SQL::CheckField::isSecret(field)) { return; }
+
+                // ERROR: if convert directly to std::string<
+                // without std::stringstream
+                std::stringstream stream;
+                stream << value;
+
+                json[std::string(field)] = stream.str();
+            });
+        }
+    };
+
+    //////////////////////// RequestBody METHODS ///////////////////////////////
+    class RequestBody {
+    public:
+        // Convert request Body to DTO
+        template <typename T>
+        static T To(const std::string_view& str)
+        {
+            T ret;
+            DTO::for_each(ret, [&str](std::string_view field, auto& value)
+            {
+                using type_dec = std::remove_cvref_t<decltype(value)>;
+
+                size_t start = str.find(field);
+                if (start == std::string_view::npos) { return; }
+
+                start +=  field.size() + 1;
+                size_t size = str.find("&", start) - start;
+
+                auto substr = drogon::utils::urlDecode( API::Utils::trim(
+                                    std::string{str.substr(start, size)}));
+                if constexpr (std::is_same_v<type_dec, int> ||
+                              std::is_same_v<type_dec, std::size_t> ||
+                              std::is_same_v<type_dec, id_t>)
+                {
+                    value = std::stoi(substr);
+                }
+                else if constexpr(std::is_same_v<type_dec, std::string>)
+                {
+                    value = substr;
+                }
+                else if constexpr(std::is_same_v<type_dec, time_p>)
+                {
+                    using namespace std::chrono;
+
+                    time_t rawtime = time(nullptr);
+                    std::tm time = *localtime(&rawtime);
+
+                    std::istringstream stream{substr};
+                    stream >> std::get_time(&time, "%Y-%m-%d");
+
+                    value = system_clock::from_time_t(std::mktime(&time));
+                }
+            });
+            return ret;
+        }
+
+    };
+
+    ///////////////////////////// SQL METHODS //////////////////////////////////
     class SQL {
     public:
+
+        // Return SQL command to insert to Teable DTO strucr T
+        template <typename T>
+        static std::string Insert(T& s)
+        {
+            std::string values{};
+            std::string fields{};
+
+            DTO::for_each(s, [&fields, &values](std::string_view field, auto& value)
+            {
+                fields += std::format("{}, ", field);
+                values += std::format("{}, ", DTO::SQL::to_string(value));
+            });
+
+            return std::format("INSERT OR IGNORE INTO {2} ( {0} ) VALUES ( {1} );",
+                               fields.substr(0,fields.size() - 2),
+                               values.substr(0,values.size() - 2),
+                               DTO::GetName<T>());
+        }
+
+        template <typename T>
+        static std::string Update(T& s)
+        {
+            std::string str{};
+
+            DTO::for_each(s, [&str](std::string_view field, auto& value)
+            {
+                str += std::format("{} = {}, ", field, DTO::SQL::to_string(value));
+            });
+
+            return str.substr(0, str.size() - 2);
+        }
+
+        // Convert orm::Result (SQL Response) to DTO
+        template <typename T>
+        static ResponseVec<T> To(const drogon::orm::Result& result)
+        {
+            ResponseVec<T> vec{};
+            for(const auto& row : result)
+            {
+                DTORow<T> _cash{row.at("id").as<id_t>(), T{}};
+                DTO::for_each(_cash.second, [&row](std::string_view name, auto& field)
+                {
+                    using type_dec = std::remove_cvref_t<decltype(field)>;
+
+                    if constexpr (std::is_same_v<type_dec, time_p>)
+                    {
+                        using namespace std::chrono;
+
+                        std::string str = row[std::string{ name }].c_str();
+                        std::istringstream stream{ str };
+#ifdef _WIN32
+                        stream >> std::chrono::parse("%Y-%m-%d %H:%M:%S", field);
+#else
+                        time_t rawtime = time(nullptr);
+                        std::tm tm = *localtime(&rawtime);
+
+                        
+                        
+                        stream >> std::get_time(&tm, "%Y-%m-%d %H:%M:%S");
+
+                        field = system_clock::from_time_t(std::mktime(&tm)) +
+                            nanoseconds(std::stoi(str.substr(str.rfind('.') + 1))) +
+                            current_zone()->get_info(time_p()).offset;
+#endif
+                        
+                        std::cout << str << " - " << field << std::endl;
+                    }
+                    else
+                    {
+                        field = row[std::string{name}].as<type_dec>();
+                    }
+                });
+
+                vec.push_back(_cash);
+            }
+            return vec;
+        }
 
         template <typename T>
         static std::string to_string(T& t)
         {
-            using type_dec = std::remove_cvref_t<::SQL::getType<decltype(t)>>;
+            using type_dec = std::remove_cvref_t<decltype(t)>;
 
             // ERROR: if convert directly to std::string
             // without std::stringstream
@@ -205,67 +245,78 @@ public:
             }
 
             template <typename T>
-            static bool NotNull(T& t)
+            static void CopyIfNull(T& from, T& to)
             {
-                bool flag = false;
-                for_each_field(t, [&flag](std::string_view field, auto& value)
+
+                using size = boost::fusion::extension::struct_size<T>;
+                auto func = [](std::string_view field, auto& from, auto& to)
                 {
-                    using type = const std::remove_cvref_t<decltype(value)>&;
+                    if(!DTO::SQL::CheckField::isNull(to)) { return; }
+                    to = from;
+                };
 
-                    if (!::SQL::isNotNull<type>::value) { return; }
-
-                    flag |= isNull(value);
-                });
-                return !flag;
+                DTO::FOREACH_TWO(from, to, func,
+                                 std::make_index_sequence<size::value>());
             }
+            // template <typename T>
+            // static bool NotNull(T& t)
+            // {
+            //     bool flag = false;
+            //     DTO::for_each(t, [&flag](std::string_view field, auto& value)
+            //     {
+            //         using type = const std::remove_cvref_t<decltype(value)>&;
 
-            template <typename T>
-            static std::string UpdateNotNull(T& s)
-            {
-                std::string sql{};
-                for_each_field(s, [&sql](std::string_view field, auto& value)
-                {
-                    // std::cout << std::format("{}: [{}] = {}", isNull(value), field, DTO::SQL::to_string(value)) << std::endl;
-                    if (isNull(value)) { return; }
-                    sql += std::format("{} = {}, ", field, DTO::SQL::to_string(value));
-                });
-                // if (sql.size() == 0) return sql;
-                return sql.substr(0,sql.size() - 2);
-                // return  std::string_view{"sql"};
-            }
+            //         if (!::SQL::isNotNull<type>::value) { return; }
 
-            template <typename T>
-            static std::string UniqueSQL(T& t)
-            {
-                std::string sql;
-                for_each_field(t, [&sql](std::string_view field, auto& value)
-                {
-                    using type = const std::remove_cvref_t<decltype(value)>&;
+            //         flag |= isNull(value);
+            //     });
+            //     return !flag;
+            // }
 
-                    if (!::SQL::isUnique<type>::value) { return; }
+            // template <typename T>
+            // static std::string UpdateNotNull(T& s)
+            // {
+            //     std::string sql{};
+            //     DTO::for_each(s, [&sql](std::string_view field, auto& value)
+            //     {
+            //         // std::cout << std::format("{}: [{}] = {}", isNull(value), field, DTO::SQL::to_string(value)) << std::endl;
+            //         if (isNull(value)) { return; }
+            //         sql += std::format("{} = {}, ", field, DTO::SQL::to_string(value));
+            //     });
+            //     // if (sql.size() == 0) return sql;
+            //     return sql.substr(0,sql.size() - 2);
+            //     // return  std::string_view{"sql"};
+            // }
 
-                    sql += std::format(" {} == {} OR ", field, DTO::SQL::to_string(value));
-                });
-                return sql.substr(0,sql.size() - 3);
-            }
+            // template <typename T>
+            // static std::string UniqueSQL(T& t)
+            // {
+            //     std::string sql;
+            //     DTO::for_each(t, [&sql](std::string_view field, auto& value)
+            //     {
+            //         using type = const std::remove_cvref_t<decltype(value)>&;
+
+            //         // if (!::SQL::isUnique<type>::value) { return; }
+
+            //         sql += std::format(" {} == {} OR ", field, DTO::SQL::to_string(value));
+            //     });
+            //     return sql.substr(0,sql.size() - 3);
+            // }
 
             template <typename T>
             static bool isNull(T& t)
             {
-                using type_dec = std::remove_cvref_t<::SQL::getType<decltype(t)>>;
+                using type_dec = std::remove_cvref_t<decltype(t)>;
 
                 if constexpr (std::is_same_v<type_dec, int> ||
                               std::is_same_v<type_dec, std::size_t> ||
-                              std::is_same_v<type_dec, id_t> ||
-                              std::is_same_v<type_dec, float> ||
-                              std::is_same_v<type_dec, double>)
+                              std::is_same_v<type_dec, id_t>)
                 {
                     return (t == 0);
                 }
                 else if constexpr(std::is_same_v<type_dec, std::string>)
                 {
-                    return (::SQL::REMOVE_ATTRIB(t) == "" ||
-                             ::SQL::REMOVE_ATTRIB(t) == " ");
+                    return (t == "" || t == " ");
                 }
                 else if constexpr(std::is_same_v<type_dec, time_p>)
                 {
@@ -277,107 +328,21 @@ public:
     };
 
 
-
 private:
-    // Fill from SQL Result
-    template <typename T, std::size_t... Is, field_referenceable U = std::remove_cvref_t<T>>
-    static constexpr void fillFromSQLResult(DTORow<T>& t, const drogon::orm::Row& row, std::index_sequence<Is...>)
+    template <typename T, typename Func, std::size_t... I>
+    static constexpr void FOREACH(T& t, Func f, std::index_sequence<I...>)
     {
-        // The function of convert Row::Field to DTO::field
-        auto func = [&row](const std::string_view& name, auto& field)
-        {
-            using type_dec = std::remove_cvref_t<::SQL::getType<decltype(field)>>;
-
-            if constexpr (::SQL::isRef<const std::remove_cvref_t<decltype(field)>&>::value)
-            {
-                ::SQL::REMOVE_ATTRIB(field) =\
-                    row[std::string{name}].as<size_t>();
-            }
-            else if constexpr (std::is_same_v<type_dec, time_p>)
-            {
-                using namespace std::chrono;
-
-                time_t rawtime = time(nullptr);
-                std::tm tm = *localtime(&rawtime);
-
-                std::istringstream stream{row[std::string{name}].c_str()};
-                stream >> std::get_time(&tm, "%Y-%m-%d %H:%M:%S.%f");
-
-                ::SQL::REMOVE_ATTRIB(field) =\
-                        system_clock::from_time_t(std::mktime(&tm)) +
-                        current_zone()->get_info(time_p()).offset;
-            }
-            else
-            {
-                ::SQL::REMOVE_ATTRIB(field) =\
-                    row[std::string{name}].as<type_dec>();
-            }
-        };
-        // The C++ "brute force" macro
-        (func(field_name<T, Is>, get_field<Is>(t.second)), ...);
+        (
+            f(boost::fusion::extension::struct_member_name<T, I>::call(),
+              boost::fusion::at_c<I>(t)),
+        ...);
     }
-
-
-    template <typename T, std::size_t... Is, field_referenceable U = std::remove_cvref_t<T>>
-    static constexpr void fillSQLCreateTable(std::string& str, std::string& reference, std::index_sequence<Is...>)
+    template <typename T, typename Func, std::size_t... I>
+    static constexpr void FOREACH_TWO(T& t1, T& t2, Func f, std::index_sequence<I...>)
     {
-        // Convert c++ representation to SQL
-        auto func = [&str, &reference](const std::string_view& name,
-                           const auto& type)
-        {
-            // Declaring type
-            using type_dec = std::remove_cvref<::SQL::getType<decltype(type)>>::type;
-
-            // Work with string
-            std::string ending{};
-
-            str += ", ";
-            str += std::string{name};
-
-            // SQL Attrib
-            if (::SQL::isUnique<decltype(type)>::value)
-            {
-                ending += " UNIQUE";
-            }
-            if (::SQL::isNotNull<decltype(type)>::value)
-            {
-                ending += " NOT NULL";
-            }
-            if (::SQL::isRef<decltype(type)>::value)
-            {
-                ending += " INTEGER ";
-
-                reference += std::format(
-                    ", FOREIGN KEY({}) REFERENCES {}(id)",
-                    std::string{name},
-                    type_name<type_dec>
-                );
-            }
-
-            if (std::is_same_v<type_dec, int> ||
-                std::is_same_v<type_dec, std::size_t>)
-            {
-                str += " INTEGER";
-            }
-            else if (std::is_same_v<type_dec, float> ||
-                std::is_same_v<type_dec, double>)
-            {
-                str += " REAL";
-            }
-            else if(std::is_same_v<type_dec, std::string>)
-            {
-                str += " VARCHAR";
-            }
-            else if(std::is_same_v<type_dec, time_p>)
-            {
-                str += " TIMESTAMP";
-            }
-            str += ending;
-        };
-
-        // The C++ "brute force" macro
-        (func(field_name<T, Is>, field_type<T, Is>()), ...);
+        (
+            f(boost::fusion::extension::struct_member_name<T, I>::call(),
+              boost::fusion::at_c<I>(t1), boost::fusion::at_c<I>(t2)),
+        ...);
     }
-
-
 };

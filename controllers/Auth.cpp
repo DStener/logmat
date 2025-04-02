@@ -14,6 +14,9 @@
 #include <string>
 #include <trantor/utils/Logger.h>
 
+#include <boost/tokenizer.hpp>
+#include <boost/algorithm/string/regex.hpp>
+
 
 using namespace API;
 
@@ -22,24 +25,9 @@ using namespace API;
 // URL: http://localhost:5555/register.html
 void Auth::Register(const HttpRequestPtr& req, callback_func &&callback)
 {
-    auto reg = Request::Register(req, callback);
-
-    // If there is any error
-    if(reg.message.size())
-    {
-        Json::Value json(reg.message);
-
-        auto response = HttpResponse::newHttpJsonResponse(json);
-        response->setStatusCode(drogon::k415UnsupportedMediaType);
-        callback(response);
-
-        return;
-    }
-
-    // If everything is fine
-    auto response = HttpResponse::newHttpResponse();
-    response->setStatusCode(drogon::k201Created);
-    callback(response);
+    // Convert request body to and register
+    auto info = DTO::RequestBody::To<RegisterDTO>(req->getBody());
+    auto ret = Request::Register(info, req, callback);
 }
 
 // URL: http://localhost:5555/api/auth/login
@@ -47,32 +35,8 @@ void Auth::Register(const HttpRequestPtr& req, callback_func &&callback)
 void Auth::Login(const HttpRequestPtr& req, callback_func &&callback)
 {
     // Convert request body to LoginDTO and login
-    auto info = DTO::CreateFromRequestBody<LoginDTO>(req->getBody());
-    auto login = Request::Login(info, req, callback);
-
-    // If there is any error
-    if(!login.id)
-    {
-        Json::Value json(login.message);
-
-        auto response = HttpResponse::newHttpJsonResponse(json);
-        response->setStatusCode(drogon::k415UnsupportedMediaType);
-        callback(response);
-
-        return;
-    }
-
-    // If everything is fine
-    // Create token cookie
-    Cookie cookie("token", login.message);
-    cookie.setPath("/");
-
-    // Create response
-    auto response = HttpResponse::newHttpResponse();
-    response->setStatusCode(drogon::k200OK);
-    response->addCookie(cookie);
-
-    callback(response);
+    auto info = DTO::RequestBody::To<LoginDTO>(req->getBody());
+    Request::Login(info, req, callback);
 }
 
 // URL: http://localhost:5555/api/auth/me
@@ -86,7 +50,7 @@ void Auth::Info(const HttpRequestPtr& req, callback_func &&callback)
     auto userinfo = DB::get()->Select<User>(std::format("id == {}", login.id))[0].second;
     userinfo.password = "X";
 
-    auto response = HttpResponse::newHttpJsonResponse(DTO::ToJson(userinfo));
+    auto response = HttpResponse::newHttpJsonResponse(DTO::JSON::From(userinfo));
     response->setStatusCode(drogon::k200OK);
     callback(response);
 }
@@ -137,7 +101,7 @@ void Auth::getTokens(const HttpRequestPtr& req, callback_func &&callback)
     Json::Value json;
     for(auto& row : DB::get()->Select<Token>(std::format("user == {}", login.id)))
     {
-        json.append(DTO::ToJson(row));
+        json.append(DTO::JSON::From(row));
     }
 
     auto response = HttpResponse::newHttpJsonResponse(json);
@@ -161,7 +125,16 @@ void Auth::Get2FAKey(const HttpRequestPtr& req, callback_func &&callback)
     auto login = Request::Login(req, callback);
     if(!login.id) { return; }
 
-    Json::Value json(login.Get2FAKey());
+    login.Get2FAKey();
+}
+
+void Auth::Is2FAEnbaled(const HttpRequestPtr& req, callback_func &&callback,
+                        std::string username)
+{
+    Json::Value json;
+    auto users = DB::get()->Select<::User>(std::format("username == \"{}\"", username));
+
+    json["enable"] = (users.size() && !DTO::SQL::CheckField::isNull(users[0].second.time2FA));
 
     auto response = HttpResponse::newHttpJsonResponse(json);
     response->setStatusCode(drogon::k200OK);

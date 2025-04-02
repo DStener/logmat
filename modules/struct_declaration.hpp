@@ -4,107 +4,111 @@
 #include <drogon/drogon.h>
 #include <chrono>
 
-#include "System/sql_template.h"
 #include "System/utils.h"
+#include <boost/fusion/adapted/struct.hpp>
 
 
 // For SQL
-using namespace SQL_ATTRIB;
-
 #define SERVICE_FIELDS  \
     time_p created_at; \
-    REFERENCES<User> created_by; \
+    id_t created_by; \
     time_p deleted_at; \
-    REFERENCES<User> deleted_by; \
+    id_t deleted_by; \
+
+#define SQL_SERVICE_FIELDS  \
+    "created_at TIMESTAMP DEFAULT \"1970-01-01 00:00:00.000000000\", " \
+    "created_by INTEGER DEFAULT 0, " \
+    "deleted_at TIMESTAMP DEFAULT \"1970-01-01 00:00:00.000000000\", " \
+    "deleted_by INTEGER DEFAULT 0, " \
+    "FOREIGN KEY(created_by) REFERENCES User(id), " \
+    "FOREIGN KEY(deleted_by) REFERENCES User(id) "
+
+#define ADAPT_SERVICE_FIELDS created_at, created_by, deleted_at, deleted_by
 
 // DB
 struct User {
-    NOTNULL<UNIQUE<std::string>> username;
-    NOTNULL<UNIQUE<std::string>> email;
+    std::string username;
+    std::string email;
     time_p time2FA;
-    NOTNULL<time_p> birthday;
-    NOTNULL<std::string> password;
+    time_p birthday;
+    std::string password;
 };
+BOOST_FUSION_ADAPT_STRUCT(User, username, email, time2FA, birthday, password)
 
 struct ChangeLog {
-    NOTNULL<std::string> name_table;
-    NOTNULL<std::string> name_field;
-    NOTNULL<id_t> id_row;
-    NOTNULL<std::string> before;
-    NOTNULL<std::string> after;
+    std::string name_table;
+    id_t id_row;
+    std::string before;
+    std::string after;
     SERVICE_FIELDS
 };
+BOOST_FUSION_ADAPT_STRUCT(ChangeLog, name_table, id_row, before,
+                          after, ADAPT_SERVICE_FIELDS)
 
 struct Role {
-    NOTNULL<UNIQUE<std::string>> name;
+    std::string name;
     std::string description;
-    NOTNULL<UNIQUE<std::string>> code;
+    std::string code;
     SERVICE_FIELDS
 };
+BOOST_FUSION_ADAPT_STRUCT(Role, name, description, code, ADAPT_SERVICE_FIELDS)
 
 struct Permission {
-    NOTNULL<UNIQUE<std::string>> name;
+    std::string name;
     std::string description;
-    NOTNULL<UNIQUE<std::string>> code;
+    std::string code;
     SERVICE_FIELDS
 };
+BOOST_FUSION_ADAPT_STRUCT(Permission, name, description, code,
+                          ADAPT_SERVICE_FIELDS)
 
 struct UserAndRole {
-    REFERENCES<User> user;
-    REFERENCES<Role> role;
+    id_t user;
+    id_t role;
     SERVICE_FIELDS
 };
+BOOST_FUSION_ADAPT_STRUCT(UserAndRole, user, role, ADAPT_SERVICE_FIELDS)
 
 struct RoleAndPermission {
-    REFERENCES<Role> role;
-    REFERENCES<Permission> permission;
+    id_t role;
+    id_t permission;
     SERVICE_FIELDS
 };
+BOOST_FUSION_ADAPT_STRUCT(RoleAndPermission, role, permission,
+                          ADAPT_SERVICE_FIELDS)
 
 struct Token {
-    NOTNULL<UNIQUE<std::string>> token;
+    std::string token;
     time_p time;
-    REFERENCES<User> user;
+    id_t user;
 };
+BOOST_FUSION_ADAPT_STRUCT(Token, token, time, user)
 
 
-struct Image {
-    NOTNULL<UNIQUE<std::string>> name;
-    NOTNULL<std::string> path;
-    size_t size;
-};
 
 
-struct Review {
-    REFERENCES<User> user_id;
-    time_p time;
-    size_t rating;
-    std::string text;
-};
 
-struct Captcha {
-    size_t uid;
-    double answer;
-};
 
 
 struct ReturnDTO {
     drogon::HttpStatusCode code;
     std::string message;
 };
+BOOST_FUSION_ADAPT_STRUCT(ReturnDTO, code, message)
 
 struct RegisterDTO {
     std::string username;
     std::string email;
     std::string password;
     std::string c_password;
-    std::string asJSON;
     time_p birthday;
 };
+BOOST_FUSION_ADAPT_STRUCT(RegisterDTO, username, email, password, c_password,
+                          birthday)
 
 struct LoginDTO {
     std::string username;
     std::string password;
     std::string code;
-    std::string asJSON;
 };
+BOOST_FUSION_ADAPT_STRUCT(LoginDTO, username, password, code)

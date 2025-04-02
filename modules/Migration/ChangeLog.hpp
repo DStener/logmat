@@ -12,7 +12,17 @@ public:
     static void up()
     {
         auto clientPtr = drogon::app().getDbClient("master");
-        clientPtr->execSqlSync(DTO::CreateTableSQL<::ChangeLog>());
+        clientPtr->execSqlSync(
+            "CREATE TABLE IF NOT EXISTS ChangeLog "
+            "( "
+                "id INTEGER PRIMARY KEY AUTOINCREMENT, "
+                "name_table VARCHAR NOT NULL, "
+                "id_row NOT NULL, "
+                "before VARCHAR NOT NULL, "
+                "after VARCHAR NOT NULL, "
+
+                SQL_SERVICE_FIELDS
+            ");");
     }
 
     static void down()

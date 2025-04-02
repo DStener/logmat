@@ -17,7 +17,7 @@ void Policy::Permission::GetList(const HttpRequestPtr& req, callback_func &&call
     for(auto& row : DB::get()->Select<::Permission>())
     {
         CHECK_SOFT_DELETE(row) { continue; }
-        json.append(DTO::ToJson(row));
+        json.append(DTO::JSON::From(row));
     }
 
     auto response = HttpResponse::newHttpJsonResponse(json);
@@ -33,7 +33,7 @@ void Policy::Permission::Get(const HttpRequestPtr& req, callback_func &&callback
     if(!login.id || !login.hasPermission<::Permission>("read")) { return; }
 
     Json::Value json;
-    json = DTO::ToJson(DB::get()->Select<::Permission>(std::format("id == {}", id))[0]);
+    json = DTO::JSON::From(DB::get()->Select<::Permission>(std::format("id == {}", id))[0]);
 
     auto response = HttpResponse::newHttpJsonResponse(json);
     response->setStatusCode(drogon::k200OK);
@@ -50,8 +50,8 @@ void Policy::Permission::Story(const HttpRequestPtr& req, callback_func &&callba
     Json::Value json;
     for(auto& log : Request::Log::Get<::Permission>(id_perm))
     {
-        CHECK_SOFT_DELETE(log) { continue; }
-        json.append(DTO::ToJson(log));
+        // CHECK_SOFT_DELETE(log) { continue; }
+        json.append(DTO::JSON::From(log));
     }
 
     auto response = HttpResponse::newHttpJsonResponse(json);
@@ -65,33 +65,33 @@ void Policy::Permission::Create(const HttpRequestPtr& req, callback_func &&callb
     auto login = Request::Login(req, callback);
     if(!login.id || !login.hasPermission<::Permission>("create")) { return; }
 
-    auto permission = DTO::CreateFromRequestBody<::Permission>(req->getBody());
-    permission.created_by.id = login.id;
+    auto permission = DTO::RequestBody::To<::Permission>(req->getBody());
+    permission.created_by = login.id;
     permission.created_at = std::chrono::system_clock::now();
-    permission.deleted_by.id = 0;
+    permission.deleted_by = 0;
     permission.deleted_at = time_p();
 
     // Сhecking that the fields with the NOTNULL attribute are filled in
-    if(!DTO::SQL::CheckField::NotNull(permission))
-    {
-        auto response = HttpResponse::newHttpResponse();
-        response->setStatusCode(drogon::k406NotAcceptable);
-        callback(response);
-        return;
-    }
+    // if(!DTO::SQL::CheckField::NotNull(permission))
+    // {
+    //     auto response = HttpResponse::newHttpResponse();
+    //     response->setStatusCode(drogon::k406NotAcceptable);
+    //     callback(response);
+    //     return;
+    // }
 
     // Сhecking that the fields with the attribute UNIQUE are unique
-    auto result = DB::get()->Select<::Permission>(DTO::SQL::CheckField::UniqueSQL(permission));
-    if(result.size() != 0)
-    {
-        Json::Value json;
-        json["message"] = "Не уникальные данные";
+    // auto result = DB::get()->Select<::Permission>(DTO::SQL::CheckField::UniqueSQL(permission));
+    // if(result.size() != 0)
+    // {
+    //     Json::Value json;
+    //     json["message"] = "Не уникальные данные";
 
-        auto response = HttpResponse::newHttpJsonResponse(json);
-        response->setStatusCode(drogon::k406NotAcceptable);
-        callback(response);
-        return;
-    }
+    //     auto response = HttpResponse::newHttpJsonResponse(json);
+    //     response->setStatusCode(drogon::k406NotAcceptable);
+    //     callback(response);
+    //     return;
+    // }
 
     // Add Permission to DB
     DB::get()->Insert(permission);
@@ -110,26 +110,30 @@ void Policy::Permission::Update(const HttpRequestPtr& req, callback_func &&callb
     auto login = Request::Login(req, callback);
     if(!login.id || !login.hasPermission<::Permission>("update")) { return; }
 
-    auto permission = DTO::CreateFromRequestBody<::Permission>(req->getBody());
-    permission.created_by.id = 0;
+    auto permission = DTO::RequestBody::To<::Permission>(req->getBody());
+    permission.created_by = 0;
     permission.created_at = time_p();
-    permission.deleted_by.id = 0;
+    permission.deleted_by = 0;
     permission.deleted_at = time_p();
 
-    auto result = DB::get()->Select<::Permission>(DTO::SQL::CheckField::UniqueSQL(permission));
-    if(result.size() != 0)
-    {
-        Json::Value json;
-        json["message"] = "Не уникальные данные";
+    std::cout << DTO::JSON::From(permission) << std::endl;
 
-        auto response = HttpResponse::newHttpJsonResponse(json);
-        response->setStatusCode(drogon::k406NotAcceptable);
-        callback(response);
-        return;
-    }
+    DB::get()->Update<::Permission>(id, permission);
+
+    // auto result = DB::get()->Select<::Permission>(DTO::SQL::CheckField::UniqueSQL(permission));
+    // if(result.size() != 0)
+    // {
+    //     Json::Value json;
+    //     json["message"] = "Не уникальные данные";
+
+    //     auto response = HttpResponse::newHttpJsonResponse(json);
+    //     response->setStatusCode(drogon::k406NotAcceptable);
+    //     callback(response);
+    //     return;
+    // }
 
     // Update row Permission in DB
-    DB::get()->Update<::Permission>(id, DTO::SQL::CheckField::UpdateNotNull(permission));
+    // DB::get()->Update<::Permission>(id, DTO::SQL::CheckField::UpdateNotNull(permission));
 
     auto response = HttpResponse::newHttpResponse();
     response->setStatusCode(drogon::k200OK);
@@ -157,9 +161,12 @@ void Policy::Permission::SoftDelete(const HttpRequestPtr& req, callback_func &&c
     auto login = Request::Login(req, callback);
     if(!login.id || !login.hasPermission<::Permission>("delete")) { return; }
 
-    auto set = std::format("deleted_at = \"{}\", deleted_by = {}",
-                           std::chrono::system_clock::now(), login.id);
-    DB::get()->Update<::Permission>(id, set);
+    auto permission = DB::get()->Select<::Permission>(std::format("id == {}",
+                                                      login.id))[0].second;
+    permission.deleted_at = std::chrono::system_clock::now();
+    permission.deleted_by = login.id;
+
+    DB::get()->Update(id, permission);
 
     auto response = HttpResponse::newHttpResponse();
     response->setStatusCode(drogon::k200OK);
@@ -173,9 +180,12 @@ void Policy::Permission::Restore(const HttpRequestPtr& req, callback_func &&call
     auto login = Request::Login(req, callback);
     if(!login.id || !login.hasPermission<::Permission>("restore")) { return; }
 
-    auto set = std::format("deleted_at = \"{}\", deleted_by = 0",
-                           std::chrono::system_clock::time_point());
-    DB::get()->Update<::Permission>(id, set);
+    auto permission = DB::get()->Select<::Permission>(std::format("id == {}",
+                                                      login.id))[0].second;
+    permission.deleted_at = time_p();
+    permission.deleted_by = 0;
+
+    DB::get()->Update(id, permission);
 
     auto response = HttpResponse::newHttpResponse();
     response->setStatusCode(drogon::k200OK);

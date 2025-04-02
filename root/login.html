@@ -3,28 +3,37 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <script src="../js/reg.js"></script>
-    <link rel="stylesheet" href="../css/styles.css">
-    <title>Login form</title>
-    
+    <script src="/js/login.js"></script>
+    <link rel="stylesheet" href="/css/styles.css">
+    <title>LogMat - Login</title>
 </head>
 <body>
+    <div class="out-box background-landscape">
+        <!-- <form class="dialog" action="/api/auth/login" method="POST"> -->
+        <form class="dialog" id="login_dialog">
+            
 
-    <form action="/api/auth/login" method="POST">
+            <a href="/" class="logo"><i><b>log</b >Mat</i></a>
+            <h2>Вход</h2>
 
-        <h3>Login form</h3>
+            <label for="username" id="username_txt">Имя пользователя</label>
+            <input type="text" name="username" id="username" required/>
 
-        <label for="username">Username</label>
-        <input type="text" name="username" id="username" required/>
+            <label for="password" id="password_txt" style="display: none;">Пароль</label>
+            <input type="hidden" name="password" id="password" required/>
 
-        <label for="password">Password</label>
-        <input type="password" name="password" id="password" required/>
-        
-        
-        <input type="submit"/>
-        <a href="/signup">Зарегистрироваться</a>
+            <label for="code" id="code_txt" style="display: none;">Ключ 2FA</label>
+            <input type="hidden" name="code" id="code" min="100000" max="999999" required/>
 
+            <lable class="error_message" id="err_mes"style="display: none;">ERROR</lable>
+            
+            <div class="btn-line">
+                <input class="previous" type="button" style="display: none;" value="← Назад"/>
+                <input class="next" type="submit" value="Далее →"/>
+            </div>
+            <a href="/register.html" class="link">Регистрация</a>
 
-    </form>
+        </form>
+    </div>
 </body>
 </html>

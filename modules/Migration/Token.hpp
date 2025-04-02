@@ -12,7 +12,17 @@ public:
     static void up()
     {
         auto clientPtr = drogon::app().getDbClient("master");
-        clientPtr->execSqlSync(DTO::CreateTableSQL<::Token>());
+        clientPtr->execSqlSync(
+            "CREATE TABLE IF NOT EXISTS Token "
+            "( "
+                "id INTEGER PRIMARY KEY AUTOINCREMENT, "
+                "token VARCHAR UNIQUE NOT NULL, "
+                "time TIMESTAMP, "
+                "user INTEGER, "
+
+                "FOREIGN KEY(user) REFERENCES User(id) "
+            ");");
+
     }
 
     static void down()

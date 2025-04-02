@@ -7,36 +7,31 @@
 
 #include <openssl/hmac.h>
 #include <openssl/evp.h>
+#include <qrencode.h>
+
+#include <qrencode.h>
+#include <boost/gil.hpp>
+#include <boost/gil/extension/io/jpeg.hpp>
+#include <boost/gil/extension/numeric/resample.hpp>
+#include <boost/gil/extension/numeric/sampler.hpp>
+using namespace boost::gil;
+
 
 using namespace drogon;
 using callback_func = std::function<void (const HttpResponsePtr &)>;
 
 #define MAX_TOKEN 32
 #undef CHECK_AND_CALLBACK
-#define CHECK_AND_CALLBACK(condition, txt)                                      \
-if(condition)                                                                   \
-{                                                                               \
-    if(info.asJSON == "true")                                                   \
-    {                                                                           \
-        Json::Value json(txt);                                                  \
-                                                                                \
-        auto response = HttpResponse::newHttpJsonResponse(json);                \
-        response->setStatusCode(drogon::k415UnsupportedMediaType);              \
-        callback(response);                                                     \
-    }                                                                           \
-    else                                                                        \
-    {                                                                           \
-        HttpViewData data;                                                      \
-        data.insert("message_visibility", "\"visibility: visible;\"");          \
-        data.insert("message_txt", txt);                                        \
-                                                                                \
-        auto response = HttpResponse::newHttpViewResponse("signin.csp", data);  \
-        response->setStatusCode(drogon::k415UnsupportedMediaType);              \
-        callback(response);                                                     \
-    }                                                                           \
-    return;                                                                     \
+#define CHECK_AND_CALLBACK(condition)                           \
+if(condition) {                                                 \
+    Json::Value json("Пожалуйста, войдите в систему");          \
+                                                                \
+    auto response = HttpResponse::newHttpJsonResponse(json);    \
+    response->setStatusCode(drogon::k406NotAcceptable);         \
+    callback(response);                                         \
+                                                                \
+    return;                                                     \
 }
-
 #undef FORBIDEN_CALLBACK
 #define FORBIDEN_CALLBACK                                       \
     Json::Value json(permission);                               \
@@ -50,10 +45,9 @@ class Login
 {
 public:
     id_t id;
-    std::string message;
+    ::User user;
 
 private:
-    LoginDTO info;
     HttpRequestPtr reqest;
     callback_func& callback;
 
@@ -62,55 +56,49 @@ public:
     Login(const HttpRequestPtr& req, callback_func& callback)
         : id(0), reqest(req), callback(callback)
     {
-        info = DTO::CreateFromRequestBody<LoginDTO>(req->getBody());
         auto token = reqest->getCookie("token");
 
         // If there is no cookie with the token
-        if(!token.size())
-        {
-            message = "Пожалуйста, войдите в систему";
-            return;
-        }
+        CHECK_AND_CALLBACK(!token.size());
 
         // Get vector of struct Token where field token is qual to the sample
         auto tokens = DB::get()->Select<::Token>(std::format("token == \"{}\"", token));
-        if(!tokens.size())
-        {
-            message = "Пожалуйста, войдите в систему";
-            return;
-        }
+        CHECK_AND_CALLBACK(!tokens.size());
 
         // Checking for expired token lifetime
-        if(tokens[0].second.time < std::chrono::system_clock::now())
-        {
-            message = "Пожалуйста, войдите в систему";
-            return;
-        }
+        CHECK_AND_CALLBACK(tokens[0].second.time < std::chrono::system_clock::now());
 
-        id = tokens[0].second.user.id;
+        Login::id = tokens[0].second.user;
+        Login::user = DB::get()->Select<::User>(std::format("id == {}", id))[0].second;
     }
 
     Login(LoginDTO& info, const HttpRequestPtr& req, callback_func& callback)
-        : id(0), info(info), reqest(req), callback(callback)
+        : id(0), reqest(req), callback(callback)
     {
         auto arr = DB::get()->Select<::User>(std::format("username == \"{}\"", info.username));
 
         if(arr.size() == 0)
         {
-            message = "Некорректный логин или пароль.";
+            Json::Value json("Некорректный логин или пароль.");
+
+            auto response = HttpResponse::newHttpJsonResponse(json);
+            response->setStatusCode(drogon::k415UnsupportedMediaType);
+            callback(response);
             return;
         }
 
         // by 2FA
         if(!DTO::SQL::CheckField::isNull(arr[0].second.time2FA))
         {
-            auto open_key = std::format("{}{}",
-                                        SQL::REMOVE_ATTRIB(arr[0].second.username),
-                                        SQL::REMOVE_ATTRIB(arr[0].second.time2FA));
+            auto open_key = getOpenKey(arr[0].second.username, arr[0].second.time2FA);
 
             if(info.code != TOTP(open_key))
             {
-                message = "Некорректный логин или ключ.";
+                Json::Value json("Некорректный логин или ключ.");
+
+                auto response = HttpResponse::newHttpJsonResponse(json);
+                response->setStatusCode(drogon::k415UnsupportedMediaType);
+                callback(response);
                 return;
             }
         }
@@ -124,25 +112,32 @@ public:
             // Check correct data
             if(arr.size() == 0 || arr[0].second.password != hash.str())
             {
-                message = "Некорректный логин или пароль.";
+                Json::Value json("Некорректный логин или пароль.");
+
+                auto response = HttpResponse::newHttpJsonResponse(json);
+                response->setStatusCode(drogon::k415UnsupportedMediaType);
+                callback(response);
                 return;
             }
-
         }
 
         // If username and password are correct,
         // AND the token limit has not been exceeded
         // then create token
         auto tokens = DB::get()->Select<Token>(std::format("user == {}", arr[0].first));
-
         if(tokens.size() >= MAX_TOKEN)
         {
-            message = "Достигнут лимит по активным сессиям.";
+            Json::Value json("Достигнут лимит по активным сессиям.");
+
+            auto response = HttpResponse::newHttpJsonResponse(json);
+            response->setStatusCode(drogon::k415UnsupportedMediaType);
+            callback(response);
             return;
         }
 
         // Set correct id of User
         Login::id = arr[0].first;
+        Login::user = arr[0].second;
 
         // Generate tokens
         Token t = Login::generateToken();
@@ -155,7 +150,16 @@ public:
         std::stringstream stream;
         stream << t.token;
 
-        message = stream.str();
+        // Create token cookie
+        Cookie cookie("token", stream.str());
+        cookie.setPath("/");
+
+        // Create response
+        auto response = HttpResponse::newHttpResponse();
+        response->setStatusCode(drogon::k200OK);
+        response->addCookie(cookie);
+
+        callback(response);
     }
 
     bool hasPermission(const std::string& permission)
@@ -166,20 +170,24 @@ public:
         auto perm = DB::get()->Select<::Permission>(std::format("name == \"{}\"", permission))[0];
 
         // Check soft delete
-        CHECK_SOFT_DELETE(perm) { FORBIDEN_CALLBACK }
+        // CHECK_SOFT_DELETE(perm) { FORBIDEN_CALLBACK }
+        std::cout << perm.second.name << std::endl;
 
         // Check if the user has a concrete permission
         auto role_perm = DB::get()->Select<::RoleAndPermission>(std::format("permission == {}", perm.first));
         for(auto& link : role_perm)
         {
-            CHECK_SOFT_DELETE(link) { continue; };
-            auto user_role = DB::get()->Select<::UserAndRole>(std::format("role == {}", link.second.role.id));
+            // CHECK_SOFT_DELETE(link) { continue; };
+            // std::
+            auto user_role = DB::get()->Select<::UserAndRole>(std::format("role == {}", link.second.role));
 
             for(auto& link2 : user_role)
             {
-                CHECK_SOFT_DELETE(link2) { continue; }
+                // CHECK_SOFT_DELETE(link2) { continue; }
 
-                if(link2.second.user.id == Login::id)
+                std::cout << link2.second.user << " ?= " << Login::id << std::endl;
+
+                if(link2.second.user == Login::id)
                 {
                     return true;
                 }
@@ -194,24 +202,51 @@ public:
         return hasPermission(std::format("{}-{}", permission, DTO::GetName<T>()));
     }
 
-    std::string Get2FAKey()
+    void Get2FAKey()
     {
-        auto user = DB::get()->Select<::User>(std::format("id == {}", id))[0].second;
+        if(DTO::SQL::CheckField::isNull(Login::user.time2FA))
+        {
+            auto response = HttpResponse::newHttpResponse();
+            response->setStatusCode(drogon::k403Forbidden);
+            callback(response);
 
-        // Change time2FA
-        auto time = std::chrono::utc_clock::now();
-        DB::get()->Update<::User>(id, std::format("time2FA = \"{}\"", time));
+            return;
+        }
 
-        std::string open_key = std::format("{}{}",
-                                           SQL::REMOVE_ATTRIB(user.username), time);
+        std::string open_key = getOpenKey(true);
+        std::string message = std::format(
+                                "otpauth://totp/logMat?secret={}&issure=logMat",
+                                API::Utils::base32Encode(open_key));
 
-        return API::Utils::base32Encode(open_key);
+
+        QRcode *qr = QRcode_encodeString(message.c_str(), 0, QR_ECLEVEL_H, QR_MODE_8, 1);
+
+        std::stringstream out_buffer(std::ios_base::out | std::ios_base::binary );
+        rgb8_image_t img(qr->width, qr->width);
+
+        auto* pSourceData = qr->data;
+        for(auto& pixel : boost::gil::view(img))
+        {
+            pixel = rgb8_pixel_t(!(*pSourceData & 1) * 255);
+            pSourceData++;
+        }
+
+        rgb8_image_t img_resize(qr->width * 4, qr->width * 4); // rgb_image is 136x98
+        resize_view(const_view(img), view(img_resize), nearest_neighbor_sampler());
+        write_view(out_buffer, const_view(img_resize), jpeg_tag{});
+
+        QRcode_free(qr);
+
+        auto response = HttpResponse::newFileResponse(
+                    reinterpret_cast<unsigned char *>(out_buffer.str().data()),
+                    out_buffer.str().size(), "", CT_IMAGE_JPG);
+        callback(response);
     }
+
 
     void Switch2FA()
     {
-        auto info = DTO::CreateFromRequestBody<::LoginDTO>(reqest->getBody());
-        auto user = DB::get()->Select<::User>(std::format("id == {}", id))[0].second;
+        auto info = DTO::RequestBody::To<::LoginDTO>(reqest->getBody());
 
         std::stringstream hash{};
         hash << std::hash<std::string>{}(info.password);
@@ -228,14 +263,22 @@ public:
             return;
         }
 
-        auto time = (DTO::SQL::CheckField::isNull(user.time2FA))?
-                    std::chrono::utc_clock::now() :
-                    std::chrono::utc_clock::time_point();
+        // Switch value
+        Json::Value json;
+        if(DTO::SQL::CheckField::isNull(user.time2FA))
+        {
+            Login::user.time2FA = std::chrono::system_clock::now();
+            json["enable"] = true;
+        }
+        else
+        {
+            Login::user.time2FA = std::chrono::system_clock::time_point();
+            json["enable"] = false;
+        }
 
-        // Update flag
-        DB::get()->Update<::User>(id, std::format("time2FA = \"{}\"", time));
+        DB::get()->Update<::User>(id, Login::user);
 
-        auto response = HttpResponse::newHttpResponse();
+        auto response = HttpResponse::newHttpJsonResponse(json);
         response->setStatusCode(drogon::k200OK);
         callback(response);
     }
@@ -243,6 +286,25 @@ public:
 
 
 private:
+    std::string getOpenKey(std::string& username, time_p& time)
+    {
+        return std::format("{}{}",
+                           username,
+                           time.time_since_epoch().count());
+    }
+
+
+    std::string getOpenKey(bool override = false)
+    {
+        if(override)
+        {
+            Login::user.time2FA = std::chrono::system_clock::now();
+            DB::get()->Update<::User>(id, Login::user);
+        }
+
+        return getOpenKey(Login::user.username, Login::user.time2FA);
+    }
+
     Token generateToken()
     {
         ::Token t{};
@@ -252,7 +314,7 @@ private:
 
         std::srand(std::time(0));
         for(int i = 0; i < 32; ++i ) {
-            t.token.value.value += characters[std::rand() % characters.size()];
+            t.token += characters[std::rand() % characters.size()];
         }
 
         return t;

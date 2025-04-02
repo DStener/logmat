@@ -1,4 +1,11 @@
-body {
+* {
+    padding: 0px;
+    margin: 0px;
+    font-family: sans-serif;
+    box-sizing: border-box;
+}
+
+.out-box {
     width: 100%;
     height: 100%;
     position: fixed;
@@ -9,31 +16,102 @@ body {
     align-content: center;
     justify-content: center;
     overflow: auto;
-    background-color: white;
+
+    
 }
 
-form {
-    width: 300px;
-    /* height: 600px; */
+.logo, .logo b, .logo i {
+    color:DimGray;
+    text-decoration: none;
+    font-family: Georgia, serif;
+    font-size: 21px;
+    /* text-align: center; */
+    padding-top: 15px;
+    padding-bottom: 3px;
+}
+
+.background-landscape {
+    background:  
+        linear-gradient(rgba(0, 0, 0, 0.3),  rgba(0, 0, 0, 0.7)), 
+        url("/img/background_test.jpg");
+    background-size: no-repeat;
+    background-position: center;
+    background-size: cover; 
+}
+
+input 
+{
+    height: 30px;
+    border: 1px solid #bdbdbd;
+    border-radius: 3px;
+    padding-left: 5px;
+    font-size: 0.9rem;
+}
+
+.btn-line 
+{
+    /* background-color: aquamarine; */
+    display: flex;
+}
+
+input[type="button"], input[type="submit"] {
+    background-color: rgba(0,0,0,0);
+    border: 0px;
+    height: 40px;
+    font-size: 16px;
+    width: auto;
+    margin-top: 20px;
+    padding-left: 0px;
+    
+    color:rgb(46, 46, 46);
+}
+input[type="button"]:hover, input[type="submit"]:hover {
+    /* color:black; */
+    text-decoration: underline;
+}
+input[type="button"].next, input[type="submit"].next{
+    margin-left: auto;
+    text-align: right;
+}
+input[type="button"].previous, input[type="submit"].previous {
+    margin-right: auto;
+    text-align: left;
+}
+
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+}
+
+input[type='number'],
+input[type="number"]:hover,
+input[type="number"]:focus {
+    appearance: none;
+    -moz-appearance: textfield;
+}
+
+.dialog {
+    width: 363px;
     background: whitesmoke;
     display: flex;
     flex-direction: column;
     padding: 20px;
     gap: 5px;
-    input {
-        margin-bottom: 10px;
-    }
-    input[type="submit"] {
-        height: 40px;
-        margin-top: 30px;
+
+
+    border-radius: 7px;
+    box-shadow: 7px 7px 30px rgba(1, 1, 1, 0.7);
+
+    h2 {
+       padding: 10px 0px;
     }
 }
 .error_message
 {
     color: maroon;
     background: lightpink;
-    /* text-align: center; */
     padding: 5px 7px;
+    margin-top: 6px;
     border: solid;
 
     font: caption;
@@ -43,13 +121,11 @@ form {
     border-color: lightcoral;
     border-radius: 7px;
 }
-a 
-{
-    font: caption;
-    font-size: 0.8rem;
+
+.link {
+    text-decoration: underline;
+    color: blueviolet;
+    font-size: 14px;
     text-align: center;
-}
-hr 
-{
-    width: 100%;
+    padding: 0px;
 }

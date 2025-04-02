@@ -1,8 +1,16 @@
 #include <drogon/drogon.h>
+#include <boost/algorithm/string.hpp>
+#include <boost/tokenizer.hpp>
 
-
+#ifndef NDEBUG
+#ifdef _WIN32
+static const std::string ROOTDIR = "../../../root";
+#else
 static const std::string ROOTDIR = "../../root";
-
+#endif
+#else
+static const std::string ROOTDIR = "root";
+#endif
 
 int main()
 {
@@ -15,10 +23,7 @@ int main()
         0
     };
 
-    drogon::app().enableReusePort(true);
-    // drogon::app().enableDynamicViewsLoading({"../../views"});
-    // drogon::app().enableDynamicViewsLoading()
-
+    std::cout << ROOTDIR  << std::endl;
 
     // Configure and setup instance
     // URL: http://0.0.0.0:5555/

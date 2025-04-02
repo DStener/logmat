@@ -12,7 +12,16 @@ public:
     static void up()
     {
         auto clientPtr = drogon::app().getDbClient("master");
-        clientPtr->execSqlSync(DTO::CreateTableSQL<::Permission>());
+        clientPtr->execSqlSync(
+            "CREATE TABLE IF NOT EXISTS Permission "
+            "( "
+                "id INTEGER PRIMARY KEY AUTOINCREMENT, "
+                "name VARCHAR UNIQUE NOT NULL, "
+                "description VARCHAR, "
+                "code VARCHAR UNIQUE NOT NULL, "
+
+                SQL_SERVICE_FIELDS
+            ");");
 
         std::vector<::Permission> perms =
         {
@@ -37,16 +46,16 @@ public:
         {
             for(auto perm : perms)
             {
-                SQL::REMOVE_ATTRIB(perm.name) += std::format("-{}",entity);
-                SQL::REMOVE_ATTRIB(perm.description) += std::format(" {}", entity);
-                SQL::REMOVE_ATTRIB(perm.code) += std::format("{}", entity);
+                perm.name += std::format("-{}",entity);
+                perm.description += std::format(" {}", entity);
+                perm.code += std::format("{}", entity);
 
-                auto f = clientPtr->execSqlAsyncFuture(DTO::InsertSQL(perm));
+                auto f = clientPtr->execSqlAsyncFuture(DTO::SQL::Insert(perm));
                 try {f.get();}
                 catch (const drogon::orm::DrogonDbException &e)
                 {
                     std::cerr << "error:" << e.base().what() << std::endl;
-                    std::cerr << "\t\t" << DTO::InsertSQL(perm) << std::endl;
+                    std::cerr << "\t\t" << DTO::SQL::Insert(perm) << std::endl;
                 }
             }
         }

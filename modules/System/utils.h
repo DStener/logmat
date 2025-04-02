@@ -5,10 +5,7 @@
 #include <ctime>
 #include <iomanip>
 #include <sstream>
-#include <random>
 #include <cmath>
-
-#include "System/math.hpp"
 
 using time_p = std::chrono::system_clock::time_point;
 #ifdef WIN32
@@ -65,55 +62,7 @@ public:
         return txt.substr(start_q, end_q - start_q + 1);
     }
 
-    static std::pair<double, std::string> generateCaptcha()
-    {
-        std::srand(std::time(nullptr));
-        const int operation = std::rand() % 6;
 
-        int a = std::rand() % 2000;
-        int b = std::rand() % (a - 2) - 1;
-
-        if(operation == 0)
-        {
-            float _cash{};
-            math::add(static_cast<float>(a), static_cast<float>(b), _cash);
-            return {_cash, std::format("{} + {}", a, b)};
-        }
-
-        if(operation == 1)
-        {
-            float _cash{};
-            math::sub(static_cast<float>(a), static_cast<float>(b), _cash);
-            return {_cash, std::format("{} - {}", a, b)};
-        }
-
-        if(operation == 2)
-        {
-            float _cash{};
-            math::prod(static_cast<float>(a),static_cast<float>(b), _cash);
-            return {_cash, std::format("{} * {}", a, b)};
-        }
-        if(operation == 3)
-        {
-            float _cash{};
-            math::quot(static_cast<float>(a),static_cast<float>(b), _cash);
-            return {_cash, std::format("{} / {}", a, b)};
-        }
-        if(operation == 4)
-        {
-            a = a % 3 + 1;
-            b = b % 2 + 1;
-            return {math::A(a,b), std::format("A({}, {})", a, b)};
-        }
-
-        if(operation == 5)
-        {
-            a = a % 3 + 1;
-            b = b % 2 + 1;
-            return {math::C(a,b), std::format("C({}, {})", a, b)};
-        }
-        return {0, ""};
-    }
 
 
 private:

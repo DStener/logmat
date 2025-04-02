@@ -17,9 +17,7 @@
 #include "Migration/RoleAndPermission.hpp"
 #include "Migration/UserAndRole.hpp"
 #include "Migration/ChangeLog.hpp"
-#include "Migration/Image.hpp"
-#include "Migration/Review.hpp"
-#include "Migration/Captcha.hpp"
+#include <boost/algorithm/string.hpp>
 
 using namespace drogon;
 
@@ -43,11 +41,6 @@ private:
         Migration::UserAndRole::up();
 
         Migration::ChangeLog::up();
-
-        // Web ldb
-        Migration::Image::up();
-        Migration::Review::up();
-        Migration::Captcha::up();
     }
 
 public:
@@ -69,7 +62,7 @@ public:
         ResponseVec<T> vec{};
         try
         {
-            vec = DTO::CreateFromSQLResult<T>(f.get());
+            vec = DTO::SQL::To<T>(f.get());
         }
         catch (const orm::DrogonDbException &e)
         {
@@ -88,32 +81,28 @@ public:
     {
         try
         {
-            // Get old value of field
-            auto row = clientPtr->execSqlSync(
-                std::format("SELECT * FROM {0} WHERE id == {1};", DTO::GetName<T>(), id))[0];
+            // Get old value of field [DIRECT]
+            auto orig = DataBase::Select<T>(std::format("id == {}", id))[0].second;
 
             clientPtr->execSqlSync("BEGIN TRANSACTION;");
 
-            for(auto& field : row)
-            {
-                // Fill ChangeLog
-                ::ChangeLog log;
-                SQL::REMOVE_ATTRIB(log.name_table) = DTO::GetName<T>();
-                SQL::REMOVE_ATTRIB(log.id_row) = 0;
-                SQL::REMOVE_ATTRIB(log.name_field) = field.name();
-                SQL::REMOVE_ATTRIB(log.before) = field.c_str();
-                SQL::REMOVE_ATTRIB(log.after) = "";
-                SQL::REMOVE_ATTRIB(log.created_by) = 1;
-                SQL::REMOVE_ATTRIB(log.created_at) = std::chrono::system_clock::now();
-                SQL::REMOVE_ATTRIB(log.deleted_by) = 0;
-                SQL::REMOVE_ATTRIB(log.deleted_at) = time_p();
-
-                // Insert log to ChangeLog
-                clientPtr->execSqlSync(DTO::InsertSQL(log));
-            }
-
+            // Delete row [TRANSACTION]
             clientPtr->execSqlSync(
                 std::format("DELETE FROM {0} WHERE id == {1};", DTO::GetName<T>(), id));
+
+            ::ChangeLog log {};
+            log.name_table = DTO::GetName<T>();
+            log.id_row = id;
+            log.before = boost::algorithm::replace_all_copy(
+                                DTO::SQL::Update(orig), "\"", "'");
+            log.after = "";
+            log.created_by = 1;
+            log.deleted_by = 0;
+            log.created_at = std::chrono::system_clock::now();
+            log.deleted_at = time_p();
+
+            // Write log [TRANSACTION]
+            clientPtr->execSqlSync(DTO::SQL::Insert(log));
 
             clientPtr->execSqlSync("COMMIT;");
 
@@ -127,53 +116,27 @@ public:
         }
     }
 
-
     template<typename T>
     void Insert(T& s)
     {
         try
         {
             clientPtr->execSqlSync("BEGIN TRANSACTION;");
-            std::string cmd = DTO::InsertSQL(s);
 
-            size_t start_fields = cmd.find('(');
-            size_t end_fields = cmd.find(')');
-            size_t start_values = cmd.find('(', start_fields + 1);
-            size_t end_values = cmd.find(')', end_fields + 1);
+            // Add new entity [TRANSACTION]
+            clientPtr->execSqlSync(DTO::SQL::Insert(s));
 
-            size_t idx_f{start_fields};
-            size_t idx_v{start_values};
+            // Write log [TRANSACTION]
+            clientPtr->execSqlSync(std::format(
+                "INSERT INTO ChangeLog"
+                "( name_table, id_row, before, after, created_by, created_at ) VALUES"
+                "( \"{0}\", (SELECT COUNT(*) FROM {0}), \"\", \"{1}\", 1, \"{2}\" );",
 
-            while(idx_f < end_fields) {
+                DTO::GetName<T>(),
+                boost::algorithm::replace_all_copy(DTO::SQL::Update(s), "\"", "'"),
+                std::chrono::system_clock::now()
+            ));
 
-                size_t end_f = cmd.find(",", idx_f + 1);
-                size_t end_v = cmd.find(",", idx_v + 1);
-
-
-                // Fill ChangeLog
-                ::ChangeLog log;
-                SQL::REMOVE_ATTRIB(log.name_table) = DTO::GetName<T>();
-                SQL::REMOVE_ATTRIB(log.id_row) = 0;
-                SQL::REMOVE_ATTRIB(log.name_field) =\
-                    API::Utils::trim(cmd.substr(idx_f + 1, std::min(end_f, end_fields) - idx_f - 1));
-
-                SQL::REMOVE_ATTRIB(log.before) = "";
-                SQL::REMOVE_ATTRIB(log.after) =\
-                    API::Utils::trim(cmd.substr(idx_v + 1, std::min(end_v, end_values) - idx_v - 1));
-
-                SQL::REMOVE_ATTRIB(log.created_by) = 1;
-                SQL::REMOVE_ATTRIB(log.created_at) = std::chrono::system_clock::now();
-                SQL::REMOVE_ATTRIB(log.deleted_by) = 0;
-                SQL::REMOVE_ATTRIB(log.deleted_at) = time_p();
-
-
-                // Insert log to ChangeLog
-                clientPtr->execSqlSync(DTO::InsertSQL(log));
-
-                idx_f = end_f;
-                idx_v = end_v;
-            }
-            clientPtr->execSqlSync(cmd);
             clientPtr->execSqlSync("COMMIT;");
         }
         catch (const orm::DrogonDbException &e)
@@ -184,48 +147,36 @@ public:
     }
 
     template<typename T>
-    void Update(id_t id, std::string set)
+    void Update(id_t id, T& t)
     {
         try
         {
-            // Get old value of field
-            auto res = clientPtr->execSqlSync(
-                std::format("SELECT * FROM {0} WHERE id == {1};", DTO::GetName<T>(), id));
+            // Get old value of field [DIRECT]
+            auto orig = DataBase::Select<T>(std::format("id == {}", id))[0].second;
+            DTO::SQL::CheckField::CopyIfNull(orig, t);
 
             clientPtr->execSqlSync("BEGIN TRANSACTION;");
 
-            std::string cmd = std::format("UPDATE {0} SET {1} WHERE id == {2};",
-                                          DTO::GetName<T>(), set, id);
+            // Send update [TRANSACTION]
+            clientPtr->execSqlSync(std::format("UPDATE {1} SET {2} WHERE id == {0};",
+                                              id, DTO::GetName<T>(),
+                                              DTO::SQL::Update(t)));
 
-            size_t index{0};
-            while (true)
-            {
-                size_t end = set.find(',', index + 1);
-                size_t center = set.find('=', index + 1);
+            ::ChangeLog log {};
+            log.name_table = DTO::GetName<T>();
+            log.id_row = id;
+            log.before = boost::algorithm::replace_all_copy(
+                                DTO::SQL::Update(orig), "\"", "'");
+            log.after = boost::algorithm::replace_all_copy(
+                                DTO::SQL::Update(t), "\"", "'");
+            log.created_by = 1;
+            log.deleted_by = 0;
+            log.created_at = std::chrono::system_clock::now();
+            log.deleted_at = time_p();
 
-                // Fill ChangeLog
-                ::ChangeLog log;
-                SQL::REMOVE_ATTRIB(log.name_table) = DTO::GetName<T>();
-                SQL::REMOVE_ATTRIB(log.id_row) = id;
-                SQL::REMOVE_ATTRIB(log.name_field) =\
-                    API::Utils::trim(set.substr(index, std::min(center, set.size()) - index - 1));
+            // // Write log [TRANSACTION]
+            clientPtr->execSqlSync(DTO::SQL::Insert(log));
 
-                SQL::REMOVE_ATTRIB(log.before) =\
-                    res[0][SQL::REMOVE_ATTRIB(log.name_field).data()].c_str();
-                SQL::REMOVE_ATTRIB(log.after) =\
-                    API::Utils::trim(set.substr(center + 1, std::min(end, set.size()) - center - 1));
-
-                SQL::REMOVE_ATTRIB(log.created_by) = 1;
-                SQL::REMOVE_ATTRIB(log.created_at) = std::chrono::system_clock::now();
-                SQL::REMOVE_ATTRIB(log.deleted_by) = 0;
-                SQL::REMOVE_ATTRIB(log.deleted_at) = time_p();
-
-                clientPtr->execSqlSync(DTO::InsertSQL(log));
-
-                index = end + 1;
-                if(end == std::string::npos || center == std::string::npos) { break; }
-            }
-            clientPtr->execSqlSync(cmd);
             clientPtr->execSqlSync("COMMIT;");
         }
         catch (const orm::DrogonDbException &e)

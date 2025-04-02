@@ -12,7 +12,16 @@ public:
     static void up()
     {
         auto clientPtr = drogon::app().getDbClient("master");
-        clientPtr->execSqlSync(DTO::CreateTableSQL<::Role>());
+        clientPtr->execSqlSync(
+            "CREATE TABLE IF NOT EXISTS Role "
+            "( "
+                "id INTEGER PRIMARY KEY AUTOINCREMENT, "
+                "name VARCHAR UNIQUE NOT NULL, "
+                "description VARCHAR, "
+                "code VARCHAR UNIQUE NOT NULL, "
+
+                SQL_SERVICE_FIELDS
+            ");");
 
         std::vector<::Role> roles =
             {
@@ -23,7 +32,7 @@ public:
 
         for(auto& role : roles)
         {
-            clientPtr->execSqlSync(DTO::InsertSQL(role));
+            clientPtr->execSqlSync(DTO::SQL::Insert(role));
         }
     }
 

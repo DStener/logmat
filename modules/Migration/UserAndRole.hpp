@@ -12,27 +12,38 @@ public:
     static void up()
     {
         auto clientPtr = drogon::app().getDbClient("master");
-        clientPtr->execSqlSync(DTO::CreateTableSQL<::UserAndRole>());
+        clientPtr->execSqlSync(
+            "CREATE TABLE IF NOT EXISTS UserAndRole "
+            "( "
+                "id INTEGER PRIMARY KEY AUTOINCREMENT, "
+                "user INTEGER, "
+                "role INTEGER, "
+
+                SQL_SERVICE_FIELDS  ", "
+
+                "FOREIGN KEY(user) REFERENCES User(id), "
+                "FOREIGN KEY(role) REFERENCES Role(id) "
+            ");");
 
         // Get Admin id
         auto f  = clientPtr->execSqlAsyncFuture(
             std::format("SELECT * FROM {0} WHERE username == \"{1}\"",
                         DTO::GetName<::User>(), ADMIN_NAME)
             );
-        auto id_user = DTO::CreateFromSQLResult<::User>(f.get())[0].first;
+        auto id_user = DTO::SQL::To<::User>(f.get())[0].first;
 
         // Get Role
         f  = clientPtr->execSqlAsyncFuture(
             std::format("SELECT * FROM {0} WHERE name == \"{1}\"",
                         DTO::GetName<::Role>(), "Admin")
             );
-        auto id_role = DTO::CreateFromSQLResult<::Role>(f.get())[0].first;
+        auto id_role = DTO::SQL::To<::Role>(f.get())[0].first;
 
         ::UserAndRole user_role;
-        SQL::REMOVE_ATTRIB(user_role.user) = id_user;
-        SQL::REMOVE_ATTRIB(user_role.role) = id_role;
+        user_role.user = id_user;
+        user_role.role = id_role;
 
-        clientPtr->execSqlSync(DTO::InsertSQL(user_role));
+        clientPtr->execSqlSync(DTO::SQL::Insert(user_role));
     }
 
     static void down()

@@ -3,6 +3,7 @@
 #pragma once
 
 #include <drogon/drogon.h>
+#include <boost/tokenizer.hpp>
 
 
 #include "System/database.hpp"
@@ -17,9 +18,9 @@ public:
     template <typename T>
     static auto Get(id_t id)
     {
-        auto condition = std::format("name_table == \"{}\" AND id_row == {}",
-                                     DTO::GetName<T>(), id);
-        return DB::get()->Select<::ChangeLog>(condition);
+        return DB::get()->Select<::ChangeLog>(std::format(
+                "name_table == \"{}\" AND id_row == {}",
+                DTO::GetName<T>(), id));
     }
 
     static bool Restore(id_t id)
@@ -34,20 +35,57 @@ public:
 
         ::ChangeLog newlog = log;
         std::swap(newlog.after, newlog.before);
-        SQL::REMOVE_ATTRIB(newlog.created_at) = std::chrono::system_clock::now();
+        newlog.created_at = std::chrono::system_clock::now();
 
         try
         {
-            // If operation is DELETE or CREATE
-            if(log.id_row == 0) { return false; }
 
-            clientPtr->execSqlSync(std::format("UPDATE {0} SET {1} = \"{2}\" WHERE id == {3};",
-                                   SQL::REMOVE_ATTRIB(log.name_table),
-                                   SQL::REMOVE_ATTRIB(log.name_field),
-                                   SQL::REMOVE_ATTRIB(log.before),
-                                   SQL::REMOVE_ATTRIB(log.id_row)));
+            // If operation is CREATE
+            if(!log.before.size())
+            {
+                clientPtr->execSqlSync(std::format(
+                    "DELETE FROM {0} WHERE id == {1};",
+                    log.name_table, log.id_row
+                ));
+            }
+            // If operation is DELETE
+            else if(!log.after.size())
+            {
+                std::vector<std::string> fields, values;
 
-            clientPtr->execSqlSync(DTO::InsertSQL(newlog));
+                boost::tokenizer<boost::escaped_list_separator<char>> tok{log.before};
+                for (const auto &t : tok)
+                {
+                    std::string str = boost::algorithm::replace_all_copy(t, "'", "\"");
+                    std::vector<std::string> row;
+
+                    boost::algorithm::split(row, str, boost::is_any_of("="));
+
+                    fields.push_back(boost::trim_copy(row[0]));
+                    values.push_back(boost::trim_copy(row[1]));
+                }
+
+                clientPtr->execSqlSync(std::format(
+                    "INSERT OR IGNORE INTO {0} "
+                    "( id, {2} ) VALUES ( {1} ,{3} );",
+
+                    log.name_table, log.id_row,
+                    boost::algorithm::join(fields, ", "),
+                    boost::algorithm::join(values, ", ")
+                ));
+            }
+            // If operation is UPDATE
+            else
+            {
+                clientPtr->execSqlSync(std::format(
+                    "UPDATE {0} SET {2} WHERE id == {1};",
+
+                    log.name_table, log.id_row,
+                    boost::algorithm::replace_all_copy(log.before, "'", "\"")
+                ));
+            }
+
+            clientPtr->execSqlSync(DTO::SQL::Insert(newlog));
             clientPtr->execSqlSync("COMMIT;");
         }
         catch (const orm::DrogonDbException &e)
