@@ -1,0 +1,85 @@
+/*td p.cropped {*/
+    /*    background-color: red;*/
+    /*    max-width: calc(var(--parent-width));*/
+/*    width: calc(var(--parent-width));
+    position: absolute;*/
+    /*white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;*/
+    /*    word-wrap: break-word;*/
+/*}*/
+
+tr.cropped td {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    vertical-align: top;
+}
+
+tr:not(.cropped) td {
+    vertical-align: top;
+    background-color: #c6e3ff;
+    color: #080a1b;
+    border-color: cornflowerblue;
+    border-width: 4px;
+}
+
+.button-line {
+    width: 100%;
+/*    background-color: red;*/
+    display: flex;
+    gap: 7px;
+    padding-bottom: 13px
+}
+
+input[type="button"].next, input[type="submit"].next {
+    margin-left: auto;
+    text-align: right;
+}
+
+input[type="button"].previous, input[type="submit"].previous {
+    margin-right: auto;
+    text-align: left;
+}
+
+input[type="button"] {
+    border: none;
+    outline: none;
+    border-radius: 0.4rem;
+    font-family: 'Roboto', sans-serif;
+    font-size: 1rem;
+    padding: 7px 10px;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+input[type="button"]:hover {
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+input[type="button"]:disabled {
+    color: #d2d5db;
+    background: #6c7589;
+    cursor: not-allowed;
+}
+
+input[type="button"].new:not(:disabled) {
+    background-color: #238636;
+    color: white;
+}
+input[type="button"].new:hover:not(:disabled) {
+    background-color: #1c6f2d;
+}
+
+input[type="button"].delete:not(:disabled), input[type="button"].soft:hover:not(:disabled) {
+    background-color: darkred;
+    color: white;
+}
+
+input[type="button"].soft:not(:disabled) {
+    background-color: firebrick;
+    color: white;
+}
+
+    input[type="button"].delete:hover:not(:disabled) {
+        background-color: #550000;
+    }

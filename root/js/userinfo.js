@@ -64,6 +64,11 @@ async function ConfigureHeaderUserInfo()
 
 }
 
+function printTest()
+{
+    alert("PRINT");
+}
+
 async function LogoutMe()
 {
     try {
@@ -76,10 +81,6 @@ async function LogoutMe()
 }
 
 
-window.onload = () => {
-    //getMeInfo().then(result => {
-    //    console.log(result);
-    //});
+window.addEventListener("load", function () {
     ConfigureHeaderUserInfo();
-
-}
+}, false);

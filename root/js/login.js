@@ -70,8 +70,9 @@ async function login_submit(event)
     }
 }
 
-window.onload  = () => {
-    
+
+window.addEventListener("load", function () {
+
     document.getElementById("login_dialog").addEventListener('submit', login_submit);
 
     document.getElementsByClassName("previous")[0].onclick = (event) => {
@@ -81,4 +82,4 @@ window.onload  = () => {
         
         document.getElementsByClassName("previous")[0].style = "display: none;";
     };
-}
+}, false);
