@@ -107,6 +107,11 @@ public:
                 {
                     value = std::stoi(substr);
                 }
+                else if constexpr (std::is_same_v<type_dec, float> ||
+                                   std::is_same_v<type_dec, double>)
+                {
+                    value = std::stod(substr);
+                }
                 else if constexpr(std::is_same_v<type_dec, std::string>)
                 {
                     value = substr;

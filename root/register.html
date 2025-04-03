@@ -12,28 +12,36 @@
     <div class="out-box background-landscape">
         <form class="dialog" id="register_dialog">
 
-            <a href="/" class="logo"><i><b>log</b >Mat</i></a>
+            <a href="/" class="logo"><i><b>log</b>Mat</i></a>
             <h2>Регистрация</h2>
 
             <label for="username">Имя пользователя</label>
-            <input type="text" name="username" id="username" required/>
+            <input type="text" name="username" id="username" required />
 
             <label for="email">Email</label>
-            <input type="email" name="email" id="email" required/>
+            <input type="email" name="email" id="email" required />
 
 
             <label for="password">Пароль</label>
-            <input type="password" name="password" id="password" required/>
+            <input type="password" name="password" id="password" required />
 
             <label for="c_password">Подтверждение пароля</label>
-            <input type="password" name="c_password" id="c_password" required/>
+            <input type="password" name="c_password" id="c_password" required />
 
             <label for="birthday">Дата рождения</label>
-            <input type="date" name="birthday" id="birthday" required/>
-            
-            <lable class="error_message" id="err_mes"style="display: none;">ERROR</lable>
-            
-            <input type="submit" value="Зарегистрироваться"/>
+            <input type="date" name="birthday" id="birthday" required />
+
+            <hr>
+             
+            <h3>CAPTCHA</h3>
+            <label for="answer" id="captcha">Загрузка...</label>
+            <input type="text" name="answer" id="answer" required />
+
+            <hr>
+
+            <lable class="error_message" id="err_mes" style="display: none;">ERROR</lable>
+
+            <input type="submit" value="Зарегистрироваться" />
 
             <a href="/login.html" class="link">Вход</a>
         </form>

@@ -84,6 +84,12 @@ struct Token {
 };
 BOOST_FUSION_ADAPT_STRUCT(Token, token, time, user)
 
+struct Captcha {
+    std::string token;
+    double answer;
+    time_p time;
+};
+BOOST_FUSION_ADAPT_STRUCT(Captcha, token, answer, time)
 
 
 
@@ -112,3 +118,4 @@ struct LoginDTO {
     std::string code;
 };
 BOOST_FUSION_ADAPT_STRUCT(LoginDTO, username, password, code)
+

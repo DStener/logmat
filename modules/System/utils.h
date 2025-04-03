@@ -42,6 +42,7 @@ public:
 
         return out;
     }
+
     static std::string trim(const std::string& str)
     {
         const auto start_s = str.find_first_not_of(' ');
@@ -61,9 +62,6 @@ public:
         const auto end_q = txt.find_last_not_of('"');
         return txt.substr(start_q, end_q - start_q + 1);
     }
-
-
-
 
 private:
 

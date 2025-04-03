@@ -26,9 +26,10 @@ public:
         METHOD_ADD(Auth::Logout, "/out", Post); // authorized
         METHOD_ADD(Auth::getTokens, "/tokens", Get); // authorized
         METHOD_ADD(Auth::LogoutAll, "/out_all", Post); // authorized
-        METHOD_ADD(Auth::Switch2FA, "/2fa/switch", Post); // authorized
-        METHOD_ADD(Auth::Get2FAKey, "/2fa/key", Get); // authorized
-        METHOD_ADD(Auth::Is2FAEnbaled, "/2fa/enabled?username={}", Get); // authorized
+        METHOD_ADD(Auth::Switch2FA, "/2fa/switch", Post); // 2fa
+        METHOD_ADD(Auth::Get2FAKey, "/2fa/key", Get); // 2fa
+        METHOD_ADD(Auth::Is2FAEnbaled, "/2fa/enabled?username={}", Get); // 2fa
+        METHOD_ADD(Auth::GetCaptcha, "/captcha", Get); // 2fa
     METHOD_LIST_END
 
     //Declaring methods
@@ -42,6 +43,7 @@ public:
     void Get2FAKey(const HttpRequestPtr& req, callback_func &&callback);
     void Is2FAEnbaled(const HttpRequestPtr& req, callback_func &&callback,
                       std::string username);
+    void GetCaptcha(const HttpRequestPtr& req, callback_func&& callback);
 
     // token
 };

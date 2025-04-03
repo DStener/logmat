@@ -9,7 +9,8 @@ static const std::string ROOTDIR = "..\\..\\..\\root";
 static const std::string ROOTDIR = "../../root";
 #endif
 #else
-static const std::string ROOTDIR = "root";
+//static const std::string ROOTDIR = "root";
+static const std::string ROOTDIR = "../../../root";
 #endif
 
 int main()

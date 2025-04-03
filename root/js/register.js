@@ -44,6 +44,21 @@ async function login_submit(event)
     } catch (e) {  console.error(e); }
 }
 
+async function Captcha()
+{
+    try {
+        const response = await fetch("/api/auth/captcha", {
+            method: "GET",
+        });
+
+        if (response.status != 200) { return; }
+        document.getElementById("captcha").innerHTML = await response.json();
+    } catch (e) { console.error(e); }
+}
+
+
 window.onload  = () => {
     document.getElementById("register_dialog").addEventListener('submit', login_submit);
+    Captcha();
+    
 }

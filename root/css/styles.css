@@ -129,3 +129,7 @@ input[type="number"]:focus {
     text-align: center;
     padding: 0px;
 }
+hr {
+    margin: 11px 0px;
+
+}

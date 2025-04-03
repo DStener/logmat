@@ -17,6 +17,9 @@
 #include "Migration/RoleAndPermission.hpp"
 #include "Migration/UserAndRole.hpp"
 #include "Migration/ChangeLog.hpp"
+#include "Migration/Captcha.hpp"
+
+
 #include <boost/algorithm/string.hpp>
 
 using namespace drogon;
@@ -41,6 +44,7 @@ private:
         Migration::UserAndRole::up();
 
         Migration::ChangeLog::up();
+        Migration::Captcha::up();
     }
 
 public:
