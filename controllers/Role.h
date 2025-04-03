@@ -29,6 +29,8 @@ public:
         METHOD_ADD(Role::SoftDelete, "/{1:id}/soft", drogon::Delete);
         METHOD_ADD(Role::Restore, "/{1:id}/restore", drogon::Post);
 
+        METHOD_ADD(Role::Form, "/form", drogon::Get);
+
         METHOD_ADD(Role::Permissions, "/{1:id_role}/permission", drogon::Get);
         METHOD_ADD(Role::Set, "/{1:id_role}/permission", drogon::Post);
         METHOD_ADD(Role::PermDelete, "/{1:id_role}/permission/{2:id_perm}", drogon::Delete);
@@ -58,6 +60,7 @@ public:
                  id_t id);
 
 
+    void Form(const HttpRequestPtr& req, callback_func &&callback);
 
     void Permissions(const HttpRequestPtr& req, callback_func &&callback,
                      id_t id_role);

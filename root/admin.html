@@ -54,7 +54,7 @@
                     <input class="changed delete" type="button" value="Жёсткое удаление" disabled="disabled"/>
                 </div>
 
-                <table class="admin-table">
+                <table class="admin-table" id="admin-table">
                     <thead>
                         <tr>
                             <th>Аватар</th>
@@ -88,63 +88,16 @@
                     </tbody>
                 </table>
 
+                <div id="parent_popup" style="display: none;">
+                    <div id="popup_form">
+                        <h2 id="popup_form_header"></h2>
+                        <form id="popup_form_form">
+                            <!-- <input type=""> -->
+                        <form>
 
-                    <!--<table class="admin-table">
-        <thead>
-            <tr>
-                <th>Аватар</th>
-                <th>Автор</th>
-                <th>Название статьи</th>
-                <th>Дата публикации</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td><img src="https://avatars.mds.yandex.net/i?id=9028b32c2dbca7fbe65309f1fb7141cf_l-4957727-images-thumbs&n=13" alt="Аватар" class="table-avatar"/></td>
-                <td>Даниил Стенер</td>
-                <td>
-                    <details class="article-details">
-                        <summary>Быстрая сортировка (Quick Sort)</summary>
-                        <div class="article-content">
-                            <p>Быстрая сортировка — это эффективный алгоритм сортировки, использующий стратегию "разделяй и властвуй".</p>
-                            <p>Сложность: O(n log n) в среднем случае, O(n²) в худшем.</p>
-                        </div>
-                    </details>
-                </td>
-                <td>15.05.2025 14:30</td>
-            </tr>
-            <tr>
-                <td><img src="https://avatars.mds.yandex.net/i?id=9028b32c2dbca7fbe65309f1fb7141cf_l-4957727-images-thumbs&n=13" alt="Аватарка" class="table-avatar"/></td>
-                <td>Петр Петров</td>
-                <td>
-                    <details class="article-details">
-                        <summary>Сортировка слиянием (Merge Sort)</summary>
-                        <div class="article-content">
-                            <p>Сортировка слиянием — это стабильный алгоритм сортировки с гарантированной сложностью O(n log n).</p>
-                        </div>
-                    </details>
-                </td>
-                <td>10.05.2025 10:15</td>
-            </tr>
-            <tr>
-                <td><img src="https://avatars.mds.yandex.net/i?id=9028b32c2dbca7fbe65309f1fb7141cf_l-4957727-images-thumbs&n=13" alt="Аватар" class="table-avatar"/></td>
-                <td>Сергей Сергеев</td>
-                <td>
-                    <details class="article-details">
-                        <summary>Бинарный поиск (Binary Search)</summary>
-                        <div class="article-content">
-                            <p>Бинарный поиск — это алгоритм поиска элемента в отсортированном массиве за O(log n).</p>
-                        </div>
-                    </details>
-                </td>
-                <td>03.04.2025 16:45</td>
-            </tr>
-        </tbody>
-    </table>-->
+                    </div>
 
-
-
-
+                </div>
 
                 </div>
             </main>

@@ -45,28 +45,24 @@ public:
         template <typename T>
         static Json::Value From(T s)
         {
-            Json::Value json;
-
-            DTO::JSON::Fill(s, json);
-
-            return json;
+            return DTO::JSON::Fill(s);
         }
 
         // Convert pair<id_t, DTO> to Json::Value
         template <typename T>
         static Json::Value From(DTORow<T> s)
         {
-            Json::Value json;
+            Json::Value json = DTO::JSON::Fill(s.second);
             json["id"] = s.first;
-
-            DTO::JSON::Fill(s.second, json);
 
             return json;
         }
     private:
         template <typename T>
-        static void Fill(T& t, Json::Value& json)
+        static Json::Value Fill(T& t)
         {
+            Json::Value json(Json::objectValue);
+
             DTO::for_each(t, [&json](std::string_view field, auto value)
             {
                 if(DTO::SQL::CheckField::isSecret(field)) { return; }
@@ -76,8 +72,11 @@ public:
                 std::stringstream stream;
                 stream << value;
 
-                json[std::string(field)] = stream.str();
+                // json.append(std::string(field), );
+                json[std::string(field)] = Json::Value(stream.str());
+                // json.append()
             });
+            return json;
         }
     };
 

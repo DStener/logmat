@@ -17,6 +17,8 @@ void Ref::User::GetList(const HttpRequestPtr& req, callback_func &&callback)
         json.append(DTO::JSON::From(row));
     }
 
+    if(!json.size()) { json = "Нет записей"; }
+
     auto response = HttpResponse::newHttpJsonResponse(json);
     response->setStatusCode(drogon::k200OK);
     callback(response);

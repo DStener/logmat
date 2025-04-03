@@ -20,6 +20,8 @@ class ASidePanel {
 
         panel.appendChild(li);
         li.appendChild(a);
+
+        return a
     }
 }
 

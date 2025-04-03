@@ -20,6 +20,8 @@ void Policy::Permission::GetList(const HttpRequestPtr& req, callback_func &&call
         json.append(DTO::JSON::From(row));
     }
 
+    if(!json.size()) { json = "Нет записей"; }
+
     auto response = HttpResponse::newHttpJsonResponse(json);
     response->setStatusCode(drogon::k200OK);
     callback(response);
@@ -71,28 +73,6 @@ void Policy::Permission::Create(const HttpRequestPtr& req, callback_func &&callb
     permission.deleted_by = 0;
     permission.deleted_at = time_p();
 
-    // Сhecking that the fields with the NOTNULL attribute are filled in
-    // if(!DTO::SQL::CheckField::NotNull(permission))
-    // {
-    //     auto response = HttpResponse::newHttpResponse();
-    //     response->setStatusCode(drogon::k406NotAcceptable);
-    //     callback(response);
-    //     return;
-    // }
-
-    // Сhecking that the fields with the attribute UNIQUE are unique
-    // auto result = DB::get()->Select<::Permission>(DTO::SQL::CheckField::UniqueSQL(permission));
-    // if(result.size() != 0)
-    // {
-    //     Json::Value json;
-    //     json["message"] = "Не уникальные данные";
-
-    //     auto response = HttpResponse::newHttpJsonResponse(json);
-    //     response->setStatusCode(drogon::k406NotAcceptable);
-    //     callback(response);
-    //     return;
-    // }
-
     // Add Permission to DB
     DB::get()->Insert(permission);
 
@@ -115,8 +95,6 @@ void Policy::Permission::Update(const HttpRequestPtr& req, callback_func &&callb
     permission.created_at = time_p();
     permission.deleted_by = 0;
     permission.deleted_at = time_p();
-
-    std::cout << DTO::JSON::From(permission) << std::endl;
 
     DB::get()->Update<::Permission>(id, permission);
 
@@ -172,6 +150,33 @@ void Policy::Permission::Restore(const HttpRequestPtr& req, callback_func &&call
     DB::get()->Update(id, permission);
 
     auto response = HttpResponse::newHttpResponse();
+    response->setStatusCode(drogon::k200OK);
+    callback(response);
+}
+
+void Policy::Permission::Form(const HttpRequestPtr& req, callback_func &&callback)
+{
+    Json::Value form;
+
+    Json::Value name;
+    Json::Value description;
+    Json::Value code;
+
+    name["type"] = "text";
+    name["required"] = "required";
+
+    description["type"] = "text" ;
+    description["required"] = "required";
+
+    code["type"] = "text";
+    code[""] = "required";
+
+    form["name"] = name;
+    form["description"] = description;
+    form["code"] = code;
+
+
+    auto response = HttpResponse::newHttpJsonResponse(form);
     response->setStatusCode(drogon::k200OK);
     callback(response);
 }
