@@ -91,6 +91,18 @@ struct Captcha {
 };
 BOOST_FUSION_ADAPT_STRUCT(Captcha, token, answer, time)
 
+struct File {
+    std::string name;
+    std::string description;
+    std::string tags;
+    std::size_t size;
+    std::string _path;
+    std::string _avatar_path;
+    SERVICE_FIELDS
+};
+BOOST_FUSION_ADAPT_STRUCT(File, name, description, size,
+                          _path, _avatar_path, ADAPT_SERVICE_FIELDS)
+
 
 
 

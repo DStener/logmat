@@ -18,6 +18,7 @@
 #include "Migration/UserAndRole.hpp"
 #include "Migration/ChangeLog.hpp"
 #include "Migration/Captcha.hpp"
+#include "Migration/File.hpp"
 
 
 #include <boost/algorithm/string.hpp>
@@ -45,6 +46,7 @@ private:
 
         Migration::ChangeLog::up();
         Migration::Captcha::up();
+        Migration::File::up();
     }
 
 public:
@@ -121,14 +123,14 @@ public:
     }
 
     template<typename T>
-    void Insert(T& s)
+    id_t Insert(T& s)
     {
         try
         {
             clientPtr->execSqlSync("BEGIN TRANSACTION;");
 
             // Add new entity [TRANSACTION]
-            clientPtr->execSqlSync(DTO::SQL::Insert(s));
+            id_t id = clientPtr->execSqlSync(DTO::SQL::Insert(s)).front().at("id").as<id_t>();
 
             // Write log [TRANSACTION]
             clientPtr->execSqlSync(std::format(
@@ -142,11 +144,13 @@ public:
             ));
 
             clientPtr->execSqlSync("COMMIT;");
+            return id;
         }
         catch (const orm::DrogonDbException &e)
         {
             clientPtr->execSqlSync("ROLLBACK;");
             std::cerr << "error:" << e.base().what() << std::endl;
+            return 0;
         }
     }
 

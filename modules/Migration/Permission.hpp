@@ -38,7 +38,8 @@ public:
         {
             DTO::GetName<::User>(),
             DTO::GetName<::Role>(),
-            DTO::GetName<::Permission>()
+            DTO::GetName<::Permission>(),
+            DTO::GetName<::File>()
         };
 
         // Create basic periccion

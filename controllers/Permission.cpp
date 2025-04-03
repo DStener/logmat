@@ -120,21 +120,6 @@ void Policy::Permission::Update(const HttpRequestPtr& req, callback_func &&callb
 
     DB::get()->Update<::Permission>(id, permission);
 
-    // auto result = DB::get()->Select<::Permission>(DTO::SQL::CheckField::UniqueSQL(permission));
-    // if(result.size() != 0)
-    // {
-    //     Json::Value json;
-    //     json["message"] = "Не уникальные данные";
-
-    //     auto response = HttpResponse::newHttpJsonResponse(json);
-    //     response->setStatusCode(drogon::k406NotAcceptable);
-    //     callback(response);
-    //     return;
-    // }
-
-    // Update row Permission in DB
-    // DB::get()->Update<::Permission>(id, DTO::SQL::CheckField::UpdateNotNull(permission));
-
     auto response = HttpResponse::newHttpResponse();
     response->setStatusCode(drogon::k200OK);
     callback(response);
@@ -180,8 +165,7 @@ void Policy::Permission::Restore(const HttpRequestPtr& req, callback_func &&call
     auto login = Request::Login(req, callback);
     if(!login.id || !login.hasPermission<::Permission>("restore")) { return; }
 
-    auto permission = DB::get()->Select<::Permission>(std::format("id == {}",
-                                                      login.id))[0].second;
+    auto permission = DB::get()->Select<::Permission>(std::format("id == {}", id))[0].second;
     permission.deleted_at = time_p();
     permission.deleted_by = 0;
 

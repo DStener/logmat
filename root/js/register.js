@@ -17,8 +17,8 @@ async function login(form)
           method: "POST",
           body: formEncode(form),
         });
-        if(response.status == 200) { window.location.replace("/me"); }
-        else{ window.location.replace("/register.html"); }
+        if(response.status == 200) { window.location.replace("/me.html"); }
+        else{ window.location.replace("/login.html"); }
     } catch (e) {  console.error(e); }
 }
 

@@ -82,8 +82,7 @@ void Auth::Info(const HttpRequestPtr& req, callback_func &&callback)
     if(!login.id) { return; }
 
     // Get info about current user
-    auto userinfo = DB::get()->Select<User>(std::format("id == {}", login.id))[0].second;
-    userinfo.password = "X";
+    auto userinfo = DB::get()->Select<User>(std::format("id == {}", login.id))[0];
 
     auto response = HttpResponse::newHttpJsonResponse(DTO::JSON::From(userinfo));
     response->setStatusCode(drogon::k200OK);

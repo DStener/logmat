@@ -151,7 +151,7 @@ public:
                 values += std::format("{}, ", DTO::SQL::to_string(value));
             });
 
-            return std::format("INSERT OR IGNORE INTO {2} ( {0} ) VALUES ( {1} );",
+            return std::format("INSERT OR IGNORE INTO {2} ( {0} ) VALUES ( {1} ) RETURNING id;",
                                fields.substr(0,fields.size() - 2),
                                values.substr(0,values.size() - 2),
                                DTO::GetName<T>());
@@ -240,7 +240,9 @@ public:
             static bool isSecret(std::string_view& field)
             {
                 using sv = std::string_view;
-                return field == sv("password") ||
+
+                return field.starts_with("_") ||
+                       field == sv("password") ||
                        field == sv("created_at") ||
                        field == sv("created_by") ||
                        field == sv("deleted_at") ||

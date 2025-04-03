@@ -29,13 +29,13 @@ public:
         auto f  = clientPtr->execSqlAsyncFuture(
             std::format("SELECT * FROM {0} ", DTO::GetName<::Permission>())
         );
-        auto perms(DTO::SQL::To<::Permission>(f.get()));
+        auto perms = DTO::SQL::To<::Permission>(f.get());
 
         // Get Role
         f = clientPtr->execSqlAsyncFuture(
             std::format("SELECT * FROM {0} ", DTO::GetName<::Role>())
         );
-        auto roles(DTO::SQL::To<::Role>(f.get()));
+        auto roles = DTO::SQL::To<::Role>(f.get());
 
         for(auto& role : roles) {
             for(auto& perm : perms)
@@ -49,7 +49,9 @@ public:
                    ) ||
 
                    (role.second.name == "Guest" &&
-                   perm.second.name == "get-list-User"))
+                        (perm.second.name == "get-list-User" ||
+                         perm.second.name == "get-list-File"))
+                )
                 {
                     // If the network is a duplicat
                     auto f  = clientPtr->execSqlAsyncFuture(

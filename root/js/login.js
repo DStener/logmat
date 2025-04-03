@@ -53,8 +53,6 @@ async function login_submit(event)
                 document.getElementById("password_txt").style = "";
             } 
         } catch (e) {  console.error(e); }
-
-        xhr.send(); 
     }
     else
     {
@@ -63,7 +61,7 @@ async function login_submit(event)
               method: "POST",
               body: formEncode(form),
             });
-            if(response.status == 200) { window.location.replace("/me"); }
+            if(response.status == 200) { window.location.replace("/me.html"); }
             else{
                 document.getElementById("err_mes").style = "";
                 document.getElementById("err_mes").innerHTML = decodeURIComponent(await response.json());

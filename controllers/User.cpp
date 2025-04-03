@@ -81,28 +81,6 @@ void Ref::User::Set(const HttpRequestPtr& req, callback_func &&callback,
     user_role.deleted_by = 0;
     user_role.deleted_at = time_p();
 
-    // Сhecking that the fields with the NOTNULL attribute are filled in
-    // if(!DTO::SQL::CheckField::NotNull(user_role))
-    // {
-    //     auto response = HttpResponse::newHttpResponse();
-    //     response->setStatusCode(drogon::k406NotAcceptable);
-    //     callback(response);
-    //     return;
-    // }
-
-    // // Сhecking that the fields with the attribute UNIQUE are unique
-    // auto result = DB::get()->Select<::UserAndRole>(DTO::SQL::CheckField::UniqueSQL(user_role));
-    // if(result.size() != 0)
-    // {
-    //     Json::Value json;
-    //     json["message"] = "Не уникальные данные";
-
-    //     auto response = HttpResponse::newHttpJsonResponse(json);
-    //     response->setStatusCode(drogon::k406NotAcceptable);
-    //     callback(response);
-    //     return;
-    // }
-
     // Add UserAndRole to DB
     DB::get()->Insert(user_role);
 
