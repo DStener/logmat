@@ -1,0 +1,105 @@
+/* Основные стили */
+body {
+    font-family: 'Roboto', sans-serif;
+    background-color: #f7fafc;
+    margin: 0;
+    padding: 0;
+}
+
+/* Контейнер */
+.max-w-screen-xl {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 1rem;
+}
+
+/* Шапка */
+header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem 0;
+}
+
+header .flex {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+header .text-2xl {
+    font-size: 1.5rem;
+    font-weight: bold;
+}
+
+header .text-sm {
+    font-size: 0.875rem;
+    color: #4a5568;
+}
+
+header input {
+    border: 1px solid #cbd5e0;
+    border-radius: 0.25rem;
+    padding: 0.5rem 1rem;
+}
+
+header img {
+    border-radius: 50%;
+}
+
+header button {
+    color: #4a5568;
+}
+
+/* Боковая панель */
+aside {
+    width: 25%;
+    background-color: #edf2f7;
+    padding: 1rem;
+}
+
+aside nav ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+aside nav ul li {
+    margin-bottom: 0.5rem;
+}
+
+aside nav ul li a {
+    color: #4a5568;
+    text-decoration: none;
+}
+
+aside nav ul li a:hover {
+    color: #3182ce;
+}
+
+details summary {
+    cursor: pointer;
+    color: #3182ce;
+}
+
+details ul {
+    margin-left: 1rem;
+}
+
+/* Основной контент */
+main {
+    width: 75%;
+    background-color: #ffffff;
+    padding: 2rem;
+}
+
+main h2 {
+    font-size: 1.875rem;
+    font-weight: bold;
+    margin-bottom: 1rem;
+}
+
+main p {
+    margin-bottom: 1rem;
+    line-height: 1.5;
+}

@@ -1,74 +1,94 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
-<html>
-    <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1"> 
-        <title>Главная</title>
-        <link rel="stylesheet" href="./style.css">
-    </head>
-    <body>
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>logMAT - Сайт про алгоритмы</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet"/>
+    <link href="../styles/styles.css" rel="stylesheet"/>
+    <link href="../styles/menuStyles.css" rel="stylesheet"/>
+    <link href="../styles/userMenu.css" rel="stylesheet"/>
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <div class="logo">
+                <a href="#">
+                    <img src="../src/av.png" alt="Логотип logMAT" class="logo-img"/>
+                </a>
+                <div>
+                    <a href="../pages/main.html" class="logo-text">logMAT</a>
+                    <p class="logo-subtext">Сайт о алгоритмах</p>
+                </div>
+            </div>
 
-        <header>
-
-            <a class="tab" href="#">Главная</a>
-            <a class="tab" href="/gallery">Галерея</a>
-            <a class="tab" href="/reviews">Отзывы</a>
-            <a class="tab" href="/contacts.html">Контакты</a>
-
+            <div class="header-controls">
+                <input type="text" placeholder="Поиск" class="search-input"/>
+                <div class="user-info">
+                    <img src="https://avatars.mds.yandex.net/i?id=9028b32c2dbca7fbe65309f1fb7141cf_l-4957727-images-thumbs&n=13" alt="Аватар пользователя" class="user-avatar"/>
+                    <details class="user-menu">
+                        <summary class="user-name">Даниил Стенер</summary>
+                        <ul class="user-menu-list">
+                            <li><a href="../pages/userTemp.html" class="user-menu-link">Профиль</a></li>
+                            <li><a href="../pages/admin.html" class="user-menu-link">Админ панель</a></li>
+                            <li><a href="#" class="user-menu-link">Выход</a></li>
+                        </ul>
+                    </details>
+                </div>
+            </div>
         </header>
 
+        <div class="content">
+            <aside class="sidebar">
+                <nav>
+                    <ul class="menu">
+                        <li class="menu-title">Алгоритмы</li>
+                        <li>
+                            <details class="menu-item">
+                                <summary class="menu-summary">Алгоритмы сортировки</summary>
+                                <ul class="submenu">
+                                    <li><a href="../pages/temp.html" class="submenu-link">Быстрая сортировка (Quick Sort)</a></li>
+                                    <li><a href="#" class="submenu-link">Сортировка слиянием (Merge Sort)</a></li>
+                                    <li><a href="#" class="submenu-link">Пузырьковая сортировка (Bubble Sort)</a></li>
+                                    <li><a href="#" class="submenu-link">Сортировка вставками (Insertion Sort)</a></li>
+                                    <li><a href="#" class="submenu-link">Сортировка выбором (Selection Sort)</a></li>
+                                    <li><a href="#" class="submenu-link">Пирамидальная сортировка (Heap Sort)</a></li>
+                                    <li><a href="#" class="submenu-link">Поразрядная сортировка (Radix Sort)</a></li>
+                                </ul>
+                            </details>
+                        </li>
+                        <li>
+                            <details class="menu-item">
+                                <summary class="menu-summary">Алгоритмы поиска</summary>
+                                <ul class="submenu">
+                                    <li><a href="#" class="submenu-link">Линейный поиск (Linear Search)</a></li>
+                                    <li><a href="#" class="submenu-link">Бинарный поиск (Binary Search)</a></li>
+                                    <li><a href="#" class="submenu-link">Поиск в глубину (DFS)</a></li>
+                                    <li><a href="#" class="submenu-link">Поиск в ширину (BFS)</a></li>
+                                </ul>
+                            </details>
+                        </li>
+                        <li class="menu-title"><a href="../pages/aboutUs.html" class="submenu-link">О нас</a></li>
+                    </ul>
+                </nav>
+            </aside>
 
-        <div class="place">
-
-            <div class="img-background out-slogan-box">
-                <div class="in-box in-slogan-box">
-                    <h1 class="h1-main-style">New Aerial Horizon</h1>
-                    <p class="p-main-style">Вместе покорим неизведанные горизонты воздухоплавания</p>
-                </div>
-            </div>
-
-            <div class="out-incoming-box">
-                <div class="in-box in-incoming-box">
-                    <h3 class="h3-main-style">Великое начинание</h3>
-                    <h4 class="h4-main-style">- &laquoНаходи, исследуй, постигай&raquo</h4>
-                    <p class="p-main-style">Именно с такими словами наши отцы-основатели подписали исторический меморандум об утверждении компании, названной &laquoNew Aerial Horizon&raquo.</p>
-                </div>
-            </div>
-
-            <div class="out-achievements-box">
-                <div class="in-box">
-                    <h3 class="h3-main-style">> 400 моделей</h3>
-                    <p class="p-main-style">За время своего существования, компания разработала 432 модели различных летательных аппаратов.</p>
-                </div>
-            </div>
-
-            <div class="out-countries-box">
-                <div class="in-box">
-                    <h3 class="h3-main-style">Международная кооперация</h3>
-                    <p class="p-main-style">&laquoNew Aerial Horizon&raquo хранит традиции политического нейтралитета, благодаря чему осуществляет свою деятельность в 56 странах мира. </p>
-                </div>
-            </div>
-
+            <main class="main-content">
+                <article>
+                    <h2 class="article-title">О сайте</h2>
+                    <p class="article-text">
+                        Добро пожаловать на сайт logMAT! Здесь вы найдёте подробные объяснения и примеры реализации различных алгоритмов. Мы поможем вам разобраться в сложных темах, таких как сортировка, поиск, графы, динамическое программирование и многое другое.
+                    </p>
+                    <p class="article-text">
+                        Наш сайт предназначен для всех, кто интересуется алгоритмами — от начинающих программистов до опытных разработчиков. Мы стремимся сделать сложные концепции доступными и понятными.
+                    </p>
+                    <p class="article-text">
+                        Используйте меню слева, чтобы выбрать интересующий вас раздел. Каждый алгоритм сопровождается подробным описанием, примерами кода и визуализацией.
+                    </p>
+                    
+                </article>
+            </main>
         </div>
-
-
-        <footer>
-            <div class="in-box">
-
-                <h3 class="h3-main-style">Присоединяйся, пилот!</h3>
-                <p class="p-main-style">ООО "New Aerial Horizon", все права защищены.</p>
-                
-                <hr>
-
-                <ul>
-                    <li>Адрес: г. Ханты-Мансийск, ул. Чехова, 16</li>
-                    <li>Контактный номер: +7 909 037-89-98</li>
-                    <li>Электронная почта: mail@horizon.com</li>
-                </ul>
-
-                <p class="p-main-style">&copy Стенер Даниил Евгеньевич</p>
-            </div>
-        </footer>
-
-    </body>
+    </div>
+</body>
 </html>

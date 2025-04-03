@@ -3,24 +3,22 @@
 <head>
     <meta charset="UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>logMAT - Сайт про алгоритмы</title>
+    <title>Профиль пользователя | logMAT</title>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet"/>
-
-    <link href="styles.css" rel="stylesheet"/>
-    <link href="menuStyles.css" rel="stylesheet"/>
-    
+    <link href="../styles/styles.css" rel="stylesheet"/>
+    <link href="../styles/menuStyles.css" rel="stylesheet"/>
+    <link href="../styles/userMenu.css" rel="stylesheet"/>
+    <link href="../styles/userProfile.css" rel="stylesheet"/>
 </head>
 <body>
     <div class="container">
-
         <header class="header">
-            
             <div class="logo">
                 <a href="#">
-                    <img src="../av.png" alt="Логотип logMAT" class="logo-img"/>
+                    <img src="../src/av.png" alt="Логотип logMAT" class="logo-img"/>
                 </a>
                 <div>
-                    <a href="main.html" class="logo-text">logMAT</a>
+                    <a href="../pages/main.html" class="logo-text">logMAT</a>
                     <p class="logo-subtext">Сайт о алгоритмах</p>
                 </div>
             </div>
@@ -29,7 +27,14 @@
                 <input type="text" placeholder="Поиск" class="search-input"/>
                 <div class="user-info">
                     <img src="https://avatars.mds.yandex.net/i?id=9028b32c2dbca7fbe65309f1fb7141cf_l-4957727-images-thumbs&n=13" alt="Аватар пользователя" class="user-avatar"/>
-                    <span class="user-name">Иван Иванов</span>
+                    <details class="user-menu">
+                        <summary class="user-name">Даниил Стенер</summary>
+                        <ul class="user-menu-list">
+                            <li><a href="../pages/userTemp.html" class="user-menu-link">Профиль</a></li>
+                            <li><a href="../pages/admin.html" class="user-menu-link">Админ панель</a></li>
+                            <li><a href="#" class="user-menu-link">Выход</a></li>
+                        </ul>
+                    </details>
                 </div>
             </div>
         </header>
@@ -43,7 +48,7 @@
                             <details class="menu-item">
                                 <summary class="menu-summary">Алгоритмы сортировки</summary>
                                 <ul class="submenu">
-                                    <li><a href="#" class="submenu-link">Быстрая сортировка (Quick Sort)</a></li>
+                                    <li><a href="../pages/temp.html" class="submenu-link">Быстрая сортировка (Quick Sort)</a></li>
                                     <li><a href="#" class="submenu-link">Сортировка слиянием (Merge Sort)</a></li>
                                     <li><a href="#" class="submenu-link">Пузырьковая сортировка (Bubble Sort)</a></li>
                                     <li><a href="#" class="submenu-link">Сортировка вставками (Insertion Sort)</a></li>
@@ -64,25 +69,32 @@
                                 </ul>
                             </details>
                         </li>
-                        <li class="menu-title"><a href="#" class="submenu-link"> О нас</a></li>
-                         
+                        <li class="menu-title"><a href="../pages/aboutUs.html" class="submenu-link">О нас</a></li>
                     </ul>
                 </nav>
             </aside>
 
             <main class="main-content">
-                <article>
-                    <h2 class="article-title">О сайте</h2>
-                    <p class="article-text">
-                        Добро пожаловать на сайт logMAT! Здесь вы найдёте подробные объяснения и примеры реализации различных алгоритмов. Мы поможем вам разобраться в сложных темах, таких как сортировка, поиск, графы, динамическое программирование и многое другое.
-                    </p>
-                    <p class="article-text">
-                        Наш сайт предназначен для всех, кто интересуется алгоритмами — от начинающих программистов до опытных разработчиков. Мы стремимся сделать сложные концепции доступными и понятными.
-                    </p>
-                    <p class="article-text">
-                        Используйте меню слева, чтобы выбрать интересующий вас раздел. Каждый алгоритм сопровождается подробным описанием, примерами кода и визуализацией.
-                    </p>
-                    
+                <article class="user-profile">
+                    <div class="profile-header">
+                        <img src="https://avatars.mds.yandex.net/i?id=9028b32c2dbca7fbe65309f1fb7141cf_l-4957727-images-thumbs&n=13" alt="Аватар пользователя" class="profile-avatar"/>
+                        <h1 class="profile-name">Даниил Стенер</h1>
+                    </div>
+                    <div class="profile-info">
+                        <p class="profile-description">
+                            Привет! Я Даниил Стенер администратор сайта logMAT. Здесь я публикую статьи об алгоритмах и помогаю другим пользователям разобраться в сложных темах.
+                        </p>
+                        <div class="profile-stats">
+                            <div class="stat-item">
+                                <span class="stat-number">0</span>
+                                <span class="stat-label">Статьи</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-number">0</span>
+                                <span class="stat-label">Комментарии</span>
+                            </div>
+                        </div>
+                    </div>
                 </article>
             </main>
         </div>

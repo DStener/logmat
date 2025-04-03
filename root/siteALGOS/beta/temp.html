@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>logMAT - Сайт про алгоритмы</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet"/>
+
+    <link href="styles.css" rel="stylesheet"/>
+    <link href="menuStyles.css" rel="stylesheet"/>
+    
+</head>
+<body>
+    <div class="container">
+
+        <header class="header">
+            
+            <div class="logo">
+                <a href="#">
+                    <img src="../av.png" alt="Логотип logMAT" class="logo-img"/>
+                </a>
+                <div>
+                    <a href="main.html" class="logo-text">logMAT</a>
+                    <p class="logo-subtext">Сайт о алгоритмах</p>
+                </div>
+            </div>
+
+            <div class="header-controls">
+                <input type="text" placeholder="Поиск" class="search-input"/>
+                <div class="user-info">
+                    <img src="https://avatars.mds.yandex.net/i?id=9028b32c2dbca7fbe65309f1fb7141cf_l-4957727-images-thumbs&n=13" alt="Аватар пользователя" class="user-avatar"/>
+                    <span class="user-name">Иван Иванов</span>
+                </div>
+            </div>
+        </header>
+
+        <div class="content">
+            <aside class="sidebar">
+                <nav>
+                    <ul class="menu">
+                        <li class="menu-title">Алгоритмы</li>
+                        <li>
+                            <details class="menu-item">
+                                <summary class="menu-summary">Алгоритмы сортировки</summary>
+                                <ul class="submenu">
+                                    <li><a href="temp.html" class="submenu-link">Быстрая сортировка (Quick Sort)</a></li>
+                                    <li><a href="#" class="submenu-link">Сортировка слиянием (Merge Sort)</a></li>
+                                    <li><a href="#" class="submenu-link">Пузырьковая сортировка (Bubble Sort)</a></li>
+                                    <li><a href="#" class="submenu-link">Сортировка вставками (Insertion Sort)</a></li>
+                                    <li><a href="#" class="submenu-link">Сортировка выбором (Selection Sort)</a></li>
+                                    <li><a href="#" class="submenu-link">Пирамидальная сортировка (Heap Sort)</a></li>
+                                    <li><a href="#" class="submenu-link">Поразрядная сортировка (Radix Sort)</a></li>
+                                </ul>
+                            </details>
+                        </li>
+                        <li>
+                            <details class="menu-item">
+                                <summary class="menu-summary">Алгоритмы поиска</summary>
+                                <ul class="submenu">
+                                    <li><a href="#" class="submenu-link">Линейный поиск (Linear Search)</a></li>
+                                    <li><a href="#" class="submenu-link">Бинарный поиск (Binary Search)</a></li>
+                                    <li><a href="#" class="submenu-link">Поиск в глубину (DFS)</a></li>
+                                    <li><a href="#" class="submenu-link">Поиск в ширину (BFS)</a></li>
+                                </ul>
+                            </details>
+                        </li>
+                        <li class="menu-title"><a href="#" class="submenu-link"> О нас</a></li>
+                         
+                    </ul>
+                </nav>
+            </aside>
+
+            <main class="main-content">
+                <article>
+                    Введение
+
+Сортировка массива является одной из первых серьезных задач, изучаемых в классическом курсе «Алгоритмы и структуры данных» дисциплины computer science. В связи с этим задачи на написание сортировок и соответствующие вопросы часто встречаются на собеседованиях на позиции стажера или junior разработчика.
+
+Постановка задачи
+
+Традиционно стоит начать изложение решений задачи с ее постановки. Обычно задача сортировки предполагает упорядочивание некоторого массива целых чисел по возрастанию. Но на самом деле, это является некоторым упрощением. Излагаемые в этом разделе алгоритмы можно применять для упорядочивания массива любых объектов, между которыми установлено отношение порядка (то есть про любые два элемента можно сказать: первый больше второго, второй больше первого или они равны). Упорядочивать можно как по возрастанию, так и по убыванию. Мы же воспользуемся стандартным упрощением.
+
+Быстрая сортировка
+
+В прошлый раз мы поговорили о чуть более сложной сортировке — сортировке вставками. Сегодня речь пойдет о существенно более сложном алгоритме — быстрой сортировке (еще ее называют сортировкой Хоара).
+
+Описание алгоритма
+
+Алгоритм быстрой сортировки является рекурсивным, поэтому для простоты процедура на вход будет принимать границы участка массива от l включительно и до r не включительно. Понятно, что для того, чтобы отсортировать весь массив, в качестве параметра l надо передать 0, а в качестве r — n, где по традиции n обозначает длину массива.
+
+В основе алгоритма быстрой сортировке лежит процедура partition. Partition выбирает некоторый элемент массива и переставляет элементы участка массива таким образом, чтобы массив разбился на 2 части: левая часть содержит элементы, которые меньше этого элемента, а правая часть содержит элементы, которые больше или равны этого элемента. Такой разделяющий элемент называется пивотом.
+
+Реализация partiion'а:
+
+                </article>
+            </main>
+        </div>
+    </div>
+</body>
+</html>
