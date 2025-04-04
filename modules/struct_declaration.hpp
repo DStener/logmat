@@ -100,7 +100,7 @@ struct File {
     std::string _avatar_path;
     SERVICE_FIELDS
 };
-BOOST_FUSION_ADAPT_STRUCT(File, name, description, size,
+BOOST_FUSION_ADAPT_STRUCT(File, name, description, tags, size,
                           _path, _avatar_path, ADAPT_SERVICE_FIELDS)
 
 

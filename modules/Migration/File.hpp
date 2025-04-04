@@ -16,7 +16,7 @@ public:
             "CREATE TABLE IF NOT EXISTS File "
             "( "
                 "id INTEGER PRIMARY KEY AUTOINCREMENT, "
-                "name VARCHAR UNIQUE NOT NULL, "
+                "name VARCHAR NOT NULL, "
                 "description VARCHAR, "
                 "tags VARCHAR, "
                 "size INTEGER, "

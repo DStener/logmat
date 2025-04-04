@@ -165,9 +165,12 @@ public:
     bool hasPermission(const std::string& permission)
     {
         // Initial login check
-        if(!id) { return 0; }
+        if(!id) { return false; }
 
-        auto perm = DB::get()->Select<::Permission>(std::format("name == \"{}\"", permission))[0];
+        auto _cash = DB::get()->Select<::Permission>(std::format("name == \"{}\"", permission));
+        if (!_cash.size()) { return false; }
+
+        auto perm = _cash[0];
 
         // Check soft delete
         // CHECK_SOFT_DELETE(perm) { FORBIDEN_CALLBACK }

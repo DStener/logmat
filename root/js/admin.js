@@ -11,6 +11,20 @@ function formEncode(form)
     return requestBodyArray.join('&');
 }
 
+function getLink(text, delete_param = false)
+{
+    text = ((text.startsWith("http")) ? "" : document.location.origin)+ text;
+    let url = new URL(text);
+
+    if (!delete_param) {
+        return url.pathname + url.search;
+    }
+    else
+    {
+        return url.pathname;
+    }
+}
+
 function clearContent()
 {
     document.querySelectorAll('tr.tb-line').forEach(line => {
@@ -86,8 +100,7 @@ async function restoreLog()
         
         clearContent();
         document.querySelectorAll('a.current').forEach(a => {
-            let url = new URL(a.href);
-            configureContent(a.innerHTML, url.pathname);
+            configureContent(a.innerHTML, getLink(a.href));
         });
         
 
@@ -123,7 +136,7 @@ async function showForm(link, isNew = true)
     document.getElementById("popup_form_form").innerHTML = "";
 
     try {
-        const response = await fetch(`${link}/form`);
+        const response = await fetch(`${getLink(link, true)}/form`);
         let json = await response.json();
         
         
@@ -173,11 +186,11 @@ async function showForm(link, isNew = true)
                     
                     if (isNew)
                     {
-                        const response = fetch(`${link}/`, {method: "POST", body: form_body});
+                        const response = fetch(`${getLink(link, true)}/`, {method: "POST", body: form_body});
                     }
                     else
                     {
-                        const response = fetch(`${link}/${id}`, {method: "PUT", body: form_body});
+                        const response = fetch(`${getLink(link, true) }/${id}`, {method: "PUT", body: form_body});
                         console.log(response);
                     }
                     
@@ -185,8 +198,7 @@ async function showForm(link, isNew = true)
                     hideForm();
 
                     document.querySelectorAll('a.current').forEach(a => {
-                        let url = new URL(a.href);
-                        configureContent(a.innerHTML, url.pathname);
+                        configureContent(a.innerHTML, getLink(a.href));
                     });
 
                 } catch (e) {  console.error(e); }
@@ -194,7 +206,7 @@ async function showForm(link, isNew = true)
             else
             {
                 let fileObj = document.getElementById(field_file).files[0]; // js get file object
-                let url =  `${link}/`; 
+                let url = getLink(link, true) + '/';
                 if (!isNew) { url += `${id}`; }
 
                 form.delete(field_file);
@@ -208,8 +220,7 @@ async function showForm(link, isNew = true)
                     hideForm();
 
                     document.querySelectorAll('a.current').forEach(a => {
-                        let url = new URL(a.href);
-                        configureContent(a.innerHTML, url.pathname);
+                        configureContent(a.innerHTML, getLink(a.href));
                     });
                 }; 
                 // xhr.onerror =  uploadFailed; 
@@ -255,18 +266,17 @@ async function DeleteCell(link, soft = false)
     try {
         if(!soft)
         {
-            const response = await fetch(`${link}/${id}`, {method: "DELETE"});
+            const response = await fetch(`${getLink(link, true)}/${id}`, {method: "DELETE"});
         }
         else
         {
-            const response = await fetch(`${link}/${id}/soft`, {method: "DELETE"});
+            const response = await fetch(`${getLink(link, true)}/${id}/soft`, {method: "DELETE"});
         }
         
         clearContent();
 
         document.querySelectorAll('a.current').forEach(a => {
-            let url = new URL(a.href);
-            configureContent(a.innerHTML, url.pathname);
+            configureContent(a.innerHTML, getLink(a.href));
         });
         
 
@@ -279,7 +289,7 @@ async function configureContent(name, link)
     document.getElementsByClassName("admin-title")[0].innerHTML = name;
 
     try {
-        const response = await fetch(link);
+        const response = await fetch(getLink(link));
         var json = await response.json();
 
         if(response.status != 200) { 
@@ -287,6 +297,7 @@ async function configureContent(name, link)
             return;
         }
 
+        console.log(link);
 
         if(link == "/api/log")
         {
@@ -360,11 +371,13 @@ async function configureContent(name, link)
     } catch (e) {  console.error(e); }
 }
 
+
+
 function configureAside()
 {
     ASidePanel.setHeader("Панель управления");
 
-    [["Галерея", "/api/ref/file"], 
+    [["Галерея", "/api/ref/file?tags=jpg"], 
      ["Файлы", "/api/ref/file"],
      ["Пользователи", "/api/ref/user"],
      ["Роли", "/api/ref/policy/role"],

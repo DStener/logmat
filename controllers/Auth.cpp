@@ -79,7 +79,7 @@ void Auth::Info(const HttpRequestPtr& req, callback_func &&callback)
 {
     // Login and check Permission
     auto login = Request::Login(req, callback);
-    if(!login.id) { return; }
+    if (!login.id || !login.hasPermission<::User>("get-list")) { return; }
 
     // Get info about current user
     auto userinfo = DB::get()->Select<User>(std::format("id == {}", login.id))[0];
