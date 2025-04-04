@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>Админ панель | logMAT</title>
+    <title>Профиль пользователя | logMAT</title>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet"/>
     <link href="../css/styles.css" rel="stylesheet"/>
     <link href="../css/menuStyles.css" rel="stylesheet"/>
     <link href="../css/userMenu.css" rel="stylesheet"/>
-    <link href="../css/admin.css" rel="stylesheet"/>
+    <link href="../css/userProfile.css" rel="stylesheet"/>
 </head>
 <body>
     <div class="container">
@@ -76,70 +76,44 @@
             </aside>
 
             <main class="main-content">
-                <h1 class="admin-title">Админ панель</h1>
-                <div class="admin-table-container">
-                    
-
-
-
-                    <table class="admin-table">
-                        <thead>
-                            <tr>
-                                <th>Аватар</th>
-                                <th>Автор</th>
-                                <th>Название статьи</th>
-                                <th>Дата публикации</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td><img src="https://avatars.mds.yandex.net/i?id=9028b32c2dbca7fbe65309f1fb7141cf_l-4957727-images-thumbs&n=13" alt="Аватар" class="table-avatar"/></td>
-                                <td>Даниил Стенер</td>
-                                <td>
-                                    <details class="article-details">
-                                        <summary>Быстрая сортировка (Quick Sort)</summary>
-                                        <div class="article-content">
-                                            <p>Быстрая сортировка — это эффективный алгоритм сортировки, использующий стратегию "разделяй и властвуй".</p>
-                                            <p>Сложность: O(n log n) в среднем случае, O(n²) в худшем.</p>
-                                        </div>
-                                    </details>
-                                </td>
-                                <td>15.05.2025 14:30</td>
-                            </tr>
-                            <tr>
-                                <td><img src="https://avatars.mds.yandex.net/i?id=9028b32c2dbca7fbe65309f1fb7141cf_l-4957727-images-thumbs&n=13" alt="Аватарка" class="table-avatar"/></td>
-                                <td>Петр Петров</td>
-                                <td>
-                                    <details class="article-details">
-                                        <summary>Сортировка слиянием (Merge Sort)</summary>
-                                        <div class="article-content">
-                                            <p>Сортировка слиянием — это стабильный алгоритм сортировки с гарантированной сложностью O(n log n).</p>
-                                        </div>
-                                    </details>
-                                </td>
-                                <td>10.05.2025 10:15</td>
-                            </tr>
-                            <tr>
-                                <td><img src="https://avatars.mds.yandex.net/i?id=9028b32c2dbca7fbe65309f1fb7141cf_l-4957727-images-thumbs&n=13" alt="Аватар" class="table-avatar"/></td>
-                                <td>Сергей Сергеев</td>
-                                <td>
-                                    <details class="article-details">
-                                        <summary>Бинарный поиск (Binary Search)</summary>
-                                        <div class="article-content">
-                                            <p>Бинарный поиск — это алгоритм поиска элемента в отсортированном массиве за O(log n).</p>
-                                        </div>
-                                    </details>
-                                </td>
-                                <td>03.04.2025 16:45</td>
-                            </tr>
-                        </tbody>
-                    </table>
-
-
-
-
-
-                </div>
+                <article class="user-profile">
+                    <div class="profile-header">
+                        <img src="https://avatars.mds.yandex.net/i?id=9028b32c2dbca7fbe65309f1fb7141cf_l-4957727-images-thumbs&n=13" alt="Аватар пользователя" class="profile-avatar"/>
+                        <div class="profile-menu">
+                            <p class="signature">Имя</p>
+                            <input class="switch-name"></input>
+                            <button class="button-profile">Редактировать</button>
+                            <button class="button-profile">Сохранить</button>
+                            <button class="button-profile">Отмена</button>
+                            <p class="signature">Фамилия</p>
+                            <input class="switch-name"></input>
+                            <button class="button-profile">Редактировать</button>
+                            <button class="button-profile">Сохранить</button>
+                            <button class="button-profile">Отмена</button>
+                            <br>
+                            <label><input type="checkbox"/> Включить двухфакторная аутентификация</label>
+                        </div>
+                        
+                    </div>
+                    <div class="profile-info">
+                        <p class="signature">Обо мне</p>
+                        <textarea class="profile-description"> Привет! Я Даниил Стенер администратор сайта logMAT. Здесь я публикую статьи об алгоритмах и помогаю другим пользователям разобраться в сложных темах.
+                        </textarea>
+                        <button class="button-profile">Редактировать</button>
+                        <button class="button-profile">Сохранить</button>
+                        <button class="button-profile">Отмена</button>
+                        <div class="profile-stats">
+                            <div class="stat-item">
+                                <span class="stat-number">0</span>
+                                <span class="stat-label">Статьи</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-number">0</span>
+                                <span class="stat-label">Комментарии</span>
+                            </div>
+                        </div>
+                    </div>
+                </article>
             </main>
         </div>
     </div>
