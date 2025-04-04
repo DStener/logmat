@@ -8,9 +8,11 @@ using namespace API;
 void Ref::File::GetList(const HttpRequestPtr& req, callback_func&& callback)
 {
 	Json::Value json;
+	std::string tags = req->getParameter("tags");
 
 	for (auto& row : DB::get()->Select<::File>())
 	{
+		if (tags.size() && !row.second.tags.contains(tags)) { continue; }
 		json.append(DTO::JSON::From(row));
 	}
 
@@ -90,17 +92,13 @@ void Ref::File::Upload(const HttpRequestPtr& req, callback_func&& callback)
 	::File FileDB{};
 	FileDB.name = file.getFileName();
 	FileDB.description = parser.getParameter<std::string>("description");
-	FileDB.tags = std::format("{}|{}", file.getFileExtension(), parser.getParameter<std::string>("tags"));
+	FileDB.tags = std::format("{}", std::string{file.getFileExtension()});
 	FileDB.size = file.fileLength();
 	FileDB._path = std::format("{}/{}", app().getUploadPath(), name);
 	//FileDB._avatar_path = "__TEMP__";
 
-    std::cout << "ZDES" << std::endl;
-
 	// Upload file info to DB and get id row
 	id_t id = DB::get()->Insert(FileDB);
-
-    std::cout << "TUT" << std::endl;
 
 	auto response = HttpResponse::newHttpJsonResponse(Json::Value(id));
 	callback(response);
