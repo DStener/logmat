@@ -29,6 +29,7 @@ public:
         METHOD_ADD(Permission::Delete, "/{1:id}", drogon::Delete);
         METHOD_ADD(Permission::SoftDelete, "/{1:id}/soft", drogon::Delete);
         METHOD_ADD(Permission::Restore, "/{1:id}/restore", drogon::Post);
+        METHOD_ADD(Permission::Form, "/form", drogon::Get);
     METHOD_LIST_END
 
     //Declaring methods
@@ -48,6 +49,7 @@ public:
                 id_t id);
     void Restore(const HttpRequestPtr& req, callback_func &&callback,
                 id_t id);
+    void Form(const HttpRequestPtr& req, callback_func &&callback);
 };
 }
 }

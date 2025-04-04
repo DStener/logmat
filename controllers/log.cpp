@@ -4,6 +4,21 @@
 #include "Request/log.hpp"
 
 
+void API::Log::GetList(const HttpRequestPtr& req, callback_func &&callback)
+{
+    Json::Value json;
+
+    for (auto& row : DB::get()->Select<::ChangeLog>())
+    {
+        json.append(DTO::JSON::From(row));
+    }
+
+    if(!json.size()) { json = "Нет записей"; }
+
+    auto response = HttpResponse::newHttpJsonResponse(json);
+    callback(response);
+}
+
 void API::Log::Restore(const HttpRequestPtr& req, callback_func &&callback,
                        id_t id_log)
 {

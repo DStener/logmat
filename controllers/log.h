@@ -19,10 +19,12 @@ class Log : public drogon::HttpController<API::Log>
 public:
     //Connect methods to URL
     METHOD_LIST_BEGIN
+        METHOD_ADD(Log::GetList, "", drogon::Get);
         METHOD_ADD(Log::Restore, "/{1:id_log}/restore", drogon::Post);
     METHOD_LIST_END
 
     //Declaring methods
+    void GetList(const HttpRequestPtr& req, callback_func &&callback);
     void Restore(const HttpRequestPtr& req, callback_func &&callback,
                  id_t id_log);
 };

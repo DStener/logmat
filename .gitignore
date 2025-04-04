@@ -1,6 +1,7 @@
 build/
 .vs/
 out/
+enc_temp_folder/
 CMakeLists.txt.user
 CMakeSettings.json
 *.exe

@@ -8,9 +8,10 @@
 #include <cmath>
 
 using time_p = std::chrono::system_clock::time_point;
-#ifdef WIN32
+
+#undef id_t
 using id_t = unsigned int;
-#endif
+
 template <typename T>
 using DTORow = std::pair<id_t,T>;
 template <typename T>

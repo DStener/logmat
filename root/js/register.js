@@ -57,8 +57,7 @@ async function Captcha()
 }
 
 
-window.onload  = () => {
+window.addEventListener("load", function () {
     document.getElementById("register_dialog").addEventListener('submit', login_submit);
     Captcha();
-    
-}
+}, false);

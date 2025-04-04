@@ -54,6 +54,8 @@ void Policy::Role::GetList(const HttpRequestPtr& req, callback_func &&callback)
         json.append(DTO::JSON::From(row));
     }
 
+    if(!json.size()) { json = "Нет записей"; }
+
     auto response = HttpResponse::newHttpJsonResponse(json);
     response->setStatusCode(drogon::k200OK);
     callback(response);
@@ -94,6 +96,8 @@ void Policy::Role::Update(const HttpRequestPtr& req, callback_func &&callback,
     role.deleted_by = 0;
     role.deleted_at = time_p();
 
+    DB::get()->Update<::Role>(id, role);
+
     auto response = HttpResponse::newHttpResponse();
     response->setStatusCode(drogon::k200OK);
     callback(response);
@@ -123,7 +127,7 @@ void Policy::Role::SoftDelete(const HttpRequestPtr& req, callback_func &&callbac
     if(!login.id || !login.hasPermission<::Role>("delete")) { return; }
 
     auto role = DB::get()->Select<::Role>(std::format("id == {}",
-                                                      login.id))[0].second;
+                                                      id))[0].second;
     role.deleted_at = std::chrono::system_clock::now();
     role.deleted_by = login.id;
 
@@ -176,6 +180,8 @@ void  Policy::Role::Permissions(const HttpRequestPtr& req, callback_func &&callb
             json.append(DTO::JSON::From(role));
         }
     }
+
+    if(!json.size()) { json = "Нет записей"; }
 
     auto response = HttpResponse::newHttpJsonResponse(json);
     response->setStatusCode(drogon::k200OK);
@@ -256,6 +262,33 @@ void Policy::Role::PermRestore(const HttpRequestPtr& req, callback_func &&callba
     DB::get()->Update(entity.first, entity.second);
 
     auto response = HttpResponse::newHttpResponse();
+    response->setStatusCode(drogon::k200OK);
+    callback(response);
+}
+
+void Policy::Role::Form(const HttpRequestPtr& req, callback_func &&callback)
+{
+    Json::Value form;
+
+    Json::Value name;
+    Json::Value description;
+    Json::Value code;
+
+    name["type"] = "text";
+    name["required"] = "required";
+
+    description["type"] = "text" ;
+    description["required"] = "required";
+
+    code["type"] = "text";
+    code[""] = "required";
+
+    form["name"] = name;
+    form["description"] = description;
+    form["code"] = code;
+
+
+    auto response = HttpResponse::newHttpJsonResponse(form);
     response->setStatusCode(drogon::k200OK);
     callback(response);
 }

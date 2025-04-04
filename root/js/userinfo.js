@@ -49,19 +49,40 @@ async function ConfigureHeaderUserInfo()
 
             for (let i = 0; i < elements.length; ++i)
             {
-                elements[i].innerHTML = `
-                <img src = ${"https://avatars.mds.yandex.net/i?id=9028b32c2dbca7fbe65309f1fb7141cf_l-4957727-images-thumbs&n=13"} alt = "Аватар пользователя" class="user-avatar" />
-                <details class="user-menu">
-                    <summary class="user-name">${result["username"]}</summary>
-                    <ul class="user-menu-list">
-                        <li><a href="/me.html" class="user-menu-link">Профиль</a></li>
-                        <li><a onclick = "LogoutMe()" class="user-menu-link">Выход</a></li>
-                    </ul>
-                </details>`;
+                if(result["username"] != "admin")
+                {
+                    elements[i].innerHTML = `
+                    <img src = ${"https://avatars.mds.yandex.net/i?id=9028b32c2dbca7fbe65309f1fb7141cf_l-4957727-images-thumbs&n=13"} alt = "Аватар пользователя" class="user-avatar" />
+                    <details class="user-menu">
+                        <summary class="user-name">${result["username"]}</summary>
+                        <ul class="user-menu-list">
+                            <li><a href="/me.html" class="user-menu-link">Профиль</a></li>
+                            <li><a onclick = "LogoutMe()" class="user-menu-link">Выход</a></li>
+                        </ul>
+                    </details>`;
+                }
+                else 
+                {
+                    elements[i].innerHTML = `
+                    <img src = ${"https://avatars.mds.yandex.net/i?id=9028b32c2dbca7fbe65309f1fb7141cf_l-4957727-images-thumbs&n=13"} alt = "Аватар пользователя" class="user-avatar" />
+                    <details class="user-menu">
+                        <summary class="user-name">${result["username"]}</summary>
+                        <ul class="user-menu-list">
+                            <li><a href="/me.html" class="user-menu-link">Профиль</a></li>
+                            <li><a href="/admin.html" class="user-menu-link">Панель упарвления</a></li>
+                            <li><a onclick = "LogoutMe()" class="user-menu-link">Выход</a></li>
+                        </ul>
+                    </details>`;
+                }
             }
         }
     });
 
+}
+
+function printTest()
+{
+    alert("PRINT");
 }
 
 async function LogoutMe()
@@ -76,10 +97,22 @@ async function LogoutMe()
 }
 
 
-window.onload = () => {
-    //getMeInfo().then(result => {
-    //    console.log(result);
-    //});
-    ConfigureHeaderUserInfo();
+async function ConfigureName()
+{
+    getMeInfo().then(result => {
 
+        
+        if (typeof result != "string")
+        {   
+            let obj = document.getElementById("profile-name")
+            if(obj) {
+                obj.innerHTML = result["username"];
+            }
+        }
+    });
 }
+
+window.addEventListener("load", function () {
+    ConfigureHeaderUserInfo();
+    ConfigureName();
+}, false);

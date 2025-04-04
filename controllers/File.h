@@ -24,11 +24,12 @@ public:
         METHOD_ADD(File::Get, "/{1:id_file}", drogon::Get);
         METHOD_ADD(File::GetAvatar, "/{1:id_file}/avatar", drogon::Get);
         METHOD_ADD(File::GetInfo, "/{1:id_file}/info", drogon::Get);
-        METHOD_ADD(File::Upload, "", drogon::Post);
+        METHOD_ADD(File::Upload, "/", drogon::Post);
         METHOD_ADD(File::Update, "/{1:id_file}", drogon::Put);
         METHOD_ADD(File::Delete, "/{1:id_file}", drogon::Delete);
         METHOD_ADD(File::SoftDelete, "/{1:id_file}/soft", drogon::Delete);
         METHOD_ADD(File::Restore, "/{1:id_file}/restore", drogon::Post);
+        METHOD_ADD(File::Form, "/form", drogon::Get);
     METHOD_LIST_END
 
     //Declaring methods
@@ -43,6 +44,7 @@ public:
     void Delete(const HttpRequestPtr& req, callback_func&& callback, id_t id_file);
     void SoftDelete(const HttpRequestPtr& req, callback_func&& callback, id_t id_file);
     void Restore(const HttpRequestPtr& req, callback_func&& callback, id_t id_file);
+    void Form(const HttpRequestPtr& req, callback_func &&callback);
 };
 }
 }

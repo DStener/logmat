@@ -130,8 +130,11 @@ public:
             clientPtr->execSqlSync("BEGIN TRANSACTION;");
 
             // Add new entity [TRANSACTION]
+#ifdef WIN32
             id_t id = clientPtr->execSqlSync(DTO::SQL::Insert(s)).front().at("id").as<id_t>();
-
+#else
+            id_t id = std::stoi(clientPtr->execSqlSync(DTO::SQL::Insert(s)).front().at("id").c_str());
+#endif
             // Write log [TRANSACTION]
             clientPtr->execSqlSync(std::format(
                 "INSERT INTO ChangeLog"
