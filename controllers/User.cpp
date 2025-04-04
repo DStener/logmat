@@ -34,8 +34,7 @@ void Ref::User::Story(const HttpRequestPtr& req, callback_func &&callback,
     Json::Value json;
     for(auto& log : Request::Log::Get<::User>(id_user))
     {
-        CHECK_SOFT_DELETE(log) { continue; }
-        json.append(DTO::JSON::From(log));
+        Request::Log::GetJSONComplianceRules(log);
     }
 
     auto response = HttpResponse::newHttpJsonResponse(json);

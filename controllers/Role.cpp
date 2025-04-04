@@ -31,8 +31,7 @@ void Policy::Role::Story(const HttpRequestPtr& req, callback_func &&callback,
     Json::Value json;
     for(auto& log : Request::Log::Get<::Role>(id_role))
     {
-        CHECK_SOFT_DELETE(log) { continue; }
-        json.append(DTO::JSON::From(log));
+        json.append(Request::Log::GetJSONComplianceRules(log));
     }
 
     auto response = HttpResponse::newHttpJsonResponse(json);

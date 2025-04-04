@@ -10,7 +10,7 @@ void API::Log::GetList(const HttpRequestPtr& req, callback_func &&callback)
 
     for (auto& row : DB::get()->Select<::ChangeLog>())
     {
-        json.append(DTO::JSON::From(row));
+        json.append(Request::Log::GetJSONComplianceRules(row));
     }
 
     if(!json.size()) { json = "Нет записей"; }
