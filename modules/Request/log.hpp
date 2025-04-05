@@ -42,40 +42,86 @@ public:
         esc_tokenizer::iterator before_it = before_tok.begin();
         esc_tokenizer::iterator after_it = after_tok.begin();
 
-
-        for (; before_it != before_tok.end() || after_it != after_tok.end();)
-        {   
-            std::string before_txt = boost::algorithm::trim_copy(*before_it);
-            std::string after_txt = boost::algorithm::trim_copy(*after_it);
-
-            bool before_finished = (before_it == before_tok.end());
-            bool after_finished = (after_it == after_tok.end());
-
-            bool hide_before = Log::isServiceField(before_txt);
-            bool hide_after = Log::isServiceField(after_txt);
-            
-
-            if (before_txt.compare(after_txt) != 0 || before_finished || after_finished)
+        if(row.second.before.size() && !row.second.after.size())
+        {
+            for(auto it : before_tok)
             {
-                if (!before_finished && !hide_before) 
-                { 
+                std::string before_txt = boost::algorithm::trim_copy(*before_it);
+                bool hide_before = Log::isServiceField(before_txt);
+
+                if (!hide_before)
+                {
                     before.push_back(Log::hideSecret(before_txt));
                 }
-                if (!after_finished && !hide_after) 
-                { 
+            }
+            after.push_back("DELETE");
+        }
+        else if (row.second.after.size() && !row.second.before.size())
+        {
+            for(auto it : after_tok)
+            {
+                std::string after_txt = boost::algorithm::trim_copy(*after_it);
+                bool hide_after = Log::isServiceField(after_txt);
+
+                if (!hide_after)
+                {
                     after.push_back(Log::hideSecret(after_txt));
                 }
             }
+            before.push_back("CREATE");
+        }
+        else if(row.second.before.size() && row.second.after.size())
+        {
+            for (; before_it != before_tok.end() || after_it != after_tok.end();)
+            {
+                std::string before_txt = boost::algorithm::trim_copy(*before_it);
+                std::string after_txt = boost::algorithm::trim_copy(*after_it);
 
-            ++before_it;
-            ++after_it;
+                bool before_finished = (before_it == before_tok.end());
+                bool after_finished = (after_it == after_tok.end());
 
-            before_it = (before_it != before_tok.end())? before_it : before_tok.end();
-            after_it = (after_it != after_tok.end()) ? after_it : after_tok.end(); 
+                bool hide_before = Log::isServiceField(before_txt);
+                bool hide_after = Log::isServiceField(after_txt);
+
+
+                if (before_txt.compare(after_txt) != 0 || before_finished || after_finished)
+                {
+                    if (!before_finished && !hide_before)
+                    {
+                        before.push_back(Log::hideSecret(before_txt));
+                    }
+                    if (!after_finished && !hide_after)
+                    {
+                        after.push_back(Log::hideSecret(after_txt));
+                    }
+                }
+
+                ++before_it;
+                ++after_it;
+
+                before_it = (before_it != before_tok.end())? before_it : before_tok.end();
+                after_it = (after_it != after_tok.end()) ? after_it : after_tok.end();
+            }
         }
 
-        json["before"] = boost::algorithm::join(before, ", ");
-        json["after"] = boost::algorithm::join(after, ", ");
+        if(before.empty() && after.empty())
+        {
+            json["before"] = "";
+
+            if(after.empty())
+            {
+                json["after"] = "SOFT DELETE";
+            }
+            else
+            {
+                json["after"] = "RESTORE";
+            }
+        }
+        else
+        {
+            json["before"] = boost::algorithm::join(before, ", ");
+            json["after"] = boost::algorithm::join(after, ", ");
+        }
         
         return json;
     }

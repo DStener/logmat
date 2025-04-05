@@ -105,5 +105,5 @@ private:
 
 #define CHECK_SOFT_DELETE(link_val)                                 \
 if(link_val.second.deleted_by != 0 &&                               \
-    link_val.second.deleted_at <= std::chrono::system_clock::now())
+    link_val.second.deleted_at >= std::chrono::system_clock::now())
 

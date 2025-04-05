@@ -173,22 +173,19 @@ public:
         auto perm = _cash[0];
 
         // Check soft delete
-        // CHECK_SOFT_DELETE(perm) { FORBIDEN_CALLBACK }
-        std::cout << perm.second.name << std::endl;
+        CHECK_SOFT_DELETE(perm) { FORBIDEN_CALLBACK }
 
         // Check if the user has a concrete permission
         auto role_perm = DB::get()->Select<::RoleAndPermission>(std::format("permission == {}", perm.first));
         for(auto& link : role_perm)
         {
-            // CHECK_SOFT_DELETE(link) { continue; };
-            // std::
+            CHECK_SOFT_DELETE(link) { continue; };
+
             auto user_role = DB::get()->Select<::UserAndRole>(std::format("role == {}", link.second.role));
 
             for(auto& link2 : user_role)
             {
-                // CHECK_SOFT_DELETE(link2) { continue; }
-
-                std::cout << link2.second.user << " ?= " << Login::id << std::endl;
+                CHECK_SOFT_DELETE(link2) { continue; }
 
                 if(link2.second.user == Login::id)
                 {
