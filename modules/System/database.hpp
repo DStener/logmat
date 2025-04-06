@@ -6,20 +6,8 @@
 
 #include "System/DTO.hpp"
 #include "System/utils.h"
-// #include "struct_declaration.hpp"
+#include "struct_declaration.hpp"
 // #include "Migrations.hpp"
-
-// Migration
-#include "Migration/User.hpp"
-#include "Migration/Token.hpp"
-#include "Migration/Role.hpp"
-#include "Migration/Permission.hpp"
-#include "Migration/RoleAndPermission.hpp"
-#include "Migration/UserAndRole.hpp"
-#include "Migration/ChangeLog.hpp"
-#include "Migration/Captcha.hpp"
-#include "Migration/File.hpp"
-
 
 #include <boost/algorithm/string.hpp>
 
@@ -33,20 +21,7 @@ private:
 
     DataBase()
     {
-        clientPtr = drogon::app().getDbClient("master");
-
-        Migration::User::up();
-        Migration::Token::up();
-
-        Migration::Role::up();
-        Migration::Permission::up();
-
-        Migration::RoleAndPermission::up();
-        Migration::UserAndRole::up();
-
-        Migration::ChangeLog::up();
-        Migration::Captcha::up();
-        Migration::File::up();
+        clientPtr = drogon::app().getDbClient( );
     }
 
 public:
@@ -79,6 +54,8 @@ public:
                             ((condition.size() > 0)? "WHERE" : "")) <<
                 std::endl;
         }
+
+       
         return vec;
     }
 

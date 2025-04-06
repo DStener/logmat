@@ -3,6 +3,12 @@
 #include "Request/login.hpp"
 #include "Request/log.hpp"
 
+#include <boost/gil.hpp>
+#include <boost/gil/extension/io/jpeg.hpp>
+#include <boost/gil/extension/numeric/resample.hpp>
+#include <boost/gil/extension/numeric/sampler.hpp>
+using namespace boost::gil;
+
 using namespace API;
 
 void Ref::File::GetList(const HttpRequestPtr& req, callback_func&& callback)
@@ -83,19 +89,37 @@ void Ref::File::Upload(const HttpRequestPtr& req, callback_func&& callback)
 		return;
 	}
 
+	// Get file
 	auto& file = parser.getFiles()[0];
 	auto md5 = file.getMd5();
 	std::string name = std::format("{}.{}", md5, file.getFileExtension());
 
 	file.saveAs(name);
 
+	// fill DB row
 	::File FileDB{};
 	FileDB.name = file.getFileName();
 	FileDB.description = parser.getParameter<std::string>("description");
 	FileDB.tags = std::format("{}", std::string{file.getFileExtension()});
 	FileDB.size = file.fileLength();
 	FileDB._path = std::format("{}/{}", app().getUploadPath(), name);
-	//FileDB._avatar_path = "__TEMP__";
+
+	// Resizeif image 
+	if (file.getContentType() == drogon::CT_IMAGE_JPG)
+	{
+
+		FileDB._avatar_path = std::format("{}/avatar_{}", app().getUploadPath(), name);
+
+		rgb8_image_t img;
+		rgb8_image_t img_resize(128, 128); // rgb_image is 136x98
+
+		boost::gil::image_read_settings<jpeg_tag> readSettings;
+		boost::gil::read_image(FileDB._path, img, readSettings);
+
+		resize_view(const_view(img), view(img_resize), bilinear_sampler());
+		write_view(FileDB._avatar_path, const_view(img_resize), jpeg_tag{});
+	}
+	
 
 	// Upload file info to DB and get id row
 	id_t id = DB::get()->Insert(FileDB);

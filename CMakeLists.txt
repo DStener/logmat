@@ -1,26 +1,13 @@
-cmake_minimum_required(VERSION 3.5)
+cmake_minimum_required(VERSION 3.24)
 project(logmat CXX)
 
-include(CheckIncludeFileCXX)
-
-
-check_include_file_cxx(any HAS_ANY)
-check_include_file_cxx(string_view HAS_STRING_VIEW)
-check_include_file_cxx(coroutine HAS_COROUTINE)
-
-
-
 set(CMAKE_CXX_STANDARD 23)
-
-
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
-
 file(GLOB MODULES_SRC ${CMAKE_CURRENT_SOURCE_DIR}/modules/*.cpp)
-file(GLOB MODELS_SRC ${CMAKE_CURRENT_SOURCE_DIR}/models/*.cpp)
-add_executable(${PROJECT_NAME} main.cpp ${MODULES_SRC} ${MODELS_SRC})
-
+add_executable(${PROJECT_NAME} main.cpp ${MODULES_SRC})
+configure_file(config.json config.json COPYONLY)
 
 find_package(Drogon CONFIG REQUIRED)
 find_package(OpenSSL CONFIG REQUIRED)
@@ -29,11 +16,10 @@ find_package(JPEG REQUIRED)
 
 find_path(QRENCODE_INCLUDE_DIR NAMES qrencode.h)
 find_library(QRENCODE_LIBRARY qrencode)
-
-# find_package(qrencode CONFIG REQUIRED)
-# find_package(Qr)
+ 
 target_link_libraries(${PROJECT_NAME} PRIVATE Drogon::Drogon OpenSSL::SSL
                       ${Boost_LIBRARY_DIRS} ${QRENCODE_LIBRARY} JPEG::JPEG)
+
 
 aux_source_directory(controllers CTL_SRC)
 aux_source_directory(filters FILTER_SRC)
@@ -62,5 +48,18 @@ target_sources(${PROJECT_NAME}
                ${FILTER_SRC}
                ${PLUGIN_SRC}
                ${MODEL_SRC})
+
+# Create symlink to HTML root dir
+add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E create_symlink
+    ${CMAKE_SOURCE_DIR}/root $<TARGET_FILE_DIR:${PROJECT_NAME}>/root)
+
+add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E create_symlink
+    ${CMAKE_SOURCE_DIR}/migrations $<TARGET_FILE_DIR:${PROJECT_NAME}>/migrations)
+
+    add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E create_symlink
+    ${CMAKE_SOURCE_DIR}/seeders $<TARGET_FILE_DIR:${PROJECT_NAME}>/seeders)
 
 add_subdirectory(test)

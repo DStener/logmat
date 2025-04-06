@@ -198,8 +198,15 @@ public:
 
     template <typename T>
     bool hasPermission(const std::string& permission)
-    {
-        return hasPermission(std::format("{}-{}", permission, DTO::GetName<T>()));
+    { 
+        // Get name T and convert to lower case
+        std::string name = DTO::GetName<T>();
+        for (auto& c : name)
+        {
+            c = std::tolower(c);
+        }
+
+        return hasPermission(std::format("{}-{}", permission, name));
     }
 
     void Get2FAKey()

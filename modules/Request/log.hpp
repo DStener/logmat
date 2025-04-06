@@ -133,7 +133,7 @@ public:
 
         auto log = _temp[0].second;
 
-        auto clientPtr = drogon::app().getDbClient("master");
+        auto clientPtr = drogon::app().getDbClient( );
         clientPtr->execSqlSync("BEGIN TRANSACTION;");
 
         ::ChangeLog newlog = log;

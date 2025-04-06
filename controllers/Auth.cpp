@@ -96,10 +96,12 @@ void Auth::Logout(const HttpRequestPtr& req, callback_func &&callback)
     auto login = Request::Login(req, callback);
     if(!login.id) { return; }
 
-    auto id = DB::get()->Select<::Token>(
-        std::format("token == \"{}\"", req->getCookie("token")))[0].first;
-    // Delete current token
-    DB::get()->Delete<::Token>(id);
+    std::cout << req->getHeader("Referer") << std::endl;
+
+    //auto id = DB::get()->Select<::Token>(
+    //    std::format("token == \"{}\"", req->getCookie("token")))[0].first;
+    //// Delete current token
+    //DB::get()->Delete<::Token>(id);
 
     auto response = HttpResponse::newHttpResponse();
     response->setStatusCode(drogon::k200OK);

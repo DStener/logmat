@@ -187,20 +187,23 @@ public:
 
                         std::string str = row[std::string{ name }].c_str();
                         std::istringstream stream{ str };
-#ifdef _WIN32
+#ifdef WIN32
                         stream >> std::chrono::parse("%Y-%m-%d %H:%M:%S", field);
 #else
                         time_t rawtime = time(nullptr);
                         std::tm tm = *localtime(&rawtime);
 
-                        
-                        
                         stream >> std::get_time(&tm, "%Y-%m-%d %H:%M:%S");
 
                         field = system_clock::from_time_t(std::mktime(&tm)) +
-                            nanoseconds(std::stoi(str.substr(str.rfind('.') + 1))) +
-                            current_zone()->get_info(time_p()).offset;
-#endif
+                                current_zone()->get_info(time_p()).offset;
+
+                        if (str.rfind('.') != std::string::npos)
+                        {
+                            field += nanoseconds(std::stoi(str.substr(str.rfind('.') + 1)));
+                        }
+                          
+#endif                  
                     }
                     else
                     {
