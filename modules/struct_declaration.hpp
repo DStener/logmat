@@ -79,10 +79,9 @@ BOOST_FUSION_ADAPT_STRUCT(RoleAndPermission, role, permission,
 
 struct Token {
     std::string token;
-    time_p time;
     id_t user;
 };
-BOOST_FUSION_ADAPT_STRUCT(Token, token, time, user)
+BOOST_FUSION_ADAPT_STRUCT(Token, token, user)
 
 struct Captcha {
     std::string token;

@@ -74,11 +74,11 @@
         //is the number of CPU cores
         "number_of_threads": 1,
         //enable_session: False by default
-        "enable_session": false,
-        "session_timeout": 0,
+        "enable_session": true,
+        "session_timeout": 47336400, // 18 month
         //string value of SameSite attribute of the Set-Cookie HTTP response header
         //valid value is either 'Null' (default), 'Lax', 'Strict' or 'None'
-        "session_same_site" : "Null",
+        "session_same_site": "Null",
         //session_cookie_key: The cookie key of the session, "JSESSIONID" by default
         "session_cookie_key": "JSESSIONID",
         //session_max_age: The max age of the session cookie, -1 by default
@@ -283,7 +283,7 @@
         "enabled_compressed_request": false,
         // enable_request_stream: Defaults to false. If true the server will enable stream mode for http requests.
         // See the wiki for more details.
-        "enable_request_stream": false,
+        "enable_request_stream": false
     },
     //plugins: Define all plugins running in the application
     "plugins": [

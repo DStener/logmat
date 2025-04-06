@@ -150,7 +150,7 @@ public:
                 values += std::format("{}, ", DTO::SQL::to_string(value));
             });
 
-            return std::format("INSERT OR IGNORE INTO {2} ( {0} ) VALUES ( {1} ) RETURNING id;",
+            return std::format("INSERT OR REPLACE INTO {2} ( {0} ) VALUES ( {1} ) RETURNING id;",
                                fields.substr(0,fields.size() - 2),
                                values.substr(0,values.size() - 2),
                                DTO::GetName<T>());

@@ -12,6 +12,8 @@ CREATE TABLE IF NOT EXISTS UserAndRole
 	FOREIGN KEY(created_by) REFERENCES User(id),
 	FOREIGN KEY(deleted_by) REFERENCES User(id),
 
+	UNIQUE(user, role),
+
     FOREIGN KEY(user) REFERENCES User(id),
     FOREIGN KEY(role) REFERENCES Role(id)
 );

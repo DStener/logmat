@@ -1,4 +1,5 @@
 #include <drogon/drogon.h>
+#include <locale>
 
 int main()
 {

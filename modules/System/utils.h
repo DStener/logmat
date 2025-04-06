@@ -17,6 +17,13 @@ using DTORow = std::pair<id_t,T>;
 template <typename T>
 using ResponseVec = std::vector<DTORow<T>>;
 
+struct aitem {
+    std::string text;
+    std::string href;
+    std::string icon;
+    std::string add_class;
+};
+
 namespace API {
 class Utils
 {

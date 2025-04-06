@@ -31,7 +31,7 @@ void Auth::Register(const HttpRequestPtr& req, callback_func &&callback)
     // Convert request body to and register
     auto info = DTO::RequestBody::To<RegisterDTO>(req->getBody());
     auto captcha = DTO::RequestBody::To<::Captcha>(req->getBody());
-    auto answers = DB::get()->Select<::Captcha>(std::format("token = \"{}\"", req->getCookie("captcha_token")));
+    auto answers = DB::get()->Select<::Captcha>(std::format("token = \"{}\"", req->session()->sessionId()));
 
     std::string message;
 
@@ -96,15 +96,19 @@ void Auth::Logout(const HttpRequestPtr& req, callback_func &&callback)
     auto login = Request::Login(req, callback);
     if(!login.id) { return; }
 
-    std::cout << req->getHeader("Referer") << std::endl;
+    auto id = DB::get()->Select<::Token>(
+        std::format("token == \"{}\"", req->session()->sessionId()))[0].first;
+    // Delete current token
+    DB::get()->Delete<::Token>(id);
 
-    //auto id = DB::get()->Select<::Token>(
-    //    std::format("token == \"{}\"", req->getCookie("token")))[0].first;
-    //// Delete current token
-    //DB::get()->Delete<::Token>(id);
 
     auto response = HttpResponse::newHttpResponse();
-    response->setStatusCode(drogon::k200OK);
+    auto redirect = req->getOptionalParameter<std::string>("redirect");
+    
+    if (redirect.has_value())
+    {
+        response = HttpResponse::newRedirectionResponse(redirect.value());
+    }
     callback(response);
 }
 
@@ -231,19 +235,13 @@ void Auth::GetCaptcha(const HttpRequestPtr& req, callback_func&& callback)
         captcha.answer = math::C(a, b);
     }
 
-    captcha.token = utils::base64Encode(std::format("{}{}", equation, 
-                            captcha.time.time_since_epoch().count()));
+    captcha.token = req->session()->sessionId();
+
+    std::cout << DTO::SQL::Insert(captcha) << std::endl;
 
     DB::get()->Insert(captcha);
 
-    Cookie cookie("captcha_token", captcha.token);
-    cookie.setPath("/");
-    
-    
     auto response = HttpResponse::newHttpJsonResponse(Json::Value(equation));
     response->setStatusCode(drogon::k200OK);
-    response->addCookie(cookie);
-
     callback(response);
-
 }

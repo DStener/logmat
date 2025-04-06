@@ -56,7 +56,7 @@ async function ConfigureHeaderUserInfo()
                     <details class="user-menu">
                         <summary class="user-name">${result["username"]}</summary>
                         <ul class="user-menu-list">
-                            <li><a href="/me.html" class="user-menu-link">Профиль</a></li>
+                            <li><a href="/me" class="user-menu-link">Профиль</a></li>
                             <li><a onclick = "LogoutMe()" class="user-menu-link">Выход</a></li>
                         </ul>
                     </details>`;
@@ -68,7 +68,7 @@ async function ConfigureHeaderUserInfo()
                     <details class="user-menu">
                         <summary class="user-name">${result["username"]}</summary>
                         <ul class="user-menu-list">
-                            <li><a href="/me.html" class="user-menu-link">Профиль</a></li>
+                            <li><a href="/me" class="user-menu-link">Профиль</a></li>
                             <li><a href="/admin.html" class="user-menu-link">Панель упарвления</a></li>
                             <li><a onclick = "LogoutMe()" class="user-menu-link">Выход</a></li>
                         </ul>

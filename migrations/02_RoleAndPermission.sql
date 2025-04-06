@@ -13,6 +13,8 @@
 	FOREIGN KEY(created_by) REFERENCES User(id),
 	FOREIGN KEY(deleted_by) REFERENCES User(id),
 
+	UNIQUE(role, permission),
+
 	FOREIGN KEY(role) REFERENCES Role(id),
 	FOREIGN KEY(permission) REFERENCES Permission(id)
  );

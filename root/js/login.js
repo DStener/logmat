@@ -61,7 +61,7 @@ async function login_submit(event)
               method: "POST",
               body: formEncode(form),
             });
-            if(response.status == 200) { window.location.replace("/me.html"); }
+            if(response.status == 200) { window.location.replace("/me"); }
             else{
                 document.getElementById("err_mes").style = "";
                 document.getElementById("err_mes").innerHTML = decodeURIComponent(await response.json());

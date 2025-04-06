@@ -53,20 +53,30 @@ private:
 
 public:
 
+    static ::User GetUser(const HttpRequestPtr& req)
+    {
+        ::User user{};
+
+        // Get vector of struct Token where field token is qual to the sample
+        auto tokens = DB::get()->Select<::Token>(std::format("token == \"{}\"", req->session()->sessionId()));
+        if (tokens.empty()) { return user; }
+
+        // Get user DTO
+        auto users = DB::get()->Select<::User>(std::format("id == {}", tokens[0].second.user));
+        if (users.empty()) { return user; }
+
+        return users[0].second;
+    }
+
     Login(const HttpRequestPtr& req, callback_func& callback)
         : id(0), reqest(req), callback(callback)
     {
-        auto token = reqest->getCookie("token");
-
-        // If there is no cookie with the token
-        CHECK_AND_CALLBACK(!token.size());
+        // Get session id
+        auto token = reqest->session()->sessionId();
 
         // Get vector of struct Token where field token is qual to the sample
         auto tokens = DB::get()->Select<::Token>(std::format("token == \"{}\"", token));
         CHECK_AND_CALLBACK(!tokens.size());
-
-        // Checking for expired token lifetime
-        CHECK_AND_CALLBACK(tokens[0].second.time < std::chrono::system_clock::now());
 
         Login::id = tokens[0].second.user;
         Login::user = DB::get()->Select<::User>(std::format("id == {}", id))[0].second;
@@ -140,7 +150,8 @@ public:
         Login::user = arr[0].second;
 
         // Generate tokens
-        Token t = Login::generateToken();
+        Token t;
+        t.token = req->session()->sessionId();
         t.user = arr[0].first;
 
         // Add token to DB
@@ -150,14 +161,9 @@ public:
         std::stringstream stream;
         stream << t.token;
 
-        // Create token cookie
-        Cookie cookie("token", stream.str());
-        cookie.setPath("/");
-
         // Create response
         auto response = HttpResponse::newHttpResponse();
         response->setStatusCode(drogon::k200OK);
-        response->addCookie(cookie);
 
         callback(response);
     }
@@ -207,6 +213,31 @@ public:
         }
 
         return hasPermission(std::format("{}-{}", permission, name));
+    }
+
+    bool isAdmin()
+    {
+        auto roles = DB::get()->Select<::Role>("code == \"ADMIN\"");
+        if (roles.empty()) { return false; }
+
+        auto user_role = DB::get()->Select<::UserAndRole>(std::format("user == {} AND role = {}", id, roles[0].first));
+        if (roles.empty()) { return false; }
+
+        return true;
+    }
+
+    static bool isAdmin(const HttpRequestPtr& req)
+    {
+        auto tokens = DB::get()->Select<::Token>(std::format("token == \"{}\"", req->session()->sessionId()));
+        if (tokens.empty()) { return false; }
+
+        auto roles = DB::get()->Select<::Role>("code == \"ADMIN\"");
+        if (roles.empty()) { return false; }
+
+        auto user_role = DB::get()->Select<::UserAndRole>(std::format("user == {} AND role == {}", tokens[0].second.user, roles[0].first));
+        if (user_role.empty()) { return false; }
+
+        return true;
     }
 
     void Get2FAKey()
@@ -310,21 +341,6 @@ private:
         }
 
         return getOpenKey(Login::user.username, Login::user.time2FA);
-    }
-
-    Token generateToken()
-    {
-        ::Token t{};
-        t.user = Login::id;
-        t.time = std::chrono::system_clock::now() + std::chrono::months(18);
-        const std::string characters("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz");
-
-        std::srand(std::time(0));
-        for(int i = 0; i < 32; ++i ) {
-            t.token += characters[std::rand() % characters.size()];
-        }
-
-        return t;
     }
 
     std::string TOTP(std::string key)
