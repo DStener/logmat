@@ -53,7 +53,7 @@
 .profile-menu
 {
     width: 40%;
-    height: 250px;
+    height: 160px;
 }
 
 .switch-name
@@ -61,6 +61,7 @@
     border-radius: 0.375rem;
     border: 1px solid #000000;
     font-size: 16px;
+    margin: 10px;
 }
 
 .button-profile
