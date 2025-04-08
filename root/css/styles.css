@@ -1,17 +1,33 @@
-
+﻿
 body {
     font-family: 'Roboto', sans-serif;
-    background-color: #f3f4f6; 
+    background-color: #f3f4f6;
     margin: 0;
     padding: 0;
+    min-height: 100vh;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
 }
 
 .container {
+    width: 95%;
     max-width: 1280px;
     margin: 0 auto;
     padding: 1rem;
 }
 
+footer {
+    margin-top: auto; /* Здесь вступает в действие магия Flexbox */
+/*    background-color: white;*/
+}
+
+footer p {
+    color: #aaa;
+    font-size: 0.8rem;
+    padding: auto auto;
+    text-align: center
+}
 
 .header {
     display: flex;
@@ -244,4 +260,65 @@ a.current, a.current:hover {
     background-color: white;
     margin-left: -5px;
     padding-left: 5px;
+}
+
+.dialog {
+    width: 320px;
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+    gap: 10px;
+
+    h2
+    {
+        padding: 10px 0px;
+    }
+    label {
+        margin-top: 7px;
+    }
+
+}
+
+
+.row-cont
+{
+    display:flex;
+    gap:20px;
+}
+
+.big-avatar {
+    margin-top: 30px;
+    width: 128px;
+    height: 128px;
+}
+
+
+
+.img-responsive {
+    position: relative;
+    height: min-content;
+    
+}
+.position-rage-bottom {
+    padding-bottom: 20px;
+}
+
+button {
+    opacity: 0;
+    position: absolute;
+    width: 100px;
+    height: 30px;
+    top: 150px;
+    left: calc(50% - 50px);
+    transition: opacity .3s;
+    border: 0px;
+    font-size: 16px;
+    border-radius: 3px;
+    font-family: 'Roboto', sans-serif;
+    font-size: 0.9rem;
+}
+
+.img-responsive:hover button {
+    opacity: 1;
+    transition: opacity .3s;
 }

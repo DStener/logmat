@@ -71,6 +71,16 @@ public:
         return txt.substr(start_q, end_q - start_q + 1);
     }
 
+    static std::string toHTMLdate(time_p& time)
+    {
+        std::stringstream stream;
+        stream << time;
+
+        std::string str = stream.str();
+
+        return str.substr(0, str.find(" "));
+    }
+
 private:
 
     static std::string base32EncodeBlock(std::string str)

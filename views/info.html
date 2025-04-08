@@ -1,0 +1,37 @@
+﻿<%layout temp %>
+<%inc
+    #include "struct_declaration.hpp"
+    #include "System/utils.h"
+    #include <tuple>
+%>
+<%c++
+    auto user = @@.get<::User>("User");
+%>
+<h1>Основная информация</h1>
+<div class="row-cont">
+
+    <div class="col-sm-4 img-responsive">
+        <%c++ if(user.avatar != 0){%>
+            <img id="big-avatar" src="/api/ref/file/{%user.avatar%}/avatar" alt="Аватар пользователя" class="user-avatar big-avatar">
+        <%c++}else{%>
+            <img id="big-avatar" src="https://avatars.mds.yandex.net/i?id=9028b32c2dbca7fbe65309f1fb7141cf_l-4957727-images-thumbs&amp;n=13" alt="Аватар пользователя" class="user-avatar big-avatar">
+        <%c++}%>
+        <button onclick="ShowDialog()">Изменить</button>
+    </div>
+
+    <form class="dialog" action="/api/ref/user/0/update?redirect=/me" method="post">
+        <label for="username">Имя пользователя</label>
+        <input type="text" name="username" id="username" value="{%user.username%}" required />
+
+        <label for="email">Email</label>
+        <input type="email" name="email" id="email" value="{%user.email%}" required />
+
+        <label for="birthday">Дата рождения</label>
+        <input type="date" name="birthday" id="birthday" value="{%API::Utils::toHTMLdate(user.birthday)%}" required />
+
+
+        <input type="hidden" name="avatar" id="avatar-field"/>
+
+        <input type="submit" class="new" value="Сохранить" />
+    </form>
+</div>

@@ -21,6 +21,7 @@ public:
     //Connect methods to URL
     METHOD_LIST_BEGIN
         METHOD_ADD(User::GetList, "", drogon::Get);
+        METHOD_ADD(User::Update, "/{1:id_user}/update", drogon::Put, drogon::Post);
         METHOD_ADD(User::Story, "/{1:id_user}/story", drogon::Get);
         METHOD_ADD(User::Roles, "/{1:id}/role", drogon::Get);
         METHOD_ADD(User::Set, "/{1:id}/role", drogon::Post);
@@ -34,9 +35,12 @@ public:
 
     void Story(const HttpRequestPtr& req, callback_func &&callback,
                 id_t id_user);
+    void Update(const HttpRequestPtr& req, callback_func&& callback,
+                id_t id_user);
 
     void Roles(const HttpRequestPtr& req, callback_func &&callback,
                 id_t id);
+
     void Set(const HttpRequestPtr& req, callback_func &&callback,
                 id_t id);
     void Delete(const HttpRequestPtr& req, callback_func &&callback,

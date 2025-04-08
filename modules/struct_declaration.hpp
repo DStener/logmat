@@ -29,11 +29,12 @@
 struct User {
     std::string username;
     std::string email;
+    id_t avatar;
     time_p time2FA;
     time_p birthday;
     std::string password;
 };
-BOOST_FUSION_ADAPT_STRUCT(User, username, email, time2FA, birthday, password)
+BOOST_FUSION_ADAPT_STRUCT(User, username, email, avatar, time2FA, birthday, password)
 
 struct ChangeLog {
     std::string name_table;

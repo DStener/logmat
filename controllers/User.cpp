@@ -147,3 +147,26 @@ void Ref::User::Restore(const HttpRequestPtr& req, callback_func &&callback,
     response->setStatusCode(drogon::k200OK);
     callback(response);
 }
+
+void Ref::User::Update(const HttpRequestPtr& req, callback_func&& callback,
+    id_t id_user)
+{
+    // Login and check Permission
+    auto login = Request::Login(req, callback);
+    if (!login.id) { return; }
+
+    auto user = DTO::RequestBody::To<::User>(req->getBody());
+    user.password = "";
+    user.time2FA = time_p();
+
+    DB::get()->Update<::User>(login.id, user);
+
+    auto response = HttpResponse::newHttpResponse();
+    auto redirect = req->getOptionalParameter<std::string>("redirect");
+
+    if (redirect.has_value())
+    {
+        response = HttpResponse::newRedirectionResponse(redirect.value());
+    }
+    callback(response);
+}

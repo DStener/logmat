@@ -53,6 +53,8 @@ void Ref::File::GetAvatar(const HttpRequestPtr& req, callback_func&& callback, i
 		callback(response);
 	}
 
+	//if(re)
+
 	auto response = HttpResponse::newFileResponse(result[0].second._avatar_path);
 	callback(response);
 }
@@ -107,17 +109,24 @@ void Ref::File::Upload(const HttpRequestPtr& req, callback_func&& callback)
 	// Resizeif image 
 	if (file.getContentType() == drogon::CT_IMAGE_JPG)
 	{
+		try 
+		{
 
-		FileDB._avatar_path = std::format("{}/avatar_{}", app().getUploadPath(), name);
+			FileDB._avatar_path = std::format("{}/avatar_{}", app().getUploadPath(), name);
 
-		rgb8_image_t img;
-		rgb8_image_t img_resize(128, 128); // rgb_image is 136x98
+			rgb8_image_t img;
+			rgb8_image_t img_resize(128, 128); // rgb_image is 136x98
 
-		boost::gil::image_read_settings<jpeg_tag> readSettings;
-		boost::gil::read_image(FileDB._path, img, readSettings);
+			boost::gil::image_read_settings<jpeg_tag> readSettings;
+			boost::gil::read_image(FileDB._path, img, readSettings);
 
-		resize_view(const_view(img), view(img_resize), bilinear_sampler());
-		write_view(FileDB._avatar_path, const_view(img_resize), jpeg_tag{});
+			resize_view(const_view(img), view(img_resize), bilinear_sampler());
+			write_view(FileDB._avatar_path, const_view(img_resize), jpeg_tag{});
+		}
+		catch (...)
+		{
+			FileDB._avatar_path = "";
+		}
 	}
 	
 

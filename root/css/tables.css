@@ -62,25 +62,25 @@ input[type="button"]:disabled {
     cursor: not-allowed;
 }
 
-input[type="button"].new:not(:disabled) {
+input.new:not(:disabled) {
     background-color: #238636;
     color: white;
 }
-input[type="button"].new:hover:not(:disabled) {
+input.new:hover:not(:disabled) {
     background-color: #1c6f2d;
 }
 
-input[type="button"].delete:not(:disabled), input[type="button"].soft:hover:not(:disabled) {
+input.delete:not(:disabled), input.soft:hover:not(:disabled) {
     background-color: darkred;
     color: white;
 }
 
-input[type="button"].soft:not(:disabled) {
+input.soft:not(:disabled) {
     background-color: firebrick;
     color: white;
 }
 
-input[type="button"].delete:hover:not(:disabled) {
+input.delete:hover:not(:disabled) {
     background-color: #550000;
 }
 
@@ -121,7 +121,7 @@ a.current, a.current:hover {
     }
 }
 
-form input {
+form.dialog input {
     height: 30px;
     border: 1px solid #bdbdbd;
     border-radius: 3px;
@@ -129,30 +129,29 @@ form input {
     font-size: 0.9rem;
 }
 
-form input[type="button"], form input[type="submit"] {
-    background-color: rgba(0,0,0,0);
-    border: 0px;
-    height: 40px;
-    font-size: 16px;
-    width: auto;
-    margin-top: 20px;
-    padding-left: 0px;
-    
-    color:rgb(46, 46, 46);
-}
-form input[type="button"]:hover, form input[type="submit"]:hover {
+form.dialog input[type="button"], form.dialog input[type="submit"] {
+/*        background-color: rgba(0,0,0,0);*/
+        border: 0px;
+        height: 40px;
+        font-size: 16px;
+        width: auto;
+        margin-top: 20px;
+        padding-left: 0px;
+/*        color: rgb(46, 46, 46);*/
+    }
+form.dialog input[type="button"]:hover, form.dialog input[type="submit"]:hover {
     /* color:black; */
     text-decoration: underline;
 }
 
-form input[type="number"]::-webkit-outer-spin-button,
-form input[type="number"]::-webkit-inner-spin-button {
+form.dialog input[type="number"]::-webkit-outer-spin-button,
+form.dialog input[type="number"]::-webkit-inner-spin-button {
     -webkit-appearance: none;
 }
 
-form input[type='number'],
-form input[type="number"]:hover,
-form input[type="number"]:focus {
+form.dialog input[type='number'],
+form.dialog input[type="number"]:hover,
+form.dialog input[type="number"]:focus {
     appearance: none;
     -moz-appearance: textfield;
 }

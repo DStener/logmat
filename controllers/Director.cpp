@@ -23,12 +23,13 @@ void Director::Test(const HttpRequestPtr& req, callback_func&& callback)
 	data.insert("User", user);
 	data.insert("aitems", aitems);
 
-	auto response = HttpResponse::newHttpViewResponse("temp", data);
+	auto response = HttpResponse::newHttpViewResponse("test", data);
 	callback(response);
 }
 
 void Director::Account(const HttpRequestPtr& req, callback_func&& callback)
 {
+	std::string view = "info";
 	auto user = Request::Login::GetUser(req);
 	std::vector<aitem> aitems;
 
@@ -36,6 +37,8 @@ void Director::Account(const HttpRequestPtr& req, callback_func&& callback)
 
 	if (section.has_value())
 	{
+		view = section.value();
+
 		aitems.push_back({ utils::fromWidePath(L"Осн. информация"), "/me?section=info","ri-user-line", ((section.value() == "info")? "current" : "")});
 		aitems.push_back({ utils::fromWidePath(L"Аутентификация"), "/me?section=authentic", "ri-lock-password-line", ((section.value() == "authentic") ? "current" : "") });
 	}
@@ -45,6 +48,7 @@ void Director::Account(const HttpRequestPtr& req, callback_func&& callback)
 		aitems.push_back({ utils::fromWidePath(L"Аутентификация"), "/me?section=authentic", "ri-lock-password-line", ""});
 	}
 
+	// If User is admin, then add new section
 	if (Request::Login::isAdmin(req))
 	{
 		aitems.push_back({ utils::fromWidePath(L"Панель управления"), "/admin.html", "ri-tools-line" });
@@ -54,12 +58,10 @@ void Director::Account(const HttpRequestPtr& req, callback_func&& callback)
 	data.insert("User", user);
 	data.insert("aside-header", utils::fromWidePath(L"Аккаунт"));
 	data.insert("aitems", aitems);
+	data.insert("javascripts", std::vector<std::string>{"/js/userpanel.js"});
 
-	//;
-	
-	
-	auto response = HttpResponse::newHttpViewResponse("temp", data);
-	//response->addHeader("Content-Type", "text/html;charset=ISO-8859-1");
+
+	auto response = HttpResponse::newHttpViewResponse(view, data);
 	callback(response);
 }
 //<meta http - equiv = "Content-Type" content = "text/html;charset=ISO-8859-1">

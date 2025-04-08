@@ -1,6 +1,11 @@
 cmake_minimum_required(VERSION 3.24)
 project(logmat CXX)
 
+# Include file/module for convert .html view (like .csp) to c++ code
+include(${CMAKE_SOURCE_DIR}/cmake/views_add.cmake)
+# Include file/module for create symlink for mains directories
+include(${CMAKE_SOURCE_DIR}/cmake/main_symlink_create.cmake)
+
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
@@ -26,15 +31,6 @@ aux_source_directory(filters FILTER_SRC)
 aux_source_directory(plugins PLUGIN_SRC)
 aux_source_directory(models MODEL_SRC)
 
-
-add_custom_command(TARGET ${PROJECT_NAME} PRE_BUILD
-    COMMAND ${CMAKE_COMMAND} -E create_symlink
-    ${CMAKE_SOURCE_DIR}/views/temp.html  ${CMAKE_SOURCE_DIR}/views/temp.csp)
-
-drogon_create_views(${PROJECT_NAME} ${CMAKE_CURRENT_SOURCE_DIR}/views
-                    ${CMAKE_CURRENT_BINARY_DIR})
-
-
 target_include_directories(${PROJECT_NAME}
                            PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}
                                    ${OPENSSL_INCLUDE_DIR}
@@ -48,23 +44,12 @@ target_include_directories(${PROJECT_NAME}
 
 target_sources(${PROJECT_NAME}
                PRIVATE
+               ${SYMLINK_TARGET}
+               ${VIEWSRC}
                ${SRC_DIR}
                ${CTL_SRC}
                ${FILTER_SRC}
                ${PLUGIN_SRC}
                ${MODEL_SRC})
-
-# Create symlink to HTML root dir
-add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E create_symlink
-    ${CMAKE_SOURCE_DIR}/root $<TARGET_FILE_DIR:${PROJECT_NAME}>/root)
-
-add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E create_symlink
-    ${CMAKE_SOURCE_DIR}/migrations $<TARGET_FILE_DIR:${PROJECT_NAME}>/migrations)
-
-add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E create_symlink
-    ${CMAKE_SOURCE_DIR}/seeders $<TARGET_FILE_DIR:${PROJECT_NAME}>/seeders)
 
 add_subdirectory(test)

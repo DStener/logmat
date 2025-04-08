@@ -9,12 +9,14 @@
     auto user = @@.get<::User>("User");
     auto items = @@.get<std::vector<aitem>>("aitems");
     auto aside_header = @@.get<std::string>("aside-header");
+    auto javascripts = @@.get<std::vector<std::string>>("javascripts");
 %>
 <head>
     <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>logMAT - TEST</title>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet"/>
+    <link href="../css/tables.css" rel="stylesheet" />
     <link href="../css/styles.css" rel="stylesheet"/>
     <link href="../css/menuStyles.css" rel="stylesheet"/>
     <link href="../css/userMenu.css" rel="stylesheet"/>
@@ -22,13 +24,16 @@
         href="https://cdn.jsdelivr.net/npm/remixicon@4.5.0/fonts/remixicon.css"
         rel="stylesheet"
     />
+    <%c++ for(auto& js : javascripts){%>
+        <script src="{%js%}"></script>
+    <%c++}%>
 </head>
 <body>
     <div class="container">
         <header class="header">
             <div class="logo">
                 <a href="#">
-                    <img src="../img/av.png" alt="Логотип logMAT" class="logo-img"/>
+                    <img src="../img/av.png" alt="Логотип logMAT" class="logo-img" />
                 </a>
                 <div>
                     <a href="../index.html" class="logo-text">logMAT</a>
@@ -37,21 +42,29 @@
             </div>
 
             <div class="header-controls">
-                <input type="text" placeholder="Поиск" class="search-input"/>
+                <input type="text" placeholder="Поиск" class="search-input" />
                 <div class="user-info">
                     <%c++ if(user.username.empty()){%>
                         <a class="submenu-link" href="login.html">Вход</a>
                         <p>/</p>
                         <a class="submenu-link" href="register.html">Регистрация</a>
                     <%c++ }else{%>
-                        <img src="https://avatars.mds.yandex.net/i?id=9028b32c2dbca7fbe65309f1fb7141cf_l-4957727-images-thumbs&n=13" alt="ÐÐ²Ð°ÑÐ°Ñ Ð¿Ð¾Ð»ÑÐ·Ð¾Ð²Ð°ÑÐµÐ»Ñ" class="user-avatar" />
+                        <%c++ if(user.avatar != 0){%>
+                            <img src="/api/ref/file/{%user.avatar%}/avatar" alt="Аватар пользователя" class="user-avatar">
+                        <%c++}else{%>
+                            <img src="https://avatars.mds.yandex.net/i?id=9028b32c2dbca7fbe65309f1fb7141cf_l-4957727-images-thumbs&amp;n=13" alt="Аватар пользователя" class="user-avatar">
+                        <%c++}%>
+
+                       
                         <details class="user-menu">
                             <summary class="user-name">{%user.username%}</summary>
                             <ul class="user-menu-list">
                                 <li><a href="me" class="user-menu-link">Профиль</a></li>
-                                <li><form action="/api/auth/out?redirect=/" method="post">
-                                    <input type="submit" class="user-menu-link" value="Выход"/>
-                                </form></li>
+                                <li>
+                                    <form action="/api/auth/out?redirect=/" method="post">
+                                        <input type="submit" class="user-menu-link" value="Выход" />
+                                    </form>
+                                </li>
                             </ul>
                         </details>
                     <%c++}%>
@@ -65,12 +78,12 @@
                     <ul class="menu" id="ASidePanel">
                         <li class="menu-title" id="aside-title">{%aside_header%}</li>
                         <%c++ for(auto& item : items){%>
-                            <a href="{%item.href%}" class="submenu-link {%item.add_class%}">
-                                <%c++ if(!item.icon.empty()){%>
-                                    <i class="{%item.icon%}"></i>
-                                <%c++}%>
-                                {%item.text.c_str()%}
-                            </a>
+                        <a href="{%item.href%}" class="submenu-link {%item.add_class%}">
+                            <%c++ if(!item.icon.empty()){%>
+                            <i class="{%item.icon%}"></i>
+                            <%c++}%>
+                            {%item.text.c_str()%}
+                        </a>
                         <%c++}%>
                     </ul>
                 </nav>
@@ -78,9 +91,26 @@
 
             <main class="main-content">
                 <article>
+                    [[]]
                 </article>
             </main>
         </div>
     </div>
+    <div id="parent_popup" style="display: none;">
+        <div id="popup_form">
+            <h2 id="popup_form_header"></h2>
+            <form id="popup_form_form" class="dialog">
+                <!-- <input type=""> -->
+            </form>
+        </div>
+    </div>
+    <footer>
+        <p>
+            @ 2025 logMat.
+            <%c++ if(drogon::app().getCustomConfig().isMember("version")){%>
+            Версия: {%API::Utils::trim(drogon::app().getCustomConfig()["version"].asString())%}
+            <%c++}%>
+        </p>
+    </footer>
 </body>
 </html>

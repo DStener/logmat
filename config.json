@@ -104,7 +104,7 @@
         //upload_path: The path to save the uploaded file. "uploads" by default. 
         //If the path isn't prefixed with /, ./ or ../,
         //it is relative path of document_root path
-        "upload_path": "uploads",
+        "upload_path": "../uploads",
         /* file_types:
          * HTTP download file types,The file types supported by drogon
          * by default are "html", "js", "css", "xml", "xsl", "txt", "svg",
@@ -266,14 +266,14 @@
         "br_static": true,
         //client_max_body_size: Set the maximum body size of HTTP requests received by drogon. The default value is "1M".
         //One can set it to "1024", "1k", "10M", "1G", etc. Setting it to "" means no limit.
-        "client_max_body_size": "1M",
+        "client_max_body_size": "10M",
         //max_memory_body_size: Set the maximum body size in memory of HTTP requests received by drogon. The default value is "64K" bytes.
         //If the body size of a HTTP request exceeds this limit, the body is stored to a temporary file for processing.
         //Setting it to "" means no limit.
-        "client_max_memory_body_size": "64K",
+        "client_max_memory_body_size": "10M",
         //client_max_websocket_message_size: Set the maximum size of messages sent by WebSocket client. The default value is "128K".
         //One can set it to "1024", "1k", "10M", "1G", etc. Setting it to "" means no limit.
-        "client_max_websocket_message_size": "128K",
+        "client_max_websocket_message_size": "10M",
         //reuse_port: Defaults to false, users can run multiple processes listening on the same port at the same time.
         "reuse_port": false,
         // enabled_compressed_request: Defaults to false. If true the server will automatically decompress compressed request bodies.
@@ -331,6 +331,9 @@
         //    }
         //}
     ],
-    //custom_config: custom configuration for users. This object can be get by the app().getCustomConfig() method. 
-    "custom_config": {}
+    //custom_config: custom configuration for users. This object can be get by the app().getCustomConfig() method.
+    "custom_config": {
+        "version":  "0.0.2"
+
+    }
 }
