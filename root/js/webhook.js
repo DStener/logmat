@@ -29,9 +29,9 @@ async function WebHookStart(event)
 
 
         if (response.status == 200) {
-            document.getElementById("shell").innerHTML = `<p style="color: green;">${json["message"]}</p>`;
+            document.getElementById("span-shell").innerHTML += json["message"];
         } else {
-            document.getElementById("shell").innerHTML = `<p style="color: red;">${json["message"]}</p>`;
+            document.getElementById("span-shell").innerHTML += json["message"];
             return;
         }
         let socket = new WebSocket(`ws://${window.location.host}${json["websocet_url"]}`);
@@ -41,7 +41,8 @@ async function WebHookStart(event)
         };
 
         socket.onmessage = function (event) {
-            document.getElementById("shell").innerHTML += `<p style="white-space: pre-line;">${atob(event.data)}</p>`;
+            document.getElementById("span-shell").innerHTML += atob(event.data);
+            // document.getElementById("shell").innerHTML += `<p style="white-space: pre-line;">${}</p>`;
         };
 
         socket.onclose = function (event) {

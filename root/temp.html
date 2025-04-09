@@ -82,7 +82,9 @@
             <main class="main-content">
                 <article>
                     <h1>Webhook на Git</h1>
-                    <div id="shell"></div>
+                    <div id="shell">   
+                        <span id="span-shell" style="white-space: pre-line"></span>
+                    </div>
                     <form id="shell-cmd" action="/hooks/git" method="POST">
                         <input type="text" name="secret_key" required>
                         <input type="submit" value="<">
