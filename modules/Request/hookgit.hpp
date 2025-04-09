@@ -43,8 +43,7 @@ public:
             auto _temp = HookGit::exec(cmd.data());
 
             LOG_INFO << _temp;
-            wsConnPtr->send(utils::urlEncode(_temp));
-
+            wsConnPtr->send(utils::base64Encode(utils::fromWidePath(utils::toWidePath(_temp))));
         }
     }
 private:

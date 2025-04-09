@@ -26,7 +26,7 @@ async function WebHookStart(event)
             body: params.toString(),
         });
         var json = await response.json();
-        
+
 
         if (response.status == 200) {
             document.getElementById("shell").innerHTML = `<p style="color: green;">${json["message"]}</p>`;
@@ -41,7 +41,7 @@ async function WebHookStart(event)
         };
 
         socket.onmessage = function (event) {
-            document.getElementById("shell").innerHTML += `<p style="white-space: pre-line;">${decodeURI(event.data)}</p>`;
+            document.getElementById("shell").innerHTML += `<p style="white-space: pre-line;">${atob(event.data)}</p>`;
         };
 
         socket.onclose = function (event) {

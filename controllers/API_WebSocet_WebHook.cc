@@ -17,15 +17,15 @@ void WebHook::handleNewConnection(const HttpRequestPtr &req, const WebSocketConn
         wsConnPtr->shutdown(CloseCode::kNormalClosure, "Обновление уже выполняется другим пользователем");
         return;
     }
-    
+
     // Set user address
     addres.emplace(req->getLocalAddr());
-    wsConnPtr->send(utils::urlEncode("START UPDATE"));
+    wsConnPtr->send(utils::base64Encode("START UPDATE"));
 
 
     Request::HookGit::Update(wsConnPtr);
 
-    wsConnPtr->send(utils::urlEncode("END UPDATE"));
+    wsConnPtr->send(utils::base64Encode("END UPDATE"));
 }
 
 void WebHook::handleConnectionClosed(const WebSocketConnectionPtr& wsConnPtr)
