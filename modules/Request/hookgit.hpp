@@ -33,8 +33,8 @@ public:
             "git checkout origin/main",
             "git pull",
             "cmake -B build .",
-            "cd build",
-            "cmake --build . --config Release"
+            "cd ./build",
+            "cmake --build . --clean-first --config Release"
         };
 
         for (const auto& cmd : commands)
