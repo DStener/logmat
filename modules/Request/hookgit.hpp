@@ -16,25 +16,26 @@
 #endif
 
 
-
+#include <drogon/WebSocketController.h>
 
 using namespace drogon;
 
 namespace Request {
 class HookGit {
 private:
-    
+
 public:
     static void Update(const WebSocketConnectionPtr& wsConnPtr)
     {
         static std::vector<std::string> commands {
             std::format("cd {}", CMAKE_CURRENT_SOURCE_DIR),
-            //"git reset --hard",
-            //"git checkout origin/main",
-            //"git pull"
+            "git reset --hard",
+            "git checkout origin/main",
+            "git pull",
+            "cmake -B build .",
+            "cd build",
+            "cmake --build . --config Release"
         };
-
-        
 
         for (const auto& cmd : commands)
         {
