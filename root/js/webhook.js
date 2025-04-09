@@ -41,7 +41,7 @@ async function WebHookStart(event)
         };
 
         socket.onmessage = function (event) {
-            document.getElementById("shell").innerHTML += `<p style="white-space: pre-line;">${atob(event.data)}</p>`;
+            document.getElementById("shell").innerHTML += `<p style="white-space: pre-line;">${decodeURI(event.data)}</p>`;
         };
 
         socket.onclose = function (event) {
