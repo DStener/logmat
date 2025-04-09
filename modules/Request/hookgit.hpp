@@ -33,17 +33,28 @@ public:
             "git checkout origin/main",
             "git pull",
             "cmake -B build .",
-            "cd ./build",
-            "cmake --build . --clean-first --config Release"
+            // "cd ./build",
+            // "cmake --build . --clean-first --config Release"
         };
+
+        std::array<char, 128> buffer;
 
         for (const auto& cmd : commands)
         {
             auto log_cmd = std::format("> {}", cmd);
-            auto _temp = HookGit::exec(cmd.data());
 
-            LOG_INFO << _temp;
-            wsConnPtr->send(utils::base64Encode(utils::fromWidePath(utils::toWidePath(_temp))));
+            wsConnPtr->send(utils::base64Encode(log_cmd));
+
+            std::unique_ptr<FILE, decltype(&pclose)> pipe(popen(cmd.data(), "r"), pclose);
+
+            if (!pipe) {
+                throw std::runtime_error("popen() failed!");
+            }
+            while (fgets(buffer.data(), static_cast<int>(buffer.size()), pipe.get()) != nullptr) {
+                wsConnPtr->send(utils::base64Encode(buffer.data()));
+            }
+
+
         }
     }
 private:
