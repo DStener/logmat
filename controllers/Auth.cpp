@@ -29,8 +29,8 @@ using namespace API;
 void Auth::Register(const HttpRequestPtr& req, callback_func &&callback)
 {
     // Convert request body to and register
-    auto info = DTO::RequestBody::To<RegisterDTO>(req->getBody());
-    auto captcha = DTO::RequestBody::To<::Captcha>(req->getBody());
+    auto info = DTO::ConvertTo<::RegisterDTO>(req);
+    auto captcha = DTO::ConvertTo<::Captcha>(req);
     auto answers = DB::get()->Select<::Captcha>(std::format("token = \"{}\"", req->session()->sessionId()));
 
     std::string message;
@@ -70,7 +70,11 @@ void Auth::Register(const HttpRequestPtr& req, callback_func &&callback)
 void Auth::Login(const HttpRequestPtr& req, callback_func &&callback)
 {
     // Convert request body to LoginDTO and login
-    auto info = DTO::RequestBody::To<LoginDTO>(req->getBody());
+    auto info = DTO::ConvertTo<::LoginDTO>(req);
+
+    std::cout << info.password << std::endl;
+    std::cout << info.username << std::endl;
+
     Request::Login(info, req, callback);
 }
 

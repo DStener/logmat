@@ -75,7 +75,7 @@ void Ref::User::Set(const HttpRequestPtr& req, callback_func &&callback,
     auto login = Request::Login(req, callback);
     if(!login.id || !login.hasPermission<::User>("create")) { return; }
 
-    auto user_role = DTO::RequestBody::To<::UserAndRole>(req->getBody());
+    auto user_role = DTO::ConvertTo<::UserAndRole>(req);
     user_role.user = id;
     user_role.created_by = login.id;
     user_role.created_at = std::chrono::system_clock::now();
@@ -155,7 +155,7 @@ void Ref::User::Update(const HttpRequestPtr& req, callback_func&& callback,
     auto login = Request::Login(req, callback);
     if (!login.id) { return; }
 
-    auto user = DTO::RequestBody::To<::User>(req->getBody());
+    auto user = DTO::ConvertTo<::User>(req);
     user.password = "";
     user.time2FA = time_p();
 

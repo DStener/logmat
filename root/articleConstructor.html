@@ -1,14 +1,21 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-    <meta charset="UTF-8"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Профиль пользователя | logMAT</title>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet"/>
-    <link href="../css/styles.css" rel="stylesheet"/>
-    <link href="../css/menuStyles.css" rel="stylesheet"/>
-    <link href="../css/userMenu.css" rel="stylesheet"/>
-    <link href="../css/userProfile.css" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet" />
+    <link href="../css/styles.css" rel="stylesheet" />
+    <link href="../css/menuStyles.css" rel="stylesheet" />
+    <link href="../css/userMenu.css" rel="stylesheet" />
+    <link href="/css/tables.css" rel="stylesheet" />
+    <link href="../css/userProfile.css" rel="stylesheet" />
+
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@4.5.0/fonts/remixicon.css"
+          rel="stylesheet" />
+
+    <script src="/js/editor.js"></script>
+
 </head>
 <body>
     <div class="container">
@@ -44,54 +51,50 @@
             <aside class="sidebar">
                 <nav>
                     <ul class="menu">
-                        <li class="menu-title">Алгоритмы</li>
-                        <li>
-                            <details class="menu-item">
-                                <summary class="menu-summary">Алгоритмы сортировки</summary>
-                                <ul class="submenu">
-                                    <li><a href="../temp.html" class="submenu-link">Быстрая сортировка (Quick Sort)</a></li>
-                                    <li><a href="#" class="submenu-link">Сортировка слиянием (Merge Sort)</a></li>
-                                    <li><a href="#" class="submenu-link">Пузырьковая сортировка (Bubble Sort)</a></li>
-                                    <li><a href="#" class="submenu-link">Сортировка вставками (Insertion Sort)</a></li>
-                                    <li><a href="#" class="submenu-link">Сортировка выбором (Selection Sort)</a></li>
-                                    <li><a href="#" class="submenu-link">Пирамидальная сортировка (Heap Sort)</a></li>
-                                    <li><a href="#" class="submenu-link">Поразрядная сортировка (Radix Sort)</a></li>
-                                </ul>
-                            </details>
-                        </li>
-                        <li>
-                            <details class="menu-item">
-                                <summary class="menu-summary">Алгоритмы поиска</summary>
-                                <ul class="submenu">
-                                    <li><a href="#" class="submenu-link">Линейный поиск (Linear Search)</a></li>
-                                    <li><a href="#" class="submenu-link">Бинарный поиск (Binary Search)</a></li>
-                                    <li><a href="#" class="submenu-link">Поиск в глубину (DFS)</a></li>
-                                    <li><a href="#" class="submenu-link">Поиск в ширину (BFS)</a></li>
-                                </ul>
-                            </details>
-                        </li>
-                        <li class="menu-title"><a href="../aboutUs.html" class="submenu-link">О нас</a></li>
+                        <li class="menu-title">Конструктор</li>
+
+                        <a href="#" class="submenu-link" onclick="insertTag('h2')">
+                            <i class="ri-h-2"></i>
+                            Заголовок раздела
+                        </a>
+
+                        <hr>
+                        <a href="#" class="submenu-link" onclick="insertTag('b')">
+                            <i class="ri-bold"></i>
+                            Жирный
+                        </a>
+
+                        <a href="#" class="submenu-link" onclick="insertTag('i')">
+                            <i class="ri-italic"></i>
+                            Курсив
+                        </a>
+
+                        <a href="#" class="submenu-link" onclick="insertTag('u')">
+                            <i class="ri-underline"></i>
+                            Подчёркнутый
+                        </a>
+
+                        <hr>
+
+                        <a class="submenu-link">
+                            <i class="ri-image-add-line"></i>
+                            Изображение
+                        </a>
+
+                        <a class="submenu-link">
+                            <i class="ri-file-add-line"></i>
+                            Файл
+                        </a>
                     </ul>
                 </nav>
             </aside>
 
             <main class="main-content">
-                <h1>Конструктор статей</h1>
-                <label for="title" class="title-stat">Заголовок статьи:</label>
-                <input type="text" id="title" placeholder="Введите заголовок" required>
-                <br>
-
-                <label for="content" class="title-stat">Содержимое статьи:</label>
-                <br>
-                <textarea id="content" placeholder="Введите текст статьи" required class="text-stat"></textarea>
-                <br>
-                <button id="submit" class="button-stat">Сохранить статью</button>
-
-                <h2>Ваши статьи:</h2>
-                <div id="articles"></div>
+                
             </main>
         </div>
     </div>
+
     <script>
         document.getElementById('submit').addEventListener('click', function() {
             const title = document.getElementById('title').value;

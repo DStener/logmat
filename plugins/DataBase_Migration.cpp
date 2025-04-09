@@ -5,8 +5,12 @@ using namespace DataBase;
 
 void Migration::initAndStart(const Json::Value &config)
 {
+    using std::filesystem::directory_iterator;
+    using std::filesystem::directory_entry;
+
     // Create new Transaction
-    auto transPtr = drogon::app().getDbClient()->newTransaction();
+    auto clientPtr = drogon::app().getDbClient();
+    clientPtr->execSqlSync("BEGIN TRANSACTION;");
 
     // Get parametr "migrations_directory"
     const auto migrations = config.get("migrations_directory", "").asString();
@@ -14,7 +18,11 @@ void Migration::initAndStart(const Json::Value &config)
     // Check, that config has value and value is exists path
     if (migrations.empty() || !std::filesystem::exists(migrations)) { return; }
 
-    for (auto const& entry : std::filesystem::directory_iterator(migrations))
+    // Sorted file in directory
+    std::vector<directory_entry> entries(directory_iterator(migrations), directory_iterator{});
+    std::ranges::sort(entries, {}, &directory_entry::path);
+
+    for (auto const& entry : entries)
     {
         // Check that file exists and it has ".sql" extension
         if (!entry.exists() || entry.path().extension() != ".sql") { continue; }
@@ -32,15 +40,15 @@ void Migration::initAndStart(const Json::Value &config)
             for (auto const& command : utils::splitString(sstr.str(), ";"))
             {
                 // Execute sql command from file 
-                transPtr->execSqlAsync(command,
+                clientPtr->execSqlAsync(command,
                     [](const drogon::orm::Result& result) {},
-                    [](const orm::DrogonDbException& e) { LOG_ERROR << "error:" << e.base().what();});
+                    [](const orm::DrogonDbException& e) { LOG_ERROR << " error:" << e.base().what();});
             }
         }
-
         // Close file
         istrm.close();
     }
+    clientPtr->execSqlSync("COMMIT;");
 }
 
 void Migration::shutdown() 

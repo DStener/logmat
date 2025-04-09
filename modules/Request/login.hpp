@@ -115,12 +115,8 @@ public:
         // by Password
         else
         {
-            // Calculate hash
-            std::stringstream hash{};
-            hash << std::hash<std::string>{}(info.password);
-
             // Check correct data
-            if(arr.size() == 0 || arr[0].second.password != hash.str())
+            if(arr.size() == 0 || arr[0].second.password != utils::getMd5(info.password))
             {
                 Json::Value json("Некорректный логин или пароль.");
 
@@ -284,7 +280,7 @@ public:
 
     void Switch2FA()
     {
-        auto info = DTO::RequestBody::To<::LoginDTO>(reqest->getBody());
+        auto info = DTO::ConvertTo<::LoginDTO>(reqest);
 
         std::stringstream hash{};
         hash << std::hash<std::string>{}(info.password);

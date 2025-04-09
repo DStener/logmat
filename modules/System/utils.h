@@ -21,6 +21,7 @@ struct aitem {
     std::string text;
     std::string href;
     std::string icon;
+    std::string onclick;
     std::string add_class;
 };
 

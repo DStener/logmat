@@ -1,12 +1,17 @@
 #include "DataBase_Seeder.h"
+#include <ranges>
 
 using namespace drogon;
 using namespace DataBase;
 
 void Seeder::initAndStart(const Json::Value &config)
 {
+    using std::filesystem::directory_iterator;
+    using std::filesystem::directory_entry;
+
     // Create new Transaction
-    auto transPtr = drogon::app().getDbClient()->newTransaction();
+    auto clientPtr = drogon::app().getDbClient();
+    clientPtr->execSqlSync("BEGIN TRANSACTION;");
 
     // Get parametr "seedrs_directory"
     const auto seedrs = config.get("seedrs_directory", "").asString();
@@ -14,8 +19,12 @@ void Seeder::initAndStart(const Json::Value &config)
     // Check, that config has value and value is exists path
     if (seedrs.empty() || !std::filesystem::exists(seedrs)) { return; }
 
+    // Sorted file in directory
+    std::vector<directory_entry> entries(directory_iterator(seedrs), directory_iterator{});
+    std::ranges::sort(entries, {}, &directory_entry::path);
+
     
-    for (auto const& entry : std::filesystem::directory_iterator(seedrs))
+    for (auto const& entry : entries)
     {
         // Check that file exists and it has ".sql" extension
         if (!entry.exists() || entry.path().extension() != ".sql") { continue; }
@@ -33,15 +42,16 @@ void Seeder::initAndStart(const Json::Value &config)
             for (auto const& command : utils::splitString(sstr.str(), ";"))
             {
                 // Execute sql command from file 
-                transPtr->execSqlAsync(command,
+                clientPtr->execSqlAsync(command,
                     [](const drogon::orm::Result& result) {},
-                    [](const orm::DrogonDbException& e) { LOG_ERROR << "error:" << e.base().what();});
+                    [](const orm::DrogonDbException& e) { LOG_ERROR << " error:" << e.base().what();});
             }
         }
 
         // Close file
         istrm.close();
     }
+    clientPtr->execSqlSync("COMMIT;");
 }
 
 void Seeder::shutdown() 

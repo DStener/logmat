@@ -10,6 +10,8 @@
     <link href="../css/menuStyles.css" rel="stylesheet" />
     <link href="../css/userMenu.css" rel="stylesheet" />
     <link href="./css/userMenu.css" rel="stylesheet" />
+
+    <script src="/js/webhook.js"></script>
 </head>
 <body>
     <div class="container">
@@ -79,6 +81,12 @@
 
             <main class="main-content">
                 <article>
+                    <h1>Webhook на Git</h1>
+                    <div id="shell"></div>
+                    <form id="shell-cmd" action="/hooks/git" method="POST">
+                        <input type="text" name="secret_key" required>
+                        <input type="submit" value="<">
+                    </form>
                 </article>
             </main>
         </div>

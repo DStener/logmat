@@ -68,7 +68,7 @@ void Policy::Role::Create(const HttpRequestPtr& req, callback_func &&callback)
     auto login = Request::Login(req, callback);
     if(!login.id || !login.hasPermission<::Role>("create")) { return; }
 
-    auto role = DTO::RequestBody::To<::Role>(req->getBody());
+    auto role = DTO::ConvertTo<::Role>(req);
     role.created_by = 0;
     role.created_at = std::chrono::system_clock::now();
     role.deleted_by = 0;
@@ -89,7 +89,7 @@ void Policy::Role::Update(const HttpRequestPtr& req, callback_func &&callback,
     auto login = Request::Login(req, callback);
     if(!login.id || !login.hasPermission<::Role>("update")) { return; }
 
-    auto role = DTO::RequestBody::To<::Role>(req->getBody());
+    auto role = DTO::ConvertTo<::Role>(req);
     role.created_by = 0;
     role.created_at = time_p();
     role.deleted_by = 0;
@@ -194,7 +194,7 @@ void Policy::Role::Set(const HttpRequestPtr& req, callback_func &&callback,
     auto login = Request::Login(req, callback);
     if(!login.id || !login.hasPermission<::Role>("create")) { return; }
 
-    auto role_perm = DTO::RequestBody::To<::RoleAndPermission>(req->getBody());
+    auto role_perm = DTO::ConvertTo<::RoleAndPermission>(req);
     role_perm.role = id_role;
     role_perm.created_by = login.id;
     role_perm.created_at = std::chrono::system_clock::now();

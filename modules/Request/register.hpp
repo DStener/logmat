@@ -47,15 +47,11 @@ public:
             return;
         }
 
-        // Calcuulate password hash
-        std::stringstream hash{};
-        hash << std::hash<std::string>{}(info.password);
-
         User user {};
         user.username = info.username;
         user.email = info.email;
         user.birthday = info.birthday;
-        user.password = hash.str();
+        user.password = utils::getMd5(info.password);
 
         // Add user to DB
         DB::get()->Insert(user);

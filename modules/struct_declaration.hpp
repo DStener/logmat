@@ -103,8 +103,14 @@ struct File {
 BOOST_FUSION_ADAPT_STRUCT(File, name, description, tags, size,
                           _path, _avatar_path, ADAPT_SERVICE_FIELDS)
 
-
-
+struct Article {
+    std::string header;
+    std::string tags;
+    std::string content;
+    SERVICE_FIELDS
+};
+BOOST_FUSION_ADAPT_STRUCT(Article, header, tags, content,
+                          ADAPT_SERVICE_FIELDS)
 
 
 
@@ -130,4 +136,11 @@ struct LoginDTO {
     std::string code;
 };
 BOOST_FUSION_ADAPT_STRUCT(LoginDTO, username, password, code)
+
+struct WebHook {
+    std::string secret_key;
+};
+BOOST_FUSION_ADAPT_STRUCT(WebHook, secret_key)
+
+
 

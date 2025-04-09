@@ -1,4 +1,5 @@
 build/
+uploads/
 .vs/
 out/
 enc_temp_folder/

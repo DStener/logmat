@@ -1,0 +1,22 @@
+﻿<%layout temp %>
+<%inc
+    #include "struct_declaration.hpp"
+    #include "System/utils.h"
+    #include <tuple>
+%>
+<%c++
+    auto user = @@.get<::User>("User");
+%>
+<h1>Конструктор статей</h1>
+
+<form class="dialog wide" action="/api/ref/article/" method="POST">
+    
+    <label for="header">Заголовок статьи:</label>
+    <input type="text" name="header" id="header" placeholder="Введите заголовок" required>
+
+    <label for="content">Содержимое статьи:</label>
+    <textarea id="content" name="content" placeholder="Введите текст статьи" required class="text-stat"></textarea>
+    <br>
+    <!--<button id="submit" class="button-stat">Сохранить статью</button>-->
+    <input type="submit" class="new" value="Сохранить статью" />
+</form>

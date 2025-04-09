@@ -77,6 +77,8 @@ void Ref::File::Upload(const HttpRequestPtr& req, callback_func&& callback)
 	auto login = Request::Login(req, callback);
 	if (!login.id || !login.hasPermission<::File>("create")) { return; }
 
+
+
 	MultiPartParser parser;
 
 	// Check coorect file 
@@ -143,7 +145,7 @@ void Ref::File::Update(const HttpRequestPtr& req, callback_func&& callback, id_t
 	auto login = Request::Login(req, callback);
 	if (!login.id || !login.hasPermission<::File>("update")) { return; }
 
-	auto info = DTO::RequestBody::To<::File>(req->getBody());
+	auto info = DTO::ConvertTo<::File>(req);
 
 	DB::get()->Update(id_file, info);
 
@@ -171,7 +173,7 @@ void Ref::File::SoftDelete(const HttpRequestPtr& req, callback_func&& callback, 
 	auto login = Request::Login(req, callback);
 	if (!login.id || !login.hasPermission<::File>("delete")) { return; }
 
-	auto file = DB::get()->Select<::File>(std::format("id == {}", login.id))[0].second;
+	auto file = DB::get()->Select<::File>(std::format("id == {}", id_file))[0].second;
 	file.deleted_at = std::chrono::system_clock::now();
 	file.deleted_by = login.id;
 

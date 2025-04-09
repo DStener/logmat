@@ -66,7 +66,7 @@ void Policy::Permission::Create(const HttpRequestPtr& req, callback_func &&callb
     auto login = Request::Login(req, callback);
     if(!login.id || !login.hasPermission<::Permission>("create")) { return; }
 
-    auto permission = DTO::RequestBody::To<::Permission>(req->getBody());
+    auto permission = DTO::ConvertTo<::Permission>(req);
     permission.created_by = login.id;
     permission.created_at = std::chrono::system_clock::now();
     permission.deleted_by = 0;
@@ -89,7 +89,7 @@ void Policy::Permission::Update(const HttpRequestPtr& req, callback_func &&callb
     auto login = Request::Login(req, callback);
     if(!login.id || !login.hasPermission<::Permission>("update")) { return; }
 
-    auto permission = DTO::RequestBody::To<::Permission>(req->getBody());
+    auto permission = DTO::ConvertTo<::Permission>(req);
     permission.created_by = 0;
     permission.created_at = time_p();
     permission.deleted_by = 0;

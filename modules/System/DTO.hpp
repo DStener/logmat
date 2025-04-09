@@ -18,6 +18,11 @@
 #include <boost/fusion/adapted.hpp>
 #include <boost/fusion/mpl.hpp>
 #include <boost/core/type_name.hpp>
+#include <boost/algorithm/string.hpp>
+
+#include <boost/tokenizer.hpp>
+#include <algorithm>
+#include <sstream>
 
 class DTO
 {
@@ -37,6 +42,125 @@ public:
     {
         return std::string{boost::core::type_name<T>()};
     }
+
+    template <typename T>
+    static T ConvertTo(const drogon::HttpRequestPtr& req)
+    {
+        T ret;
+        const std::string_view body = req->getBody();
+
+        DTO::for_each(ret, [&](std::string_view field, auto& value)
+        {
+            using type_dec = std::remove_cvref_t<decltype(value)>;
+
+            size_t start = body.find(field);
+            size_t end = body.find("&", start);
+
+            if(start == std::string_view::npos) { return; }
+            if(end == std::string_view::npos) { end = body.size(); }
+
+            std::string content(drogon::utils::urlDecode(
+                                body.begin() + start + field.size() + 1,
+                                body.begin() + end));
+
+
+            // Convert from string to var
+            if constexpr (std::is_same_v<type_dec, int> ||
+                std::is_same_v<type_dec, std::size_t> ||
+                std::is_same_v<type_dec, id_t>)
+            {
+                value = std::stoi(content);
+            }
+            else if constexpr (std::is_same_v<type_dec, float> ||
+                std::is_same_v<type_dec, double>)
+            {
+                value = std::stod(content);
+            }
+            else if constexpr (std::is_same_v<type_dec, std::string>)
+            {
+                value = content;
+            }
+            else if constexpr (std::is_same_v<type_dec, time_p>)
+            {
+                using namespace std::chrono;
+
+                time_t rawtime = time(nullptr);
+                std::tm time = *localtime(&rawtime);
+
+                std::istringstream stream{ content };
+                stream >> std::get_time(&time, "%Y-%m-%d");
+
+                value = system_clock::from_time_t(std::mktime(&time));
+            }
+        });
+        return ret;
+    }
+
+
+
+    // template <typename T>
+    // static T ConvertTo(const drogon::HttpRequestPtr& req)
+    // {
+    //     using char_tokenizer = boost::tokenizer<boost::char_separator<char>>;
+    //     T ret;
+
+    //     boost::char_separator<char> sep{ "&" };
+    //     const std::string body{req->getBody()};
+    //     char_tokenizer tok{body, sep};
+
+    //     std::cout << req->getBody() << std::endl;
+
+    //     DTO::for_each(ret, [&tok](std::string_view field, auto& value)
+    //     {
+    //         using type_dec = std::remove_cvref_t<decltype(value)>;
+    //         const std::string name{ field };
+
+    //         char_tokenizer::iterator it =\
+    //             std::find_if(tok.begin(), tok.end(), [&name](const std::string& str)
+    //             {
+    //                     return str.starts_with(name);
+    //             });
+
+
+    //         if (it == tok.end() && !(*it).starts_with(name)) { return; }
+
+    //         // Get value before '='
+    //         std::string_view _temp = (*it).substr((*it).find('=') + 1);
+    //         std::string content(drogon::utils::urlDecode(_temp));
+
+    //         //LOG_INFO << (*it).starts_with(name) << *it ;
+
+    //         // Convert from string to var
+    //         if constexpr (std::is_same_v<type_dec, int> ||
+    //             std::is_same_v<type_dec, std::size_t> ||
+    //             std::is_same_v<type_dec, id_t>)
+    //         {
+    //             value = std::stoi(content);
+    //         }
+    //         else if constexpr (std::is_same_v<type_dec, float> ||
+    //             std::is_same_v<type_dec, double>)
+    //         {
+    //             value = std::stod(content);
+    //         }
+    //         else if constexpr (std::is_same_v<type_dec, std::string>)
+    //         {
+    //             value = content;
+    //         }
+    //         else if constexpr (std::is_same_v<type_dec, time_p>)
+    //         {
+    //             using namespace std::chrono;
+
+    //             time_t rawtime = time(nullptr);
+    //             std::tm time = *localtime(&rawtime);
+
+    //             std::istringstream stream{ content };
+    //             stream >> std::get_time(&time, "%Y-%m-%d");
+
+    //             value = system_clock::from_time_t(std::mktime(&time));
+    //         }
+    //     });
+    //     return ret;
+    // }
 
     /////////////////////////// JSON METHODS ///////////////////////////////////
     class JSON {
@@ -79,59 +203,7 @@ public:
             return json;
         }
     };
-
-    //////////////////////// RequestBody METHODS ///////////////////////////////
-    class RequestBody {
-    public:
-        // Convert request Body to DTO
-        template <typename T>
-        static T To(const std::string_view& str)
-        {
-            T ret;
-            DTO::for_each(ret, [&str](std::string_view field, auto& value)
-            {
-                using type_dec = std::remove_cvref_t<decltype(value)>;
-
-                size_t start = str.find(field);
-                if (start == std::string_view::npos) { return; }
-
-                start +=  field.size() + 1;
-                size_t size = str.find("&", start) - start;
-
-                auto substr = drogon::utils::urlDecode( API::Utils::trim(
-                                    std::string{str.substr(start, size)}));
-                if constexpr (std::is_same_v<type_dec, int> ||
-                              std::is_same_v<type_dec, std::size_t> ||
-                              std::is_same_v<type_dec, id_t>)
-                {
-                    value = std::stoi(substr);
-                }
-                else if constexpr (std::is_same_v<type_dec, float> ||
-                                   std::is_same_v<type_dec, double>)
-                {
-                    value = std::stod(substr);
-                }
-                else if constexpr(std::is_same_v<type_dec, std::string>)
-                {
-                    value = substr;
-                }
-                else if constexpr(std::is_same_v<type_dec, time_p>)
-                {
-                    using namespace std::chrono;
-
-                    time_t rawtime = time(nullptr);
-                    std::tm time = *localtime(&rawtime);
-
-                    std::istringstream stream{substr};
-                    stream >> std::get_time(&time, "%Y-%m-%d");
-
-                    value = system_clock::from_time_t(std::mktime(&time));
-                }
-            });
-            return ret;
-        }
-
-    };
+    
 
     ///////////////////////////// SQL METHODS //////////////////////////////////
     class SQL {
