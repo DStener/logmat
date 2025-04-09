@@ -41,7 +41,7 @@ public:
 
         for (const auto& cmd : commands)
         {
-            auto log_cmd = std::format("> {}", cmd);
+            auto log_cmd = std::format("> {}\n", cmd);
 
             wsConnPtr->send(utils::base64Encode(log_cmd));
 
