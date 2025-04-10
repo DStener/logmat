@@ -22,7 +22,7 @@ find_package(JPEG REQUIRED)
 
 find_path(QRENCODE_INCLUDE_DIR NAMES qrencode.h)
 find_library(QRENCODE_LIBRARY qrencode)
- 
+
 target_link_libraries(${PROJECT_NAME} PRIVATE Drogon::Drogon OpenSSL::SSL
                       ${Boost_LIBRARY_DIRS} ${QRENCODE_LIBRARY} JPEG::JPEG)
 

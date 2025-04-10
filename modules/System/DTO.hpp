@@ -205,7 +205,7 @@ public:
             return json;
         }
     };
-    
+
 
     ///////////////////////////// SQL METHODS //////////////////////////////////
     class SQL {
@@ -276,8 +276,8 @@ public:
                         {
                             field += nanoseconds(std::stoi(str.substr(str.rfind('.') + 1)));
                         }
-                          
-#endif                  
+
+#endif
                     }
                     else
                     {
