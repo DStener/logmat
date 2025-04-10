@@ -16,8 +16,8 @@ configure_file(config.json config.json COPYONLY)
 configure_file(config.h.in config.h @ONLY)
 
 find_package(Drogon CONFIG REQUIRED)
-find_package(OpenSSL CONFIG REQUIRED)
-find_package(Boost CONFIG REQUIRED)
+find_package(OpenSSL REQUIRED)
+find_package(Boost REQUIRED)
 find_package(JPEG REQUIRED)
 
 find_path(QRENCODE_INCLUDE_DIR NAMES qrencode.h)

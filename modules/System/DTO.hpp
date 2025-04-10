@@ -16,6 +16,7 @@
 #include <drogon/drogon.h>
 
 #include <boost/fusion/adapted.hpp>
+#include <boost/fusion/sequence.hpp>
 #include <boost/fusion/mpl.hpp>
 #include <boost/core/type_name.hpp>
 #include <boost/algorithm/string.hpp>
@@ -23,6 +24,7 @@
 #include <boost/tokenizer.hpp>
 #include <algorithm>
 #include <sstream>
+#include "struct_declaration.hpp"
 
 class DTO
 {
@@ -371,6 +373,7 @@ private:
             f(boost::fusion::extension::struct_member_name<T, I>::call(),
               boost::fusion::at_c<I>(t)),
         ...);
+
     }
     template <typename T, typename Func, std::size_t... I>
     static constexpr void FOREACH_TWO(T& t1, T& t2, Func f, std::index_sequence<I...>)

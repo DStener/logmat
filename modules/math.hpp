@@ -31,6 +31,7 @@ namespace math {
         if (n == 0) return m + 1;                            // if n == 0
         if (n != 0 && m == 0) return math::A(n - 1, static_cast<T>(1));           // if n != 0 and m ==0
         if (n > 0 && m > 0)return math::A(n - 1, math::A(n, m - 1));   // if n > 0 and m > 0
+        return T();
     }
     template<typename T>
     T C(T n, T m)
