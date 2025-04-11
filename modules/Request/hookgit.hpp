@@ -55,7 +55,7 @@ public:
 
 
         // Open new pipe
-        std::unique_ptr<FILE, decltype(&pclose)> pipe(popen(std::format("sh {}/setup.sh --update", CMAKE_CURRENT_SOURCE_DIR).data(), "r"), pclose);
+        std::unique_ptr<FILE, decltype(&pclose)> pipe(popen(std::format("sh {0}/setup.sh {0} --update", CMAKE_CURRENT_SOURCE_DIR).data(), "r"), pclose);
 
         if (!pipe) {
             throw std::runtime_error("popen() failed!");

@@ -8,16 +8,14 @@ export CXX="$(which clang++)"
 
 CMAKE_CONFIG_ARGS=""
 
-if [ -d "$1" ]; then
-	cd $1
-fi
 
 if [[ $* == *--update* ]]; then 
 	CMAKE_CONFIG_ARGS="--fresh"
 	git pull origin main
+	
 fi
 
- 
+cd 
 
 # Configure project
 cmake -B build ${CMAKE_CONFIG_ARGS} -DCMAKE_BUILD_TYPE=Release .
