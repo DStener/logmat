@@ -12,7 +12,6 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 
 file(GLOB MODULES_SRC ${CMAKE_CURRENT_SOURCE_DIR}/modules/*.cpp)
 add_executable(${PROJECT_NAME} main.cpp ${MODULES_SRC})
-configure_file(config.json config.json COPYONLY)
 configure_file(config.h.in config.h @ONLY)
 
 find_package(Drogon CONFIG REQUIRED)

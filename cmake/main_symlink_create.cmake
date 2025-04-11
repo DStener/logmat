@@ -11,8 +11,13 @@ add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/seeders
                     COMMAND ${CMAKE_COMMAND} -E create_symlink
                     ${CMAKE_SOURCE_DIR}/seeders ${CMAKE_CURRENT_BINARY_DIR}/seeders)
 
+add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/config.json
+                    COMMAND ${CMAKE_COMMAND} -E create_symlink
+                    ${CMAKE_SOURCE_DIR}/config.json ${CMAKE_CURRENT_BINARY_DIR}/config.json)
+
 
 set(SYMLINK_TARGET ${SYMLINK_TARGET} ${CMAKE_CURRENT_BINARY_DIR}/root)
 set(SYMLINK_TARGET ${SYMLINK_TARGET} ${CMAKE_CURRENT_BINARY_DIR}/migrations)
 set(SYMLINK_TARGET ${SYMLINK_TARGET} ${CMAKE_CURRENT_BINARY_DIR}/seeders)
+set(SYMLINK_TARGET ${SYMLINK_TARGET} ${CMAKE_CURRENT_BINARY_DIR}/config.json)
 
