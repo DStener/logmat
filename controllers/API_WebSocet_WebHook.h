@@ -5,7 +5,7 @@
 #include <optional>
 #include "Request/hookgit.hpp"
 		
-
+#include "Webhook.h"
 using namespace drogon;
 
 namespace API
@@ -16,7 +16,7 @@ class WebHook : public drogon::WebSocketController<WebHook>
 {
 public:
     void handleNewMessage(const WebSocketConnectionPtr&,
-                                std::string &&,
+                                std::   string &&,
                                 const WebSocketMessageType &) override;
     void handleNewConnection(const HttpRequestPtr &,
                                     const WebSocketConnectionPtr&) override;

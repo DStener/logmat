@@ -5,6 +5,7 @@ out/
 enc_temp_folder/
 CMakeLists.txt.user
 CMakeSettings.json
+config.json
 *.exe
 *.dll
 *.db

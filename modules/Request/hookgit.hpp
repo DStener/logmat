@@ -20,6 +20,7 @@
 
 #include <drogon/WebSocketController.h>
 #include "System/database.hpp"
+#include "Webhook.h"
 
 using namespace drogon;
 
@@ -44,6 +45,14 @@ public:
 
         // Open new log file
         log.open(FileDB._path);
+
+        // Write log header
+        if(log.is_open()){
+            log << Hooks::user_addres.value().toIp() << " - "
+                << std::chrono::system_clock::now()
+                << "\n-=-=-=-=-=-=-=-=-=-=-=-=--\n";
+        }
+
 
         // Open new pipe
         std::unique_ptr<FILE, decltype(&pclose)> pipe(popen(std::format("sh {}/setup.sh --update", CMAKE_CURRENT_SOURCE_DIR).data(), "r"), pclose);

@@ -333,7 +333,7 @@
     ],
     //custom_config: custom configuration for users. This object can be get by the app().getCustomConfig() method.
     "custom_config": {
-        "version":  "0.0.2"
-
+        "version":  "0.0.2",
+        "secret_key": "yOeLPqYcabGInXpcbVmGmHuItukwgHIrCFVa"
     }
 }
