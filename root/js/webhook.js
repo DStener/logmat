@@ -46,7 +46,7 @@ async function WebHookStart(event)
 
             if(data.startsWith("%RELAUNCH")) {
 
-                let id = data.slice(11);
+                let id = data.slice(data.search("-"), data.length);
             
                 document.getElementById("span-shell").innerHTML += "RELAUNCH";
                 console.log("BEST OF THE BEST");
