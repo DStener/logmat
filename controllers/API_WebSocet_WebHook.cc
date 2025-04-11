@@ -10,7 +10,7 @@ void WebSocet::WebHook::handleNewMessage(const WebSocketConnectionPtr& wsConnPtr
 
 void WebSocet::WebHook::handleNewConnection(const HttpRequestPtr &req, const WebSocketConnectionPtr& wsConnPtr)
 {
-    if (Hooks::user_addres.has_value())
+    if (Hooks::user_addres.has_value() && Hooks::user_addres.value().toIpPort() != req->getPeerAddr().toIpPort())
     {
         wsConnPtr->shutdown(CloseCode::kNormalClosure, "Обновление уже выполняется другим пользователем");
         return;
