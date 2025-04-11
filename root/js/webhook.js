@@ -79,7 +79,5 @@ async function WebHookStart(event)
 
 
 window.addEventListener("load", function () {
-
     document.getElementById("shell-cmd").addEventListener('submit', WebHookStart);
-    alert("BEST OF THE BESTs");
 }, false);
