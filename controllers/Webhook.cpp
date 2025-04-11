@@ -5,6 +5,10 @@ std::optional<trantor::InetAddress> Hooks::user_addres;
 
 void Hooks::GitUpdate(const HttpRequestPtr& req, callback_func&& callback)
 {
+    // Login and check Permission
+    auto login = Request::Login(req, callback);
+    if(!login.id) { return; }
+
 	auto webhook = DTO::ConvertTo<::WebHook>(req);
 	Json::Value json;
 
