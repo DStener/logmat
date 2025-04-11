@@ -14,6 +14,9 @@ fi
 
 if [[ $* == *--update* ]]; then 
 	CMAKE_CONFIG_ARGS="--fresh"
+	git fetch --all
+	git reset --hard origin/main
+	git clean
 	git pull origin main
 fi
 
