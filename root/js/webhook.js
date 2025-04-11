@@ -41,7 +41,21 @@ async function WebHookStart(event)
         };
 
         socket.onmessage = function (event) {
-            document.getElementById("span-shell").innerHTML += atob(event.data);
+
+            let data = atob(event.data);
+
+            if(data.startsWith("%RELAUNCH")) {
+
+                let id = data.slice(11);
+            
+                document.getElementById("span-shell").innerHTML += "RELAUNCH";
+                console.log("BEST OF THE BEST");
+                console.log(id);
+                
+            } else {
+                document.getElementById("span-shell").innerHTML += data;
+            }
+            
             // document.getElementById("shell").innerHTML += `<p style="white-space: pre-line;">${}</p>`;
         };
 

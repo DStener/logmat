@@ -107,29 +107,34 @@ void Ref::File::Upload(const HttpRequestPtr& req, callback_func&& callback)
 	FileDB.tags = std::format("{}", std::string{file.getFileExtension()});
 	FileDB.size = file.fileLength();
 	FileDB._path = std::format("{}/{}", app().getUploadPath(), name);
+    FileDB._avatar_path = std::format("/img/file/{}.png",file.getFileExtension());
 
 	// Resizeif image 
 	if (file.getContentType() == drogon::CT_IMAGE_JPG)
-	{
-		try 
-		{
+    {
+        try
+        {
 
-			FileDB._avatar_path = std::format("{}/avatar_{}", app().getUploadPath(), name);
+            FileDB._avatar_path = std::format("{}/avatar_{}", app().getUploadPath(), name);
 
-			rgb8_image_t img;
-			rgb8_image_t img_resize(128, 128); // rgb_image is 136x98
+            rgb8_image_t img;
+            rgb8_image_t img_resize(128, 128); // rgb_image is 136x98
 
-			boost::gil::image_read_settings<jpeg_tag> readSettings;
-			boost::gil::read_image(FileDB._path, img, readSettings);
+            boost::gil::image_read_settings<jpeg_tag> readSettings;
+            boost::gil::read_image(FileDB._path, img, readSettings);
 
-			resize_view(const_view(img), view(img_resize), bilinear_sampler());
-			write_view(FileDB._avatar_path, const_view(img_resize), jpeg_tag{});
-		}
-		catch (...)
-		{
-			FileDB._avatar_path = "";
-		}
-	}
+            resize_view(const_view(img), view(img_resize), bilinear_sampler());
+            write_view(FileDB._avatar_path, const_view(img_resize), jpeg_tag{});
+        }
+        catch (...)
+        {
+            FileDB._avatar_path = "";
+        }
+    }
+    else if(!std::filesystem::exists(FileDB._avatar_path))
+    {
+        FileDB._avatar_path = "/img/file/none.png";
+    }
 	
 
 	// Upload file info to DB and get id row

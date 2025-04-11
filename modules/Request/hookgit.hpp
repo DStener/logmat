@@ -4,10 +4,12 @@
 #include <stdexcept>
 #include <string>
 #include <array>
+#include <cstdlib>
 
 #include "config.h"
 
 #include <drogon/drogon.h>
+#include <fstream>
 
 #ifdef WIN32
 #define pclose _pclose;
@@ -17,6 +19,7 @@
 
 
 #include <drogon/WebSocketController.h>
+#include "System/database.hpp"
 
 using namespace drogon;
 
@@ -27,26 +30,50 @@ private:
 public:
     static void Update(const WebSocketConnectionPtr& wsConnPtr)
     {
-        static std::vector<std::string> commands {
-            std::format("cd {}", CMAKE_CURRENT_SOURCE_DIR),
-            "sh setup.sh --update",
-            "exec ./build/bash"
-        };
-
         std::array<char, 128> buffer;
+        std::ofstream log;
 
-        for (const auto& cmd : commands)
-        {
-            std::unique_ptr<FILE, decltype(&pclose)> pipe(popen(cmd.data(), "r"), pclose);
+        // Fill DTO
+        ::File FileDB{};
+        FileDB.name = std::format("Log {}.txt", std::chrono::system_clock::now());
+        FileDB.description = "LOG FILE OF UPDATE";
+        FileDB.tags = "txt|log";
+        FileDB._path = std::format("{}/{}", app().getUploadPath(), FileDB.name);
+        FileDB._avatar_path = "/img/file/txt.png";
 
-            if (!pipe) {
-                throw std::runtime_error("popen() failed!");
-            }
-            while (fgets(buffer.data(), static_cast<int>(buffer.size()), pipe.get()) != nullptr) {
-                wsConnPtr->send(utils::base64Encode(buffer.data()));
+
+        // Open new log file
+        log.open(FileDB._path);
+
+        // Open new pipe
+        std::unique_ptr<FILE, decltype(&pclose)> pipe(popen(std::format("sh {}/setup.sh --update", CMAKE_CURRENT_SOURCE_DIR).data(), "r"), pclose);
+
+        if (!pipe) {
+            throw std::runtime_error("popen() failed!");
+        }
+        while (fgets(buffer.data(), static_cast<int>(buffer.size()), pipe.get()) != nullptr) {
+            wsConnPtr->send(utils::base64Encode(buffer.data()));
+            if(log.is_open()){
+                log << buffer.data();
             }
         }
-        wsConnPtr->send("RELAUNCH");
+
+        // Close log file and write his size
+        log.close();
+        FileDB.size = std::filesystem::file_size(FileDB._path);
+
+
+        // Upload file info to DB and get id row
+        id_t id = DB::get()->Insert(FileDB);
+
+        LOG_INFO << id;
+        // Start updates version
+        std::system(std::format("nohup {}/build/logmat & > /dev/null", CMAKE_CURRENT_SOURCE_DIR).data());
+
+        // Send End message
+        wsConnPtr->send(utils::base64Encode(std::format("%RELAUNCH-{}", id)));
+
+        // terminated
         drogon::app().quit();
     }
 };
