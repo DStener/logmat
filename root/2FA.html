@@ -6,8 +6,6 @@
     <title>logMAT - Сайт про алгоритмы</title>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet"/>
     <link href="../css/styles.css" rel="stylesheet"/>
-    <link href="../css/menuStyles.css" rel="stylesheet"/>
-    <link href="../css/userMenu.css" rel="stylesheet"/>
     
 </head>
 <body>
@@ -26,7 +24,7 @@
             </div>
         </header>
 
-        <div class="content">
+        <div class="content" style="margin-top: 0px;">
             <main class="twofa-form">
                 <article>
                     <h2 class="article-title">Подтверждение входа</h2>
@@ -48,5 +46,15 @@
             </main>
         </div>
     </div>
+
+    <footer>
+        <p>
+            @ 2025 logMat.
+            <%c++ if(drogon::app().getCustomConfig().isMember("version")){%>
+            Версия: {%API::Utils::trim(drogon::app().getCustomConfig()["version"].asString())%}
+            <%c++}%>
+        </p>
+    </footer>
+
 </body>
 </html>
