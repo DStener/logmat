@@ -4,6 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>logMAT - Сайт про алгоритмы</title>
+<<<<<<< HEAD
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet" />
     <link href="/css/styles.css" rel="stylesheet" />
 
@@ -41,31 +42,62 @@
                     </ul>
                 </nav>
             </aside>
+=======
+    <link href="/css/tech.css" rel="stylesheet" />
+</head>
+<body>
 
-            <main class="main-content">
-                <article>
-                    <h2 class="article-title">О сайте</h2>
-                    <p class="article-text">
-                        Добро пожаловать на сайт logMAT! Здесь вы найдёте подробные объяснения и примеры реализации различных алгоритмов. Мы поможем вам разобраться в сложных темах, таких как сортировка, поиск, графы, динамическое программирование и многое другое.
-                    </p>
-                    <p class="article-text">
-                        Наш сайт предназначен для всех, кто интересуется алгоритмами — от начинающих программистов до опытных разработчиков. Мы стремимся сделать сложные концепции доступными и понятными.
-                    </p>
-                    <p class="article-text">
-                        Используйте меню слева, чтобы выбрать интересующий вас раздел. Каждый алгоритм сопровождается подробным описанием, примерами кода и визуализацией.
-                    </p>
-                    
-                </article>
-            </main>
+    <header>
+        <label id="logo" class="hide-p">
+            <img src="/img/av.png" alt="Логотип logMAT" class="logo-img">
+            <p>logMat</p>
+            <a href="#">Главная</a>
+            <a href="#">О нас</a>
+        </label>
+
+        
+>>>>>>> 7db5ffb (New html template)
+
+        <details class="user-menu">
+            <summary class="user-name hide-p">
+                <img src="https://avatars.mds.yandex.net/i?id=9028b32c2dbca7fbe65309f1fb7141cf_l-4957727-images-thumbs&amp;n=13" alt="Аватар пользователя" class="user-avatar">
+                <p>Даниил Стенер</p>
+            </summary>
+            <ul class="user-menu-list box-decor">
+                <li><a href="../userTemp.html" class="user-menu-link">Профиль</a></li>
+                <li><a href="../articleConstructor.html" class="user-menu-link">Конструктор статей</a></li>
+                <li><a href="../admin.html" class="user-menu-link">Админ панель</a></li>
+                <li><a href="#" class="user-menu-link">Выход</a></li>
+            </ul>
+        </details>
+    </header>
+
+    <div class="content">
+        <div class="sidemenu box-decor">
+            <input type="checkbox" id="menu">
+            <label for="menu" id="menu-title">AdminUser</label>
+            <a>О нас</a>
+            <a>INFO</a>
+        </div>
+        <div class="test box-decor">
         </div>
     </div>
 
+<<<<<<< HEAD
     <footer>
         <p>
             @ 2025 logMat.
             <%c++ if(drogon::app().getCustomConfig().isMember("version")){%>
             Версия: {%API::Utils::trim(drogon::app().getCustomConfig()["version"].asString())%}
             <%c++}%>
+=======
+
+
+    <footer>
+        <p>
+            @ 2025 logMat.
+            Версия: 0.0.1
+>>>>>>> 7db5ffb (New html template)
         </p>
     </footer>
 
