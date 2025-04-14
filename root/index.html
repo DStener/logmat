@@ -6,62 +6,38 @@
     <title>logMAT - Сайт про алгоритмы</title>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet" />
     <link href="/css/styles.css" rel="stylesheet" />
-    <link href="/css/menuStyles.css" rel="stylesheet" />
-    <link href="/css/userMenu.css" rel="stylesheet" />
 
     <script src="/js/userinfo.js"></script>
 </head>
 <body>
-    <div class="container">
-        <header class="header">
-            <div class="logo">
-                <a href="#">
-                    <img src="/img/av.png" alt="Логотип logMAT" class="logo-img"/>
-                </a>
-                <div>
-                    <a href="/" class="logo-text">logMAT</a>
-                    <p class="logo-subtext">Сайт о алгоритмах</p>
-                </div>
-            </div>
 
-            <div class="header-controls">
-                <input type="text" placeholder="Поиск" class="search-input"/>
-                <div class="user-info"></div>
+    <header class="header" style="position: fixed; margin-right: 10px; margin-left: 10px;">
+        <div class="logo">
+            <a href="#">
+                <img src="/img/av.png" alt="Логотип logMAT" class="logo-img"/>
+            </a>
+            <div>
+                <a href="/" class="logo-text">logMAT</a>
+                <p class="logo-subtext">Сайт о алгоритмах</p>
             </div>
-        </header>
+        </div>
+
+        <div class="header-controls">
+            <input type="text" placeholder="Поиск" class="search-input"/>
+            <div class="user-info"></div>
+        </div>
+    </header>
+
+    <div class="container" style="margin-top: 100px;">
+        
 
         <div class="content">
             <aside class="sidebar">
                 <nav>
                     <ul class="menu" id="ASidePanel">
-                        <li class="menu-title" id="aside-title">Алгоритмы</li>
-                        <li>
-                            <details class="menu-item">
-                                <summary class="menu-summary">Алгоритмы сортировки</summary>
-                                <ul class="submenu">
-                                    <li><a href="/temp.html" class="submenu-link">Быстрая сортировка (Quick Sort)</a></li>
-                                    <li><a href="#" class="submenu-link">Сортировка слиянием (Merge Sort)</a></li>
-                                    <li><a href="#" class="submenu-link">Пузырьковая сортировка (Bubble Sort)</a></li>
-                                    <li><a href="#" class="submenu-link">Сортировка вставками (Insertion Sort)</a></li>
-                                    <li><a href="#" class="submenu-link">Сортировка выбором (Selection Sort)</a></li>
-                                    <li><a href="#" class="submenu-link">Пирамидальная сортировка (Heap Sort)</a></li>
-                                    <li><a href="#" class="submenu-link">Поразрядная сортировка (Radix Sort)</a></li>
-                                </ul>
-                            </details>
-                        </li>
-                        <li>
-                            <details class="menu-item">
-                                <summary class="menu-summary">Алгоритмы поиска</summary>
-                                <ul class="submenu">
-                                    <li><a href="#" class="submenu-link">Линейный поиск (Linear Search)</a></li>
-                                    <li><a href="#" class="submenu-link">Бинарный поиск (Binary Search)</a></li>
-                                    <li><a href="#" class="submenu-link">Поиск в глубину (DFS)</a></li>
-                                    <li><a href="#" class="submenu-link">Поиск в ширину (BFS)</a></li>
-                                </ul>
-                            </details>
-                        </li>
-                        <li class="menu-title"><a href="/gallery.html" class="submenu-link">Галерея</a></li>
-                        <li class="menu-title"><a href="/aboutUs.html" class="submenu-link">О нас</a></li>
+                        <a href="#" class="submenu-link">Алгоритмы</a>
+                        <a href="/gallery.html" class="submenu-link">Галерея</a>
+                        <a href="/aboutUs.html" class="submenu-link">О нас</a>
                     </ul>
                 </nav>
             </aside>
@@ -83,5 +59,15 @@
             </main>
         </div>
     </div>
+
+    <footer>
+        <p>
+            @ 2025 logMat.
+            <%c++ if(drogon::app().getCustomConfig().isMember("version")){%>
+            Версия: {%API::Utils::trim(drogon::app().getCustomConfig()["version"].asString())%}
+            <%c++}%>
+        </p>
+    </footer>
+
 </body>
 </html>

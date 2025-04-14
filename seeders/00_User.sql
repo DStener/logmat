@@ -1,0 +1,3 @@
+INSERT OR IGNORE INTO User 
+(username, email, birthday, password) VALUES 
+("admin", "NULL", CURRENT_TIMESTAMP, "71E23BAEE837C5D2952F93A29B113CAB");

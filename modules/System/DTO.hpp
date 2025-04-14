@@ -26,6 +26,8 @@
 #include <sstream>
 #include "struct_declaration.hpp"
 
+#include <drogon/drogon.h>
+
 class DTO
 {
 public:
@@ -61,9 +63,10 @@ public:
             if(start == std::string_view::npos) { return; }
             if(end == std::string_view::npos) { end = body.size(); }
 
-            std::string content(drogon::utils::urlDecode(
-                                body.begin() + start + field.size() + 1,
-                                body.begin() + end));
+
+            std::string content(body.begin() + start + field.size() + 1,
+                                body.begin() + end);
+            content = drogon::utils::urlDecode(content);
 
 
             // Convert from string to var
@@ -303,7 +306,10 @@ public:
             if constexpr (std::is_same_v<type_dec, std::string> ||
                           std::is_same_v<type_dec, time_p>)
             {
-                return std::format("\"{}\"", stream.str());
+                using namespace boost::algorithm;
+
+                return std::format("\"{}\"", 
+                                   replace_all_copy(stream.str(), "\"", "'"));
             }
             else
             {

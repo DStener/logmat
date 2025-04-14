@@ -9,15 +9,16 @@ void Seeder::initAndStart(const Json::Value &config)
     using std::filesystem::directory_iterator;
     using std::filesystem::directory_entry;
 
-    // Create new Transaction
     auto clientPtr = drogon::app().getDbClient();
-    clientPtr->execSqlSync("BEGIN TRANSACTION;");
-
+    
     // Get parametr "seedrs_directory"
     const auto seedrs = config.get("seedrs_directory", "").asString();
 
     // Check, that config has value and value is exists path
     if (seedrs.empty() || !std::filesystem::exists(seedrs)) { return; }
+
+    // Begin new Transaction
+    clientPtr->execSqlSync("BEGIN TRANSACTION;");
 
     // Sorted file in directory
     std::vector<directory_entry> entries(directory_iterator(seedrs), directory_iterator{});

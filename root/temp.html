@@ -7,9 +7,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet" />
     <link href="../css/styles.css" rel="stylesheet" />
     <link href="../css/tables.css" rel="stylesheet" />
-    <link href="../css/menuStyles.css" rel="stylesheet" />
-    <link href="../css/userMenu.css" rel="stylesheet" />
-    <link href="./css/userMenu.css" rel="stylesheet" />
 
     <script src="/js/webhook.js"></script>
 </head>
@@ -43,37 +40,38 @@
             </div>
         </header>
 
-        <div class="content">
+        <div class="content" style="margin-top: 0px;">
             <aside class="sidebar">
                 <nav>
-                    <ul class="menu" id="ASidePanel">
-                        <li class="menu-title" id="aside-title">Алгоритмы</li>
-                        <li>
-                            <details class="menu-item">
-                                <summary class="menu-summary">Алгоритмы сортировки</summary>
-                                <ul class="submenu">
-                                    <li><a href="../temp.html" class="submenu-link">Быстрая сортировка (Quick Sort)</a></li>
-                                    <li><a href="#" class="submenu-link">Сортировка слиянием (Merge Sort)</a></li>
-                                    <li><a href="#" class="submenu-link">Пузырьковая сортировка (Bubble Sort)</a></li>
-                                    <li><a href="#" class="submenu-link">Сортировка вставками (Insertion Sort)</a></li>
-                                    <li><a href="#" class="submenu-link">Сортировка выбором (Selection Sort)</a></li>
-                                    <li><a href="#" class="submenu-link">Пирамидальная сортировка (Heap Sort)</a></li>
-                                    <li><a href="#" class="submenu-link">Поразрядная сортировка (Radix Sort)</a></li>
-                                </ul>
+                    <ul class="menu">
+                        <details class="menu-item">
+                            <summary class="menu-title" style="padding: 0px;">Алгоритмы</summary>
+                            <li>
+                                <details class="menu-item">
+                                    <summary class="menu-summary">Алгоритмы сортировки</summary>
+                                    <ul class="submenu">
+                                        <li><a href="../temp.html" class="submenu-link">Быстрая сортировка (Quick Sort)</a></li>
+                                        <li><a href="#" class="submenu-link">Сортировка слиянием (Merge Sort)</a></li>
+                                        <li><a href="#" class="submenu-link">Пузырьковая сортировка (Bubble Sort)</a></li>
+                                        <li><a href="#" class="submenu-link">Сортировка вставками (Insertion Sort)</a></li>
+                                        <li><a href="#" class="submenu-link">Сортировка выбором (Selection Sort)</a></li>
+                                        <li><a href="#" class="submenu-link">Пирамидальная сортировка (Heap Sort)</a></li>
+                                        <li><a href="#" class="submenu-link">Поразрядная сортировка (Radix Sort)</a></li>
+                                    </ul>
                             </details>
-                        </li>
-                        <li>
-                            <details class="menu-item">
-                                <summary class="menu-summary">Алгоритмы поиска</summary>
-                                <ul class="submenu">
-                                    <li><a href="#" class="submenu-link">Линейный поиск (Linear Search)</a></li>
-                                    <li><a href="#" class="submenu-link">Бинарный поиск (Binary Search)</a></li>
-                                    <li><a href="#" class="submenu-link">Поиск в глубину (DFS)</a></li>
-                                    <li><a href="#" class="submenu-link">Поиск в ширину (BFS)</a></li>
-                                </ul>
-                            </details>
-                        </li>
-                        <li class="menu-title"><a href="/gallery.html" class="submenu-link">Галерея</a></li>
+                            </li>
+                            <li>
+                                <details class="menu-item">
+                                    <summary class="menu-summary">Алгоритмы поиска</summary>
+                                    <ul class="submenu">
+                                        <li><a href="#" class="submenu-link">Линейный поиск (Linear Search)</a></li>
+                                        <li><a href="#" class="submenu-link">Бинарный поиск (Binary Search)</a></li>
+                                        <li><a href="#" class="submenu-link">Поиск в глубину (DFS)</a></li>
+                                        <li><a href="#" class="submenu-link">Поиск в ширину (BFS)</a></li>
+                                    </ul>
+                                </details>
+                            </li>
+                        </details>
                         <li class="menu-title"><a href="../aboutUs.html" class="submenu-link">О нас</a></li>
                     </ul>
                 </nav>
@@ -93,5 +91,15 @@
             </main>
         </div>
     </div>
+
+    <footer>
+        <p>
+            @ 2025 logMat.
+            <%c++ if(drogon::app().getCustomConfig().isMember("version")){%>
+            Версия: {%API::Utils::trim(drogon::app().getCustomConfig()["version"].asString())%}
+            <%c++}%>
+        </p>
+    </footer>
+
 </body>
 </html>

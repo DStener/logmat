@@ -71,10 +71,6 @@ void Auth::Login(const HttpRequestPtr& req, callback_func &&callback)
 {
     // Convert request body to LoginDTO and login
     auto info = DTO::ConvertTo<::LoginDTO>(req);
-
-    std::cout << info.password << std::endl;
-    std::cout << info.username << std::endl;
-
     Request::Login(info, req, callback);
 }
 

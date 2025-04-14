@@ -1,0 +1,23 @@
+CREATE TABLE IF NOT EXISTS LogRequest
+(
+	id INTEGER PRIMARY KEY AUTOINCREMENT,
+	address VARCHAR NOT NULL,
+	method VARCHAR NOT NULL,
+	controller_path VARCHAR NOT NULL,
+	controller_method VARCHAR NOT NULL,
+	request_body VARCHAR NOT NULL,
+	request_head VARCHAR NOT NULL,
+	id_user INTEGER NULL,
+	ip VARCHAR NOT NULL,
+	user_agent VARCHAR NOT NULL,
+	response_code INTEGER NOT NULL,
+	response_body VARCHAR NOT NULL,
+	response_head VARCHAR NOT NULL,
+	time TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+;;
+CREATE TRIGGER IF NOT EXISTS time_delete 
+BEFORE INSERT ON LogRequest 
+BEGIN
+	DELETE FROM LogRequest WHERE time < DATETIME('now', '-73 hours');
+END;

@@ -12,9 +12,9 @@
 #include <fstream>
 
 #ifdef WIN32
-#define pclose _pclose;
-#define popen _popen;
-#define pclose _pclose;
+#define pclose _pclose
+#define popen _popen
+#define pclose _pclose
 #endif
 
 
