@@ -447,11 +447,11 @@ a.current, a.current:hover {
 
 .dialog {
     width: 320px;
+ 
     display: flex;
     flex-direction: column;
     padding: 20px;
     gap: 10px;
-
     h2
     {
         padding: 10px 0px;

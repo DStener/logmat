@@ -51,7 +51,7 @@ void Director::Account(const HttpRequestPtr& req, callback_func&& callback)
 	// If User is admin, then add new section
 	if (Request::Login::isAdmin(req))
 	{
-		aitems.push_back({ utils::fromWidePath(L"Панель управления"), "/admin.html", "ri-tools-line" });
+		aitems.push_back({ utils::fromWidePath(L"Панель управления"), "/admin", "ri-tools-line" });
 	}
 
 	auto data = HttpViewData();
@@ -112,7 +112,7 @@ void Director::ArticleEditor(const HttpRequestPtr& req, callback_func&& callback
 
 	auto data = HttpViewData();
 	data.insert("User", user);
-	data.insert("aside-header", utils::fromWidePath(L"Аккаунт"));
+	data.insert("aside-header", utils::fromWidePath(L"Элементы"));
 	data.insert("aitems", aitems);
 	data.insert("javascripts", std::vector<std::string>{"/js/editor.js"});
 
