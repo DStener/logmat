@@ -12,6 +12,27 @@
 #include <boost/gil/extension/numeric/sampler.hpp>
 using namespace boost::gil;
 
+
+void Director::Version(const HttpRequestPtr& req, callback_func&& callback)
+{
+	Json::Value json;
+	json["version"] = "";
+
+	if (drogon::app().getCustomConfig().isMember("version")) {
+		json["version"] = API::Utils::trim(drogon::app().getCustomConfig()["version"].asString());
+	}
+
+	auto response = HttpResponse::newHttpJsonResponse(json);
+	callback(response);
+}
+
+
+
+
+
+
+
+
 void Director::Test(const HttpRequestPtr& req, callback_func&& callback)
 {
 	auto user = Request::Login::GetUser(req);

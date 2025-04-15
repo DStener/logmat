@@ -128,6 +128,7 @@ void Ref::File::Upload(const HttpRequestPtr& req, callback_func&& callback)
         }
         catch (...)
         {
+			LOG_ERROR << "SIBAKA";
             FileDB._avatar_path = "";
         }
     }
@@ -140,7 +141,7 @@ void Ref::File::Upload(const HttpRequestPtr& req, callback_func&& callback)
 	// Upload file info to DB and get id row
 	id_t id = DB::get()->Insert(FileDB);
 
-	auto response = HttpResponse::newHttpJsonResponse(Json::Value(id));
+	auto response = HttpResponse::newHttpJsonResponse("");
 	callback(response);
 }
 

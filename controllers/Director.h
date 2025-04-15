@@ -18,12 +18,15 @@ class Director : public drogon::HttpController<Director>
 public:
     //Connect methods to URL
     METHOD_LIST_BEGIN
+        //ADD_METHOD_TO(Director::Main, "/", drogon::Get);
         ADD_METHOD_TO(Director::Test, "/temp", drogon::Get);
         ADD_METHOD_TO(Director::AdminPanel, "/admin", drogon::Get);
         ADD_METHOD_TO(Director::Account, "/me", drogon::Get);
         ADD_METHOD_TO(Director::ArticleEditor, "/article/{1:id}/editor", drogon::Get);
+        ADD_METHOD_TO(Director::Version, "/info/version", drogon::Get);
     METHOD_LIST_END
 
+    void Version(const HttpRequestPtr& req, callback_func&& callback);
     void Test(const HttpRequestPtr& req, callback_func&& callback);
     void Account(const HttpRequestPtr& req, callback_func&& callback);
     void AdminPanel(const HttpRequestPtr& req, callback_func&& callback);

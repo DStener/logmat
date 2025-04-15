@@ -30,6 +30,7 @@ public:
         METHOD_ADD(Auth::Get2FAKey, "/2fa/key", Get); // 2fa
         METHOD_ADD(Auth::Is2FAEnbaled, "/2fa/enabled?username={}", Get); // 2fa
         METHOD_ADD(Auth::GetCaptcha, "/captcha", Get); // 2fa
+        //METHOD_ADD(Auth::GetCaptcha, "/captcha", Get); // 2fa
     METHOD_LIST_END
 
     //Declaring methods
