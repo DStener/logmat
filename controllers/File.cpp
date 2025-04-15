@@ -1,4 +1,4 @@
-#include "File.h"
+﻿#include "File.h"
 #include "System/utils.h"
 #include "Request/login.hpp"
 #include "Request/log.hpp"
@@ -77,8 +77,6 @@ void Ref::File::Upload(const HttpRequestPtr& req, callback_func&& callback)
 	auto login = Request::Login(req, callback);
 	if (!login.id || !login.hasPermission<::File>("create")) { return; }
 
-    LOG_INFO << "TUT";
-
 	MultiPartParser parser;
 
 	// Check coorect file 
@@ -92,16 +90,15 @@ void Ref::File::Upload(const HttpRequestPtr& req, callback_func&& callback)
 
 		return;
 	}
-    LOG_INFO << "TEST";
 
-    // // Get file
-    // auto& file = parser.getFiles()[0];
-    // auto md5 = file.getMd5();
-    // std::string name = std::format("{}.{}", md5, file.getFileExtension());
+	 // Get file
+     auto& file = parser.getFiles()[0];
+     auto md5 = file.getMd5();
+     std::string name = std::format("{}.{}", md5, file.getFileExtension());
 
-    // file.saveAs(name);
+     file.saveAs(name);
 
-    /* // fill DB row
+     // fill DB row
 	::File FileDB{};
 	FileDB.name = file.getFileName();
 	FileDB.description = parser.getParameter<std::string>("description");
@@ -140,9 +137,9 @@ void Ref::File::Upload(const HttpRequestPtr& req, callback_func&& callback)
 	
 
 	// Upload file info to DB and get id row
-    id_t id = DB::get()->Insert(FileDB);*/
+    id_t id = DB::get()->Insert(FileDB);
 
-	auto response = HttpResponse::newHttpJsonResponse("");
+	auto response = HttpResponse::newHttpJsonResponse(id);
 	callback(response);
 }
 

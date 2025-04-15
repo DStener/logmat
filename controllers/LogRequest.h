@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include <drogon/HttpController.h>
 #include <drogon/HttpController.h>
@@ -23,7 +23,7 @@ private:
 public:
     //Connect methods to URL
     METHOD_LIST_BEGIN
-        drogon::app().registerPostHandlingAdvice(Request::logger);
+        //drogon::app().registerPostHandlingAdvice(Request::logger);
         METHOD_ADD(Request::Get, "/{1:id}", drogon::Get);
     METHOD_LIST_END
             
