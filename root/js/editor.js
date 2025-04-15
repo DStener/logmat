@@ -123,8 +123,9 @@ async function InsertFile(isImg) {
         submit.onclick = (event) => {
             event.preventDefault();
 
-            let form = new FormData(document.getElementById("popup_form_form"));
-            let form_body = formEncode(form);
+            // let form = new FormData(document.getElementById("popup_form_form"));
+            let form = new FormData();
+            // let form_body = formEncode(form);
             
             let fileObj = document.getElementById(field_file).files[0]; // js get file object
             let url = getLink(link, true) + '/';
