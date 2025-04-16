@@ -18,11 +18,8 @@ void Ref::Article::GetList(const HttpRequestPtr& req, callback_func&& callback)
 
 	for (auto& row : DB::get()->Select<::Article>())
 	{
-		auto _temp = DTO::JSON::From(row);
-		json.append(_temp);
+		json.append(DTO::JSON::From(row));
 	}
-
-    if(!json.size()) { json = "Нет записей"; }
 
 	auto response = HttpResponse::newHttpJsonResponse(json);
 	callback(response);
