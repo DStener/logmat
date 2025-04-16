@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include <string>
 #include <drogon/drogon.h>
@@ -108,10 +108,11 @@ BOOST_FUSION_ADAPT_STRUCT(File, name, description, tags, size,
 struct Article {
     std::string     header;
     std::string     tags;
+    id_t            banner;
     std::string     content;
     SERVICE_FIELDS
 };
-BOOST_FUSION_ADAPT_STRUCT(Article, header, tags, content,
+BOOST_FUSION_ADAPT_STRUCT(Article, header, tags, banner, content,
                           ADAPT_SERVICE_FIELDS)
 
 struct LogRequest {

@@ -18,8 +18,6 @@ async function configureUser() {
 
         let json = await response.json();
 
-        console.log(json);
-
         if (typeof json != "string") {
 
             let obj = document.getElementById("user-name")
@@ -52,6 +50,4 @@ async function configureUser() {
 window.addEventListener("load", function () {
     configureUser()
     configVersion()
-
-    console.log("welcome");
 }, false);

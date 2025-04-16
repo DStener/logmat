@@ -1,4 +1,4 @@
-/*td p.cropped {*/
+﻿/*td p.cropped {*/
     /*    background-color: red;*/
     /*    max-width: calc(var(--parent-width));*/
 /*    width: calc(var(--parent-width));
@@ -207,4 +207,57 @@ form.dialog input[type="number"]:hover,
 form.dialog input[type="number"]:focus {
     appearance: none;
     -moz-appearance: textfield;
+}
+
+
+#div-article {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    justify-content: center;
+
+    width: 100%;
+}
+
+a.artcile-card {
+    text-decoration: none;
+    color: #374151;
+}
+
+div.artcile-card {
+    width: 277px;
+    height: 367px;
+    background-color: white;
+    *:not(img) {
+        padding: 0.5rem 1rem;       
+    }
+}
+
+div.artcile-card:hover {
+    background-color:aliceblue;
+}
+
+.artcile-card h1 {
+    font-weight: bolder;
+    font-size: 1.4rem;
+    color: #374151;
+    padding: 0.3rem 1rem;
+}
+
+.artcile-card p {
+    display: block; /* or inline-block */
+    text-overflow: ellipsis;
+    word-wrap: break-word;
+    overflow: hidden;
+    max-height: 3.8em;
+    line-height: 1.3em;
+}
+
+
+.artcile-card img {
+    width: 100%;
+    height: 50%;
+    -webkit-clip-path: polygon(0 0, 0 100%, 100% 80%, 100% 0);
+    clip-path: polygon(0 0, 0 100%, 100% 80%, 100% 0);
+    border-radius: 0.5rem
 }

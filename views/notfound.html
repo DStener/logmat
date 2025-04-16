@@ -1,9 +1,5 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="ru">
-<%inc
-    #include <drogon/drogon.h>
-    #include "System/utils.h"
-%>
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -13,6 +9,8 @@
           rel="stylesheet" />
     <link href="/css/tech.css" rel="stylesheet" />
     <link href="/css/tables.css" rel="stylesheet" />
+    <script src="/js/temp.js"></script>
+    <link rel="icon" type="image/x-icon" href="favicon.png">
 </head>
 <body>
 
@@ -23,6 +21,19 @@
             <a href="/">Главная</a>
             <a href="/">О нас</a>
         </label>
+
+
+        <details class="user-menu">
+
+            <summary class="user-name hide-p" id="user-name">
+                <img src="https://avatars.mds.yandex.net/i?id=9028b32c2dbca7fbe65309f1fb7141cf_l-4957727-images-thumbs&amp;n=13" alt="Аватар пользователя" class="user-avatar">
+                <p>Гость</p>
+            </summary>
+            <ul class="user-menu-list box-decor" id="user-menu-list">
+                <li><a class="submenu-link" href="/login.html">Вход</a></li>
+                <li><a class="submenu-link" href="/register.html">Регистрация</a></li>
+            </ul>
+        </details>
     </header>
 
     <div class="content">
@@ -44,11 +55,8 @@
 
 
     <footer>
-        <p>
+        <p id="footer-text">
             @ 2025 logMat.
-            <%c++ if(drogon::app().getCustomConfig().isMember("version")){%>
-            Версия: {%API::Utils::trim(drogon::app().getCustomConfig()["version"].asString())%}
-            <%c++}%>
         </p>
     </footer>
 </body>

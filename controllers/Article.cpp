@@ -1,4 +1,4 @@
-#include "Article.h"
+﻿#include "Article.h"
 #include "System/utils.h"
 #include "Request/login.hpp"
 #include "Request/log.hpp"
@@ -18,7 +18,8 @@ void Ref::Article::GetList(const HttpRequestPtr& req, callback_func&& callback)
 
 	for (auto& row : DB::get()->Select<::Article>())
 	{
-		json.append(DTO::JSON::From(row));
+		auto _temp = DTO::JSON::From(row);
+		json.append(_temp);
 	}
 
     if(!json.size()) { json = "Нет записей"; }
