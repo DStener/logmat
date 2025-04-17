@@ -4,81 +4,77 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>logMAT - Сайт про алгоритмы</title>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet" />
-    <link href="../css/styles.css" rel="stylesheet" />
-    <link rel="icon" type="image/x-icon" href="favicon.png">
+
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@4.5.0/fonts/remixicon.css"
+          rel="stylesheet" />
+    <link href="/css/tech.css" rel="stylesheet" />
+    <link href="/css/tables.css" rel="stylesheet" />
+    <script src="/js/temp.js"></script>
+    <script src="/js/mainpage.js"></script>
     <script src="/js/color.js"></script>
+    <link rel="icon" type="image/x-icon" href="favicon.png">
 </head>
 <body>
-    <div class="container">
-        <header>
-            <label id="logo" class="hide-p">
-                <img src="/favicon.png" alt="Логотип logMAT" class="logo-img">
-                <p>logMat</p>
-                <a href="/">Главная</a>
-                <a href="/">О нас</a>
-            </label>
+    <header>
+        <label id="logo">
+            <details class="menu">
+                <summary class="ri-char-font mainsidemenu-summary"></summary>
+                <ul class="menu-list mainsidemenu">
+                    <li><a class="submenu-link height-link" href="/">Главная</a></li>
+                    <li><a class="submenu-link height-link" href="/catalog.html">Каталог</a></li>
+                    <li><a class="submenu-link height-link" href="/aboutus.html">О нас</a></li>
+                </ul>
+            </details>
 
-            <div class="header-right">
-                <label id="color-switcher"><input type="checkbox" onchange="changeColorTheme()"><span></span></label>
+            <img src="/favicon.png" alt="Логотип logMAT" class="logo-img">
+            <p>logMat</p>
+        </label>
 
-                <details class="user-menu">
+        <div class="header-right">
+            <label id="color-switcher"><input type="checkbox" onchange="changeColorTheme()"><span></span></label>
 
-                    <summary class="user-name hide-p" id="user-name">
-                        <img src="https://avatars.mds.yandex.net/i?id=9028b32c2dbca7fbe65309f1fb7141cf_l-4957727-images-thumbs&amp;n=13" alt="Аватар пользователя" class="user-avatar">
-                        <p>Гость</p>
-                    </summary>
-                    <ul class="user-menu-list box-decor" id="user-menu-list">
-                        <li><a class="submenu-link" href="/login.html">Вход</a></li>
-                        <li><a class="submenu-link" href="/register.html">Регистрация</a></li>
-                    </ul>
-                </details>
-            </div>
-        </header>
+            <details class="user-menu">
 
-        <div class="content">
-            <aside class="sidebar">
-                <nav>
-                    <ul class="menu">
-                        <details class="menu-item">
-                            <summary class="menu-title" style="padding: 0px;">Алгоритмы</summary>
-                        <li>
-                            <details class="menu-item">
-                                <summary class="menu-summary">Алгоритмы сортировки</summary>
-                                <ul class="submenu">
-                                    <li><a href="../temp.html" class="submenu-link">Быстрая сортировка (Quick Sort)</a></li>
-                                    <li><a href="#" class="submenu-link">Сортировка слиянием (Merge Sort)</a></li>
-                                    <li><a href="#" class="submenu-link">Пузырьковая сортировка (Bubble Sort)</a></li>
-                                    <li><a href="#" class="submenu-link">Сортировка вставками (Insertion Sort)</a></li>
-                                    <li><a href="#" class="submenu-link">Сортировка выбором (Selection Sort)</a></li>
-                                    <li><a href="#" class="submenu-link">Пирамидальная сортировка (Heap Sort)</a></li>
-                                    <li><a href="#" class="submenu-link">Поразрядная сортировка (Radix Sort)</a></li>
-                                </ul>
-                            </details>
-                        </li>
-                        <li>
-                            <details class="menu-item">
-                                <summary class="menu-summary">Алгоритмы поиска</summary>
-                                <ul class="submenu">
-                                    <li><a href="#" class="submenu-link">Линейный поиск (Linear Search)</a></li>
-                                    <li><a href="#" class="submenu-link">Бинарный поиск (Binary Search)</a></li>
-                                    <li><a href="#" class="submenu-link">Поиск в глубину (DFS)</a></li>
-                                    <li><a href="#" class="submenu-link">Поиск в ширину (BFS)</a></li>
-                                </ul>
-                            </details>
-                        </li>
-                        </details>
-                        <li class="menu-title"><a href="../aboutUs.html" class="submenu-link">О нас</a></li>
-                    </ul>
-                </nav>
-            </aside>
+                <summary class="user-name hide-p" id="user-name">
+                    <img src="https://avatars.mds.yandex.net/i?id=9028b32c2dbca7fbe65309f1fb7141cf_l-4957727-images-thumbs&amp;n=13" alt="Аватар пользователя" class="user-avatar">
+                    <p>Гость</p>
+                </summary>
+                <ul class="menu-list user-menu-list box-decor" id="user-menu-list">
+                    <li><a class="submenu-link" href="/login.html">Вход</a></li>
+                    <li><a class="submenu-link" href="/register.html">Регистрация</a></li>
+                </ul>
+            </details>
+        </div>
+    </header>
 
-            <main class="main-content">
-                <article>
-                    <img src="../img/about us.jpg" alt="Логотип logMAT" />
-                </article>
-            </main>
+    <div class="banner box-decor">
+        <h1>logMat</h1>
+        <h2>О нас</h2>
+    </div>
+
+    <div class="content">
+        <div class="sidemenu box-decor">
+            <input type="checkbox" id="menu">
+            <label for="menu" id="menu-title">Фильтр</label>
+        </div>
+        <div id="div-article">
         </div>
     </div>
+
+    <div id="parent_popup" style="display: none;">
+        <div id="popup_form">
+            <h2 id="popup_form_header"></h2>
+            <form id="popup_form_form" class="dialog">
+                <!-- <input type=""> -->
+            </form>
+        </div>
+    </div>
+
+
+    <footer>
+        <p id="footer-text">
+            @ 2025 logMat.
+        </p>
+    </footer>
 </body>
 </html>
