@@ -10,6 +10,7 @@
 * {
     padding: 0;
     margin: 0;
+    color: var(--main-font-color);
     transition: 
         background 0.3s,
         mask 0.3s,
@@ -30,8 +31,16 @@
     justify-content: center;
     color: white;
     padding: 1rem 0;
-}
 
+    h1 {
+       color: whitesmoke;
+       font-size: 3rem;
+    }
+
+    h2 {
+        color: whitesmoke;
+    }
+}
 .header-right {
     display: flex;
     align-items: center;
@@ -66,15 +75,10 @@
 }
 
 
-.banner h1 {
-    font-size: 3rem;
-}
-.banner h2 {
-    color: whitesmoke;
-}
+
 
 .main-content {
-    background-color: white;
+    background-color: var(--block-background-color);
     width: 100%;
     height: min-content;
 }
@@ -137,7 +141,7 @@ body {
         background-color: darkgray;
     }
     .current, .current:hover {
-        background-color: white;
+        background-color: rgba(1, 102, 240, 0.2);
         margin-left: -0.7rem;
         padding-left: 0.7rem;
     }
@@ -156,16 +160,6 @@ body {
     h2 {
         color: #808080;
     }
-}
-
-.text-stat {
-    font-size: 0.9rem;
-    height: 150px;
-    margin-top: 10px;
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    resize: vertical;
 }
 
 #menu-title {
@@ -220,7 +214,7 @@ header a {
     position: relative;
     gap: 0.5rem;
 }
-#user-name {
+.user-name {
     color: var(--main-font-color);
 }
 
@@ -303,6 +297,7 @@ details summary:hover {
 
 footer {
     width: 100%;
+    opacity: 0.375;
 
     color: #aaa;
     font-size: 0.8rem;
