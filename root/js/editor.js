@@ -170,5 +170,5 @@ async function InsertFile(isImg) {
 }
 
 window.addEventListener("load", function () {
-    alert("WORK");
+    //alert("WORK");
 }, false);

@@ -60,9 +60,9 @@
                 <ul class="user-menu-list box-decor">
                     <%c++ if(user.username.empty()){%>
                         <li><a class="submenu-link" href="/login.html">Вход</a></li>
-                        <li><a class="submenu-link" href="/register.html">Регистрация</a></li>
+                        <li><a class="submenu-link" href="/register.html">Регистрация</a></li>
                     <%c++ }else{%>
-                        <li><a href="/me" class="user-menu-link">Профиль</a></li>
+                        <li><a href="/me" class="user-menu-link">Профиль</a></li>
                         <li>
                             <form action="/api/auth/out?redirect=/" method="POST">
                                 <input type="submit" class="user-menu-link" value="Выход" />

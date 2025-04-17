@@ -33,7 +33,7 @@ async function configureUser() {
             obj = document.getElementById("user-menu-list")
             if (obj) {
                 obj.innerHTML = `
-                    <li><a href="/me" class="user-menu-link">Профиль</a></li>
+                    <li><a href="/me" class="user-menu-link">Профиль</a></li>
                     <li>
                         <form action="/api/auth/out?redirect=/" method="POST">
                             <input type="submit" class="user-menu-link" value="Выход" />
