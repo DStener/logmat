@@ -17,20 +17,28 @@
 </head>
 <body>
     <div class="container">
-        <header class="header">
-            <div class="logo">
-                <a href="#">
-                    <img src="/img/av.png" alt="Логотип logMAT" class="logo-img"/>
-                </a>
-                <div>
-                    <a href="/" class="logo-text">logMAT</a>
-                    <p class="logo-subtext">Сайт о алгоритмах</p>
-                </div>
-            </div>
+        <header>
+            <label id="logo" class="hide-p">
+                <img src="/favicon.png" alt="Логотип logMAT" class="logo-img">
+                <p>logMat</p>
+                <a href="/">Главная</a>
+                <a href="/">О нас</a>
+            </label>
 
-            <div class="header-controls">
-                <input type="text" placeholder="Поиск" class="search-input"/>
-                <div class="user-info"></div>
+            <div class="header-right">
+                <label id="color-switcher"><input type="checkbox" onchange="changeColorTheme()"><span></span></label>
+
+                <details class="user-menu">
+
+                    <summary class="user-name hide-p" id="user-name">
+                        <img src="https://avatars.mds.yandex.net/i?id=9028b32c2dbca7fbe65309f1fb7141cf_l-4957727-images-thumbs&amp;n=13" alt="Аватар пользователя" class="user-avatar">
+                        <p>Гость</p>
+                    </summary>
+                    <ul class="user-menu-list box-decor" id="user-menu-list">
+                        <li><a class="submenu-link" href="/login.html">Вход</a></li>
+                        <li><a class="submenu-link" href="/register.html">Регистрация</a></li>
+                    </ul>
+                </details>
             </div>
         </header>
 
@@ -40,31 +48,31 @@
                     <ul class="menu">
                         <details class="menu-item">
                             <summary class="menu-title" style="padding: 0px;">Алгоритмы</summary>
-                            <li>
-                                <details class="menu-item">
-                                    <summary class="menu-summary">Алгоритмы сортировки</summary>
-                                    <ul class="submenu">
-                                        <li><a href="../temp.html" class="submenu-link">Быстрая сортировка (Quick Sort)</a></li>
-                                        <li><a href="#" class="submenu-link">Сортировка слиянием (Merge Sort)</a></li>
-                                        <li><a href="#" class="submenu-link">Пузырьковая сортировка (Bubble Sort)</a></li>
-                                        <li><a href="#" class="submenu-link">Сортировка вставками (Insertion Sort)</a></li>
-                                        <li><a href="#" class="submenu-link">Сортировка выбором (Selection Sort)</a></li>
-                                        <li><a href="#" class="submenu-link">Пирамидальная сортировка (Heap Sort)</a></li>
-                                        <li><a href="#" class="submenu-link">Поразрядная сортировка (Radix Sort)</a></li>
-                                    </ul>
+                        <li>
+                            <details class="menu-item">
+                                <summary class="menu-summary">Алгоритмы сортировки</summary>
+                                <ul class="submenu">
+                                    <li><a href="../temp.html" class="submenu-link">Быстрая сортировка (Quick Sort)</a></li>
+                                    <li><a href="#" class="submenu-link">Сортировка слиянием (Merge Sort)</a></li>
+                                    <li><a href="#" class="submenu-link">Пузырьковая сортировка (Bubble Sort)</a></li>
+                                    <li><a href="#" class="submenu-link">Сортировка вставками (Insertion Sort)</a></li>
+                                    <li><a href="#" class="submenu-link">Сортировка выбором (Selection Sort)</a></li>
+                                    <li><a href="#" class="submenu-link">Пирамидальная сортировка (Heap Sort)</a></li>
+                                    <li><a href="#" class="submenu-link">Поразрядная сортировка (Radix Sort)</a></li>
+                                </ul>
                             </details>
-                            </li>
-                            <li>
-                                <details class="menu-item">
-                                    <summary class="menu-summary">Алгоритмы поиска</summary>
-                                    <ul class="submenu">
-                                        <li><a href="#" class="submenu-link">Линейный поиск (Linear Search)</a></li>
-                                        <li><a href="#" class="submenu-link">Бинарный поиск (Binary Search)</a></li>
-                                        <li><a href="#" class="submenu-link">Поиск в глубину (DFS)</a></li>
-                                        <li><a href="#" class="submenu-link">Поиск в ширину (BFS)</a></li>
-                                    </ul>
-                                </details>
-                            </li>
+                        </li>
+                        <li>
+                            <details class="menu-item">
+                                <summary class="menu-summary">Алгоритмы поиска</summary>
+                                <ul class="submenu">
+                                    <li><a href="#" class="submenu-link">Линейный поиск (Linear Search)</a></li>
+                                    <li><a href="#" class="submenu-link">Бинарный поиск (Binary Search)</a></li>
+                                    <li><a href="#" class="submenu-link">Поиск в глубину (DFS)</a></li>
+                                    <li><a href="#" class="submenu-link">Поиск в ширину (BFS)</a></li>
+                                </ul>
+                            </details>
+                        </li>
                         </details>
                         <li class="menu-title"><a href="../aboutUs.html" class="submenu-link">О нас</a></li>
                     </ul>

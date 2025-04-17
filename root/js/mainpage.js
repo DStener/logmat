@@ -5,8 +5,8 @@ async function configArticle() {
         let json = await response.json();
         let obj = document.getElementById("div-article");
 
-        console.log(json.length);
-        console.log(json);
+        if (!json) { return; }
+
         for (let i = 0; i < json.length; ++i) {
             obj.innerHTML +=
             `<a href="#" class="artcile-card">

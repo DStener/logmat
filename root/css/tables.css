@@ -221,7 +221,7 @@ form.dialog input[type="number"]:focus {
 
 a.artcile-card {
     text-decoration: none;
-    color: #374151;
+    color: var(--additional-font-color);
 }
 
 div.artcile-card {
@@ -240,7 +240,7 @@ div.artcile-card:hover {
 .artcile-card h1 {
     font-weight: bolder;
     font-size: 1.4rem;
-    color: #374151;
+    color: var(--additional-font-color);
     padding: 0.3rem 1rem;
 }
 

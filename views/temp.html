@@ -36,39 +36,41 @@
             <a href="/">О нас</a>
         </label>
 
-
-        <details class="user-menu">
+        <div class="header-right">
+            <label id="color-switcher"><input type="checkbox" onchange="changeColorTheme()"><span></span></label>
+            <details class="user-menu">
             
-            <summary class="user-name hide-p">
-                <!--Avatar-->
-                <%c++ if(user.avatar != 0){%>
-                    <img src="/api/ref/file/{%user.avatar%}/avatar" alt="Аватар пользователя" class="user-avatar">
-                <%c++}else{%>
-                    <img src="https://avatars.mds.yandex.net/i?id=9028b32c2dbca7fbe65309f1fb7141cf_l-4957727-images-thumbs&amp;n=13" alt="Аватар пользователя" class="user-avatar">
-                <%c++}%>
+                <summary class="user-name hide-p">
+                    <!--Avatar-->
+                    <%c++ if(user.avatar != 0){%>
+                        <img src="/api/ref/file/{%user.avatar%}/avatar" alt="Аватар пользователя" class="user-avatar">
+                    <%c++}else{%>
+                        <img src="https://avatars.mds.yandex.net/i?id=9028b32c2dbca7fbe65309f1fb7141cf_l-4957727-images-thumbs&amp;n=13" alt="Аватар пользователя" class="user-avatar">
+                    <%c++}%>
 
-                <!--Name-->
-                <%c++ if(user.username.empty()){%>
-                    <p>Гость</p>
-                <%c++ }else{%>
-                    <p>{%user.username%}</p>
-                <%c++}%>
+                    <!--Name-->
+                    <%c++ if(user.username.empty()){%>
+                        <p>Гость</p>
+                    <%c++ }else{%>
+                        <p>{%user.username%}</p>
+                    <%c++}%>
 
-            </summary>
-            <ul class="user-menu-list box-decor">
-                <%c++ if(user.username.empty()){%>
-                    <li><a class="submenu-link" href="/login.html">Вход</a></li>
-                    <li><a class="submenu-link" href="/register.html">Регистрация</a></li>
-                <%c++ }else{%>
-                    <li><a href="/me" class="user-menu-link">Профиль</a></li>
-                    <li>
-                        <form action="/api/auth/out?redirect=/" method="POST">
-                            <input type="submit" class="user-menu-link" value="Выход" />
-                        </form>
-                    </li>
-                <%c++}%>
-            </ul>
-        </details>
+                </summary>
+                <ul class="user-menu-list box-decor">
+                    <%c++ if(user.username.empty()){%>
+                        <li><a class="submenu-link" href="/login.html">Вход</a></li>
+                        <li><a class="submenu-link" href="/register.html">Регистрация</a></li>
+                    <%c++ }else{%>
+                        <li><a href="/me" class="user-menu-link">Профиль</a></li>
+                        <li>
+                            <form action="/api/auth/out?redirect=/" method="POST">
+                                <input type="submit" class="user-menu-link" value="Выход" />
+                            </form>
+                        </li>
+                    <%c++}%>
+                </ul>
+            </details>
+        </div>
     </header>
 
     <div class="content">

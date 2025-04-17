@@ -1,7 +1,19 @@
-﻿* {
+﻿html {
+    --main-background-color: #f3f4f6;
+    --block-background-color: #fff;
+    --additional-background-color: #e5e7eb;
+    --main-font-color: #000;
+    --additional-font-color: #374151;
+}   
+
+
+* {
     padding: 0;
     margin: 0;
-    transition: background-color 0.3s;
+    transition: 
+        background 0.3s,
+        mask 0.3s,
+        color 0.3s;
 }
 
 
@@ -13,12 +25,46 @@
     margin-bottom: 2rem;
     width: 100%;
     text-align: center;
-    display:flex;
-    flex-direction:column;
-    justify-content:center;
-    color: white; 
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    color: white;
     padding: 1rem 0;
 }
+
+.header-right {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+#color-switcher {
+    width: 1.5rem;
+    height: 1.5rem;
+    display: block;
+    position: relative;
+}
+
+#color-switcher input {
+    display: none;
+}
+
+#color-switcher input, #color-switcher span {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    mask: url(/img/theme.svg) no-repeat;
+    mask-size: 1.5rem;
+    cursor: pointer;
+    background-color: var(--main-font-color);
+}
+
+#color-switcher input:checked + span {
+    mask-position: 0 -1.9rem;
+}
+
 
 .banner h1 {
     font-size: 3rem;
@@ -36,9 +82,11 @@
     padding: 2rem;
 }
 
+
+
 body {
     max-width: 1280px;
-    background-color: #f3f4f6;
+    background-color: var(--main-background-color);
     display: flex;
     flex-direction: column;
     min-height: 100vh;
@@ -65,7 +113,7 @@ body {
 }
 
 .sidemenu {
-    background-color: #e5e7eb;
+    background-color: var(--additional-background-color);
     padding: 1rem;
     display: block;
 
@@ -74,12 +122,12 @@ body {
     @media (max-width: 860px) { width: 100%; }
 
     height: min-content;
-    color: #374151;
+    color: var(--additional-font-color);
 
     *:not(i):not(hr) { 
         display: block;
         padding: 0.7rem 0;
-        color: #374151;
+        color: var(--additional-font-color);
         text-decoration: none;
         border-radius: 0.5rem;
     }
@@ -139,9 +187,10 @@ header #logo {
     gap: 1rem;
     font-size: 1.5rem;
     font-weight: bold;
+    color: var(--main-font-color);
     img {
-        width: 40px;
-        height: 40px;
+        width: 2rem;
+        height: 2rem;
     }
 }
 
@@ -150,7 +199,7 @@ header a {
     align-items: center;
     font-size: 1rem;
     font-weight: normal;
-    color: #374151;
+    color: var(--additional-font-color);
     text-decoration: none;
     padding-left: 0.5rem;
 }
@@ -171,10 +220,16 @@ header a {
     position: relative;
     gap: 0.5rem;
 }
+#user-name {
+    color: var(--main-font-color);
+}
 
 details summary {
     padding: 0.5rem;
-    @media (min-width: 600px) { padding-right:  1rem; }
+
+    @media (min-width: 600px) {
+        padding-right: 1rem;
+    }
 
     border-radius: 2rem;
     transition: background-color 0.3s ease;
@@ -182,14 +237,13 @@ details summary {
     flex-direction: row;
     align-items: center;
     gap: 0.5rem;
-    
 }
 
 .user-menu-list {
     position: absolute;
     right: 0;
-    background-color: #fff;
-    border: 1px solid #d1d5db;
+    background-color: var(--block-background-color);
+    border: 1px solid rgba(0, 0, 0, 0.2);
     padding: 0.5rem 0;
     min-width: 150px;
     z-index: 10;
@@ -198,7 +252,7 @@ details summary {
     li { list-style: none; }
 
     li *:not(form) {
-        background-color: white;
+        background-color: rgba(0, 0, 0, 0);
         margin: 0;
         padding: 0.5rem 1rem;
         transition: background-color 0.3s ease;
@@ -208,7 +262,7 @@ details summary {
         font-size: 1rem;
     }
     li *:hover {
-        background-color: #f3f4f6;
+        background-color: rgba(1, 102, 240, 0.1);
     }
 }
 
@@ -216,7 +270,7 @@ details summary {
     display: block;
     padding: 0.5rem 1rem;
     border: none;
-    color: #374151;
+    color: var(--additional-font-color);
     text-decoration: none;
     transition: background-color 0.3s ease;
     border-radius: 0.5rem;
@@ -228,11 +282,11 @@ details summary {
     cursor: pointer;
 }
 details[open] summary {
-    background-color: #cbd5e0;
+    background-color: rgba(1, 102, 240, 0.2);
 }
 details summary:hover {
-    background-color: #e2e8f0;
-  }
+    background-color: rgba(1, 102, 240, 0.1);
+}
 
 
 
@@ -265,21 +319,20 @@ footer {
         flex-direction: column;
     }
 }
-/************************ form.dialog ************************ */
-/*form.dialog input {
-    height: 30px;
-    border: 1px solid #bdbdbd;
-    border-radius: 0.3rem;
-    font-size: 0.9rem;
-}
-*/
+
 @media (max-width: 860px)  {
     #menu-title::after {
+        font-family: 'remixicon' !important;
+        font-style: normal;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        font-size: 1.2rem;
+        font-weight: normal;
+
         text-align: right;
-        float:right;
-        content: url("/img/arrow.svg");
-        width: 1rem;
-        height: 1rem;
+        float: right;
+        content: "\ea54";
+        color: var(--additional-font-color);
     }
 
     .sidemenu *:not(#menu-title):not(i) {

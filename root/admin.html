@@ -15,31 +15,28 @@
 </head>
 <body>
     <div class="container">
-        <header class="header">
-            <div class="logo">
-                <a href="#">
-                    <img src="../img/av.png" alt="Логотип logMAT" class="logo-img"/>
-                </a>
-                <div>
-                    <a href="../index.html" class="logo-text">logMAT</a>
-                    <p class="logo-subtext">Сайт о алгоритмах</p>
-                </div>
-            </div>
+        <header>
+            <label id="logo" class="hide-p">
+                <img src="/favicon.png" alt="Логотип logMAT" class="logo-img">
+                <p>logMat</p>
+                <a href="/">Главная</a>
+                <a href="/">О нас</a>
+            </label>
 
-            <div class="header-controls">
-                <input type="text" placeholder="Поиск" class="search-input"/>
-                <div class="user-info">
-                    <img src="https://avatars.mds.yandex.net/i?id=9028b32c2dbca7fbe65309f1fb7141cf_l-4957727-images-thumbs&n=13" alt="Аватар пользователя" class="user-avatar"/>
-                    <details class="user-menu">
-                        <summary class="user-name">Даниил Стенер</summary>
-                        <ul class="user-menu-list">
-                            <li><a href="../userTemp.html" class="user-menu-link">Профиль</a></li>
-                            <li><a href="../articleConstructor.html" class="user-menu-link">Конструктор статей</a></li>
-                            <li><a href="../admin.html" class="user-menu-link">Админ панель</a></li>
-                            <li><a href="#" class="user-menu-link">Выход</a></li>
-                        </ul>
-                    </details>
-                </div>
+            <div class="header-right">
+                <label id="color-switcher"><input type="checkbox" onchange="changeColorTheme()"><span></span></label>
+
+                <details class="user-menu">
+
+                    <summary class="user-name hide-p" id="user-name">
+                        <img src="https://avatars.mds.yandex.net/i?id=9028b32c2dbca7fbe65309f1fb7141cf_l-4957727-images-thumbs&amp;n=13" alt="Аватар пользователя" class="user-avatar">
+                        <p>Гость</p>
+                    </summary>
+                    <ul class="user-menu-list box-decor" id="user-menu-list">
+                        <li><a class="submenu-link" href="/login.html">Вход</a></li>
+                        <li><a class="submenu-link" href="/register.html">Регистрация</a></li>
+                    </ul>
+                </details>
             </div>
         </header>
 
@@ -56,29 +53,29 @@
                 <h1 class="admin-title">Панель управления</h1>
                 <div class="admin-table-container">
 
-                <div class="button-line">
-                </div>
-
-                <table class="admin-table" id="admin-table">
-                    <thead>
-                        <tr>
-                            <th>Выберете пункт меню, чтобы начать работу.</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                    </tbody>
-                </table>
-
-                <div id="parent_popup" style="display: none;">
-                    <div id="popup_form">
-                        <h2 id="popup_form_header"></h2>
-                        <form id="popup_form_form">
-                            <!-- <input type=""> -->
-                        <form>
-
+                    <div class="button-line">
                     </div>
 
-                </div>
+                    <table class="admin-table" id="admin-table">
+                        <thead>
+                            <tr>
+                                <th>Выберете пункт меню, чтобы начать работу.</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+
+                    <div id="parent_popup" style="display: none;">
+                        <div id="popup_form">
+                            <h2 id="popup_form_header"></h2>
+                            <form id="popup_form_form">
+                                <!-- <input type=""> -->
+                                <form>
+
+                        </div>
+
+                    </div>
 
                 </div>
             </main>
