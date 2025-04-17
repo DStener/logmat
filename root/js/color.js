@@ -1,12 +1,14 @@
 ﻿function lightTheme() {
+    document.documentElement.style.setProperty("--is-light-theme", "1");
     document.documentElement.style.setProperty("--main-background-color", " #f3f4f6");
     document.documentElement.style.setProperty("--block-background-color", "#fff");
     document.documentElement.style.setProperty("--additional-background-color", "#e5e7eb");
     document.documentElement.style.setProperty("--main-font-color", "#000");
-    document.documentElement.style.setProperty("--additional-font-color", "#374151");
+    document.documentElement.style.setProperty("--additional-font-color", "#374151"); 
 }
 
 function darkTheme() {
+    document.documentElement.style.setProperty("--is-light-theme", "0");
     document.documentElement.style.setProperty("--main-background-color", "#232325");
     document.documentElement.style.setProperty("--block-background-color", "#121212");
     document.documentElement.style.setProperty("--additional-background-color", "#2c2d31");
