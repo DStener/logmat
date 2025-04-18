@@ -1,0 +1,16 @@
+﻿<%layout temp %>
+<%inc
+    #include "struct_declaration.hpp"
+    #include "System/utils.h"
+    #include <tuple>
+%>
+<%c++
+    auto user = @@.get<::User>("User");
+    auto article = @@.get<::Article>("article");
+%>
+<div class="main-content article-content box-decor padding-content">
+    <img class="best-photo-banner" src="/api/ref/file/{%article.banner%}">
+    <h1>{%article.header%}</h1>
+    <span class="best-cotent">{%utils::base64Decode(article.content)%}</span>
+
+</div>

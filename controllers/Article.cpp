@@ -27,7 +27,7 @@ void Ref::Article::GetList(const HttpRequestPtr& req, callback_func&& callback)
 
 void Ref::Article::Get(const HttpRequestPtr& req, callback_func&& callback, id_t id_file)
 {
-	auto result = DB::get()->Select<::Article>(std::format("id == {}", id_file));
+	/*auto result = DB::get()->Select<::Article>(std::format("id == {}", id_file));
 
 	if (!result.size())
 	{
@@ -36,8 +36,8 @@ void Ref::Article::Get(const HttpRequestPtr& req, callback_func&& callback, id_t
 		callback(response);
 	}
 
-	auto response = HttpResponse::newFileResponse(result[0].second.content);
-	callback(response);
+	auto response = HttpResponse::newFileResponse(result[0].second);
+	callback(response);*/
 }
 
 void Ref::Article::GetInfo(const HttpRequestPtr& req, callback_func&& callback, id_t id_file)
@@ -65,10 +65,15 @@ void Ref::Article::Upload(const HttpRequestPtr& req, callback_func&& callback)
 
 	// Add Permission to DB
 	LOG_INFO << "TR-2";
-	DB::get()->Insert(article);
+	id_t id = DB::get()->Insert(article);
 
 	auto response = HttpResponse::newHttpResponse();
-	response->setStatusCode(drogon::k200OK);
+	auto redirect = req->getOptionalParameter<std::string>("redirect");
+
+	if (redirect.has_value() && redirect.value()=="true")
+	{
+		response = HttpResponse::newRedirectionResponse(std::format("/article/{}", id));
+	}
 	callback(response);
 }
 
@@ -79,11 +84,17 @@ void Ref::Article::Update(const HttpRequestPtr& req, callback_func&& callback, i
 	if (!login.id) { return; }
 
 	auto article = DTO::ConvertTo<::Article>(req);
+	article.content = utils::base64Encode(article.content);
 
 	DB::get()->Update(id_file, article);
 
 	auto response = HttpResponse::newHttpResponse();
-	response->setStatusCode(drogon::k200OK);
+	auto redirect = req->getOptionalParameter<std::string>("redirect");
+
+	if (redirect.has_value() && redirect.value() == "true")
+	{
+		response = HttpResponse::newRedirectionResponse(std::format("/article/{}", id_file));
+	}
 	callback(response);
 }
 
@@ -96,8 +107,14 @@ void Ref::Article::Delete(const HttpRequestPtr& req, callback_func&& callback, i
 	DB::get()->Delete<::Article>(id_file);
 
 	auto response = HttpResponse::newHttpResponse();
-	response->setStatusCode(drogon::k200OK);
+	auto redirect = req->getOptionalParameter<std::string>("redirect");
+
+	if (redirect.has_value())
+	{
+		response = HttpResponse::newRedirectionResponse(redirect.value());
+	}
 	callback(response);
+
 }
 
 void Ref::Article::SoftDelete(const HttpRequestPtr& req, callback_func&& callback, id_t id_file)

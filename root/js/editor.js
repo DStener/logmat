@@ -59,6 +59,7 @@ function hideForm() {
 async function InsertFile(isImg) {
     let link = "/api/ref/file"
     let isNew = true;
+
     document.getElementById("parent_popup").style.display = "block";
 
     let row, id;
@@ -148,7 +149,7 @@ async function InsertFile(isImg) {
 
                 content.value =
                     value.slice(0, start) +
-                    `<img class="just-photo" src="/api/ref/file/${xhr.response}/avatar">` +
+                    `<img class="just-photo" src="/api/ref/file/${xhr.response}">` +
                     value.slice(start, end) +
                     `</img>` +
                     value.slice(end, value.lenght);

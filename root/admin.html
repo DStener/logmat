@@ -4,83 +4,108 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Админ панель | logMAT</title>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet" />
-    <link href="../css/styles.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@4.5.0/fonts/remixicon.css"
+          rel="stylesheet" />
+    <link href="/css/styles.css" rel="stylesheet" />
+    <link href="/css/tech.css" rel="stylesheet" />
     <link href="/css/tables.css" rel="stylesheet" />
 
-    <script src="/js/userinfo.js"></script>
+
+    <script src="/js/temp.js"></script>
     <script src="/js/asidepanel.js"></script>
     <script src="/js/admin.js"></script>
     <script src="/js/color.js"></script>
     <link rel="icon" type="image/x-icon" href="favicon.png">
 </head>
 <body>
-    <div class="container">
-        <header>
-            <label id="logo" class="hide-p">
-                <img src="/favicon.png" alt="Логотип logMAT" class="logo-img">
-                <p>logMat</p>
-                <a href="/">Главная</a>
-                <a href="/">О нас</a>
-            </label>
+    <header>
+        <label id="logo">
+            <details class="menu" id="mainsidemenu-detail" onclick="openMainsidemenu()">
+                <summary class="ri-char-font mainsidemenu-summary"></summary>
+                <ul class="menu-list mainsidemenu">
+                    <li><a class="submenu-link height-link" href="/">Главная</a></li>
+                    <li><a class="submenu-link height-link" href="/catalog.html">Каталог</a></li>
+                    <li><a class="submenu-link height-link" href="/aboutus.html">О нас</a></li>
+                </ul>
+            </details>
 
-            <div class="header-right">
-                <label id="color-switcher"><input type="checkbox" onchange="changeColorTheme()"><span></span></label>
+            <img src="/favicon.png" alt="Логотип logMAT" class="logo-img">
+            <p>logMat</p>
+        </label>
 
-                <details class="user-menu">
+        <div class="header-right">
+            <label id="color-switcher"><input type="checkbox" onchange="changeColorTheme()"><span></span></label>
 
-                    <summary class="user-name hide-p" id="user-name">
-                        <img src="https://avatars.mds.yandex.net/i?id=9028b32c2dbca7fbe65309f1fb7141cf_l-4957727-images-thumbs&amp;n=13" alt="Аватар пользователя" class="user-avatar">
-                        <p>Гость</p>
-                    </summary>
-                    <ul class="user-menu-list box-decor" id="user-menu-list">
-                        <li><a class="submenu-link" href="/login.html">Вход</a></li>
-                        <li><a class="submenu-link" href="/register.html">Регистрация</a></li>
-                    </ul>
-                </details>
-            </div>
-        </header>
+            <details class="user-menu">
 
-        <div class="content" style="margin-top: 0px;">
-            <aside class="sidebar">
-                <nav>
-                    <ul class="menu" id="ASidePanel">
-                        <li class="menu-title" id="aside-title"></li>
-                    </ul>
-                </nav>
-            </aside>
+                <summary class="user-name hide-p" id="user-name">
+                    <img src="https://avatars.mds.yandex.net/i?id=9028b32c2dbca7fbe65309f1fb7141cf_l-4957727-images-thumbs&amp;n=13" alt="Аватар пользователя" class="user-avatar">
+                    <p>Гость</p>
+                </summary>
+                <ul class="menu-list user-menu-list box-decor" id="user-menu-list">
+                    <li><a class="submenu-link" href="/login.html">Вход</a></li>
+                    <li><a class="submenu-link" href="/register.html">Регистрация</a></li>
+                </ul>
+            </details>
+        </div>
+    </header>
 
-            <main class="main-content">
-                <h1 class="admin-title">Панель управления</h1>
-                <div class="admin-table-container">
+    <div class="content" style="margin-top: 0px;">
+        <!--<aside class="sidebar sidemenu box-decor">
+        <nav>
+            <ul class="menu" id="ASidePanel">
+                <li class="menu-title" id="aside-title"></li>
+            </ul>
+        </nav>
+    </aside>-->
 
-                    <div class="button-line">
-                    </div>
 
-                    <table class="admin-table" id="admin-table">
-                        <thead>
-                            <tr>
-                                <th>Выберете пункт меню, чтобы начать работу.</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                        </tbody>
-                    </table>
+        <div class="sidemenu box-decor" id="ASidePanel">
+            <input type="checkbox" id="menu">
+            <label for="menu" id="menu-title">{%aside_header%}</label>
+            <!--<a href="{%item.href%}" class="submenu-link {%item.add_class%}" onclick="{%item.onclick%}">
+                <i class="{%item.icon%}"></i>
+                <%c++}%>
+                {%item.text.c_str()%}
+            </a>-->
+        </div>
 
-                    <div id="parent_popup" style="display: none;">
-                        <div id="popup_form">
-                            <h2 id="popup_form_header"></h2>
-                            <form id="popup_form_form">
-                                <!-- <input type=""> -->
-                                <form>
 
-                        </div>
+        <main class="main-content box-decor padding-content">
+            <h1 class="admin-title">Панель управления</h1>
+            <div class="admin-table-container">
 
-                    </div>
-
+                <div class="button-line">
                 </div>
-            </main>
+
+                <table class="admin-table" id="admin-table">
+                    <thead>
+                        <tr>
+                            <th>Выберете пункт меню, чтобы начать работу.</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+            </div>
+        </main>
+    </div>
+
+    <div id="parent_popup" style="display: none;">
+        <div id="popup_form">
+            <h2 id="popup_form_header"></h2>
+            <form id="popup_form_form" class="dialog">
+                <!-- <input type=""> -->
+            </form>
         </div>
     </div>
+
+
+    <footer>
+        <p id="footer-text">
+            @ 2025 logMat.
+        </p>
+    </footer>
+
 </body>
 </html>

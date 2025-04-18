@@ -61,18 +61,18 @@ void Director::Account(const HttpRequestPtr& req, callback_func&& callback)
 		view = section.value();
 
 		aitems.push_back({ utils::fromWidePath(L"Осн. информация"), "/me?section=info","ri-user-line", "", ((section.value() == "info") ? "current" : "")});
-		aitems.push_back({ utils::fromWidePath(L"Аутентификация"), "/me?section=authentic", "ri-lock-password-line", "", ((section.value() == "authentic") ? "current" : "")});
+		//aitems.push_back({ utils::fromWidePath(L"Аутентификация"), "/me?section=authentic", "ri-lock-password-line", "", ((section.value() == "authentic") ? "current" : "")});
 	}
 	else
 	{
 		aitems.push_back({ utils::fromWidePath(L"Осн. информация"), "/me?section=info","ri-user-line", "", "current"});
-		aitems.push_back({ utils::fromWidePath(L"Аутентификация"), "/me?section=authentic", "ri-lock-password-line",});
+		//aitems.push_back({ utils::fromWidePath(L"Аутентификация"), "/me?section=authentic", "ri-lock-password-line",});
 	}
 
 	// If User is admin, then add new section
 	if (Request::Login::isAdmin(req))
 	{
-		aitems.push_back({ utils::fromWidePath(L"Панель управления"), "/admin", "ri-tools-line" });
+		aitems.push_back({ utils::fromWidePath(L"Панель управления"), "/admin.html", "ri-tools-line" });
 	}
 
 	auto data = HttpViewData();
@@ -83,6 +83,30 @@ void Director::Account(const HttpRequestPtr& req, callback_func&& callback)
 
 
 	auto response = HttpResponse::newHttpViewResponse(view, data);
+	callback(response);
+}
+
+
+void Director::Article(const HttpRequestPtr& req, callback_func&& callback, id_t id)
+{
+	auto articles = DB::get()->Select<::Article>(std::format("id == {}", id));
+
+	if (articles.empty()) {
+		callback(HttpResponse::newNotFoundResponse());
+		return;
+	}
+
+	auto user = Request::Login::GetUser(req);
+	auto data = HttpViewData();
+	data.insert("User", user);
+	//data.insert("aside-header", utils::fromWidePath(L"Оглавление"));
+	//data.insert("aitems", aitems);
+	data.insert("javascripts", std::vector<std::string>{"/js/editor.js"});
+	data.insert("article", articles[0].second);
+
+
+
+	auto response = HttpResponse::newHttpViewResponse("article", data);
 	callback(response);
 }
 
@@ -125,6 +149,8 @@ void Director::ArticleEditor(const HttpRequestPtr& req, callback_func&& callback
 
 	// Get Article DTO by id
 	auto articles = DB::get()->Select<::Article>(std::format("id == {}", id));
+	//LOG_INFO << articles.empty();
+
 	// If the Article exists, then use UPDATE action
 	std::string action = std::format("/api/ref/article/{}", id);
 	// Else, use CREATE action
@@ -135,8 +161,12 @@ void Director::ArticleEditor(const HttpRequestPtr& req, callback_func&& callback
 	data.insert("User", user);
 	data.insert("aside-header", utils::fromWidePath(L"Элементы"));
 	data.insert("aitems", aitems);
+	data.insert("action", action);
 	data.insert("javascripts", std::vector<std::string>{"/js/editor.js"});
-
+	if (!articles.empty()) {
+		data.insert("article", articles[0].second);
+	}
+	
 
 	auto response = HttpResponse::newHttpViewResponse("article_editor", data);
 	callback(response);

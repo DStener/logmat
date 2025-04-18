@@ -10,14 +10,14 @@
     <link href="/css/tech.css" rel="stylesheet" />
     <link href="/css/tables.css" rel="stylesheet" />
     <script src="/js/temp.js"></script>
-    <script src="/js/mainpage.js"></script>
+    <script src="/js/catalog.js"></script>
     <script src="/js/color.js"></script>
     <link rel="icon" type="image/x-icon" href="favicon.png">
 </head>
 <body>
     <header>
         <label id="logo">
-            <details class="menu">
+            <details class="menu" id="mainsidemenu-detail" onclick="openMainsidemenu()">
                 <summary class="ri-char-font mainsidemenu-summary"></summary>
                 <ul class="menu-list mainsidemenu">
                     <li><a class="submenu-link height-link" href="/">Главная</a></li>
@@ -48,15 +48,11 @@
     </header>
 
     <div class="banner box-decor">
-        <h1>logMat</h1>
+        <!--<h1>logMat</h1>-->
         <h2>Каталог алгоритмов</h2>
     </div>
 
     <div class="content">
-        <div class="sidemenu box-decor">
-            <input type="checkbox" id="menu">
-            <label for="menu" id="menu-title">Фильтр</label>
-        </div>
         <div id="div-article">
         </div>
     </div>

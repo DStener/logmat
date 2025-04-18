@@ -32,11 +32,12 @@ void Ref::File::Get(const HttpRequestPtr& req, callback_func&& callback, id_t id
 {
 	auto result = DB::get()->Select<::File>(std::format("id == {}", id_file));
 
-	if (!result.size())
+	if (result.empty())
 	{
 		auto response = HttpResponse::newHttpJsonResponse(Json::Value("Bad index"));
 		response->setStatusCode(k404NotFound);
 		callback(response);
+		return;
 	}
 
 	auto response = HttpResponse::newFileResponse(result[0].second._path);
@@ -46,11 +47,12 @@ void Ref::File::GetAvatar(const HttpRequestPtr& req, callback_func&& callback, i
 {
 	auto result = DB::get()->Select<::File>(std::format("id == {}", id_file));
 
-	if (!result.size())
+	if (result.empty())
 	{
 		auto response = HttpResponse::newHttpJsonResponse(Json::Value("Bad index"));
 		response->setStatusCode(k404NotFound);
 		callback(response);
+		return;
 	}
 
 	//if(re)

@@ -7,9 +7,11 @@ async function configArticle() {
 
         if (!json) { return; }
 
+        console.log(json);
+
         for (let i = 0; i < json.length; ++i) {
             obj.innerHTML +=
-            `<a href="#" class="artcile-card">
+             `<a href="/article/${json[i]["id"]}" class="artcile-card">
              <div class="artcile-card box-decor">
                 <img src="/api/ref/file/${json[i]["banner"]}">
                 <h1>${json[i]["header"]}</h1>

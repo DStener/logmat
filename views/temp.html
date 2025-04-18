@@ -31,7 +31,7 @@
 
     <header>
         <label id="logo">   
-            <details class="menu">
+            <details class="menu" id="mainsidemenu-detail" onclick="openMainsidemenu()">
                 <summary class="ri-char-font mainsidemenu-summary"></summary>
                 <ul class="menu-list mainsidemenu">
                     <li><a class="submenu-link height-link" href="/">Главная</a></li>
@@ -81,22 +81,24 @@
     </header>
 
     <div class="content">
-        <div class="sidemenu box-decor">
-            <input type="checkbox" id="menu">
-            <label for="menu" id="menu-title">{%aside_header%}</label>
-            <%c++ for(auto& item : items){%>
-                <%c++ if(item.text != "hr"){%>
+        <%c++ if(!aside_header.empty()) {%>
+            <div class="sidemenu box-decor">
+                <input type="checkbox" id="menu">
+                <label for="menu" id="menu-title">{%aside_header%}</label>
+                <%c++ for(auto& item : items){%>
+                    <%c++ if(item.text != "hr"){%>
                     <a href="{%item.href%}" class="submenu-link {%item.add_class%}" onclick="{%item.onclick%}">
-                    <%c++ if(!item.icon.empty()){%>
+                        <%c++ if(!item.icon.empty()){%>
                         <i class="{%item.icon%}"></i>
-                    <%c++}%>
-                    {%item.text.c_str()%}
+                        <%c++}%>
+                        {%item.text.c_str()%}
                     </a>
-                <%c++}else{%>
+                    <%c++}else{%>
                     <hr>
+                    <%c++}%>
                 <%c++}%>
-            <%c++}%>
-        </div>
+            </div>
+        <%c++}%>
         [[]]
     </div>
 

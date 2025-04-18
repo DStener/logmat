@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include <drogon/HttpController.h>
 #include <drogon/HttpController.h>
@@ -19,10 +19,11 @@ public:
     //Connect methods to URL
     METHOD_LIST_BEGIN
         //ADD_METHOD_TO(Director::Main, "/", drogon::Get);
-        ADD_METHOD_TO(Director::Test, "/temp", drogon::Get);
-        ADD_METHOD_TO(Director::AdminPanel, "/admin", drogon::Get);
-        ADD_METHOD_TO(Director::Account, "/me", drogon::Get);
-        ADD_METHOD_TO(Director::ArticleEditor, "/article/{1:id}/editor", drogon::Get);
+        ADD_METHOD_TO(Director::Test, "/temp", drogon::Get, "Filter::Login");
+        ADD_METHOD_TO(Director::AdminPanel, "/admin", drogon::Get, "Filter::Login");
+        ADD_METHOD_TO(Director::Account, "/me", drogon::Get, "Filter::Login");
+        ADD_METHOD_TO(Director::ArticleEditor, "/article/{1:id}/editor", drogon::Get, "Filter::Login");
+        ADD_METHOD_TO(Director::Article, "/article/{1:id}", drogon::Get);
         ADD_METHOD_TO(Director::Version, "/info/version", drogon::Get);
     METHOD_LIST_END
 
@@ -31,6 +32,7 @@ public:
     void Account(const HttpRequestPtr& req, callback_func&& callback);
     void AdminPanel(const HttpRequestPtr& req, callback_func&& callback);
     void ArticleEditor(const HttpRequestPtr& req, callback_func&& callback, id_t id);
+    void Article(const HttpRequestPtr& req, callback_func&& callback, id_t id);
    
 };
 

@@ -1,44 +1,5 @@
 ﻿/*****************MENU_STYLE*****************************************************************************/
 
-details summary {
-    list-style: none;
-    cursor: pointer;
-    padding: 0.5rem 1rem;
-    border-radius: 0.5rem;
-    transition: background-color 0.3s ease;
-}
-
-
-details summary:hover {
-    background-color: #e2e8f0;
-}
-
-
-details[open] summary {
-    background-color: #cbd5e0;
-}
-
-
-details ul {
-    list-style: none;
-    margin-top: 0.5rem;
-    padding-left: 1rem;
-    border-left: 2px solid #cbd5e0; 
-}
-
-
-details ul li a {
-    display: block;
-    padding: 0.5rem 1rem;
-    border-radius: 0.5rem;
-    transition: background-color 0.3s ease, color 0.3s ease;
-}
-
-
-details ul li a:hover {
-    background-color: #e2e8f0;
-    color: #3182ce;
-}
 
 .content {
     display: flex;
@@ -104,7 +65,7 @@ input.user-menu-link {
 
 
 .user-menu-link:hover {
-    background-color: #f3f4f6;
+/*    background-color: #f3f4f6;*/
 }
 /********************************************************************************************************/
 
@@ -113,7 +74,7 @@ input.user-menu-link {
 .admin-title {
     font-size: 2rem;
     margin-bottom: 1.5rem;
-    color: #1f2937;
+    color: var(--main-font-color);
 }
 
 .admin-table-container {
@@ -125,7 +86,7 @@ input.user-menu-link {
     table-layout: fixed;
     word-wrap: break-word;
     border-collapse: collapse;
-    background-color: #fff;
+    background-color: rgba(0,0,0,0s);
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
@@ -139,13 +100,13 @@ input.user-menu-link {
 }
 
 .admin-table th {
-    background-color: #f3f4f6;
+    background-color: var( --additional-background-color);
     font-weight: 600;
-    color: #374151;
+    color: var(--additional-font-color);
 }
 
 .admin-table tr:hover {
-    background-color: #f9fafb;
+    background-color: rgba(1, 102, 240, 0.1);
 }
 
 .table-avatar {
@@ -301,21 +262,12 @@ footer p {
     box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); 
 }
 
-.menu {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-}
-
 .menu-title {
     font-weight: bold;
     font-size: 1.125rem;
     margin-bottom: 0.5rem;
 }
 
-.menu-item {
-    margin-bottom: 0.5rem;
-}
 
 .menu-summary {
     font-weight: 500;
@@ -327,7 +279,7 @@ footer p {
 }
 
 .menu-summary:hover {
-    background-color: #d1d5db; 
+/*    background-color: #d1d5db; */
 }
 
 .submenu {
@@ -335,20 +287,6 @@ footer p {
     padding-left: 1rem;
     margin-top: 0.5rem;
     border-left: 2px solid #d1d5db; 
-}
-
-.submenu-link {
-    display: block;
-    padding: 0.7rem 0rem;
-    color: #374151; 
-    text-decoration: none;
-    border-radius: 0.5rem;
-    transition: background-color 0.3s ease, color 0.3s ease;
-}
-
-.submenu-link:hover {
-    background-color: #e5e7eb; 
-    color: #3b82f6; 
 }
 
 

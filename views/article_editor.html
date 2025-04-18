@@ -6,22 +6,29 @@
 %>
 <%c++
     auto user = @@.get<::User>("User");
+    auto article = @@.get<::Article>("article");
+    auto action =@@.get<std::string>("action");
 %>
 <div class="main-content box-decor padding-content">
     <h2>Конструктор статей</h2>
 
-    <form class="dialog wide" action="/api/ref/article/" method="POST">
+    <form class="dialog wide" action="{%action%}?redirect=true" method="POST">
 
         <label for="header">Заголовок статьи:</label>
-        <input type="text" name="header" id="header" placeholder="Введите заголовок" required>
+        <input type="text" name="header" id="header" placeholder="Введите заголовок" value="{%article.header%}" required>
 
         <label for="banner">Баннер статьи:</label>
-        <input type="number" name="banner" id="banner" placeholder="Введите id баннер статьи" required>
+        <input type="number" name="banner" id="banner" placeholder="Введите id баннер статьи" value="{%article.banner%}" required>
 
         <label for="content">Содержимое статьи:</label>
-        <textarea id="content" name="content" placeholder="Введите текст статьи" required class="text-stat"></textarea>
+        <textarea id="content" name="content" placeholder="Введите текст статьи" required class="text-stat">{%utils::base64Decode(article.content)%}</textarea>
         <br>
         <!--<button id="submit" class="button-stat">Сохранить статью</button>-->
         <input type="submit" class="new" value="Сохранить статью" />
     </form>
+    <%c++ if(action != "/api/ref/article/") {%>
+        <form class="dialog wide" action="{%action%}/delete?redirect=/" method="POST">
+            <input type="submit" class="delete" value="Удалить статью" />
+        </form>
+    <%c++}%>
 </div>

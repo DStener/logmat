@@ -23,6 +23,22 @@ function changeColorTheme() {
     else { lightTheme(); }
 }
 
+
+function openMainsidemenu() {
+    let obj = document.getElementById("mainsidemenu-detail")
+    if (!obj.hasAttribute("open")) {
+        console.log("TUT");
+        document.body.style.position = 'fixed';
+        document.body.style.overflowY = 'hidden';
+    } else {
+        document.body.style.position = '';
+        document.body.style.overflowY = '';
+    }
+}
+
+
+
+
 function preLoadThemeConfig() {
     let isDarkTheme = (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches);
 

@@ -253,7 +253,9 @@ public:
             ResponseVec<T> vec{};
             for(const auto& row : result)
             {
+                //LOG_INFO << row.size();
                 DTORow<T> _cash{row.at("id").as<id_t>(), T{}};
+                //LOG_INFO << "END";
                 DTO::for_each(_cash.second, [&row](std::string_view name, auto& field)
                 {
                     using type_dec = std::remove_cvref_t<decltype(field)>;

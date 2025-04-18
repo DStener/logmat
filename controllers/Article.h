@@ -25,7 +25,7 @@ public:
         METHOD_ADD(Article::GetInfo, "/{1:id_file}/info", drogon::Get);
         METHOD_ADD(Article::Upload, "/", drogon::Post);
         METHOD_ADD(Article::Update, "/{1:id_file}", drogon::Put, drogon::Post);
-        METHOD_ADD(Article::Delete, "/{1:id_file}", drogon::Delete);
+        METHOD_ADD(Article::Delete, "/{1:id_file}/delete", drogon::Delete, drogon::Post);
         METHOD_ADD(Article::SoftDelete, "/{1:id_file}/soft", drogon::Delete);
         METHOD_ADD(Article::Restore, "/{1:id_file}/restore", drogon::Post);
         METHOD_ADD(Article::Form, "/form", drogon::Get);

@@ -1,0 +1,97 @@
+﻿<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>logMAT - Сайт про алгоритмы</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet" />
+    <link href="/css/styles.css" rel="stylesheet" />
+    <link href="/css/menuStyles.css" rel="stylesheet" />
+    <link href="/css/userMenu.css" rel="stylesheet" />
+
+    <script src="/js/userinfo.js"></script>
+    <script src="/js/color.js"></script>
+    <link rel="icon" type="image/x-icon" href="favicon.png">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <label id="logo" class="hide-p">
+                <img src="/favicon.png" alt="Логотип logMAT" class="logo-img">
+                <p>logMat</p>
+                <a href="/">Главная</a>
+                <a href="/">О нас</a>
+            </label>
+
+            <div class="header-right">
+                <label id="color-switcher"><input type="checkbox" onchange="changeColorTheme()"><span></span></label>
+
+                <details class="user-menu">
+
+                    <summary class="user-name hide-p" id="user-name">
+                        <img src="https://avatars.mds.yandex.net/i?id=9028b32c2dbca7fbe65309f1fb7141cf_l-4957727-images-thumbs&amp;n=13" alt="Аватар пользователя" class="user-avatar">
+                        <p>Гость</p>
+                    </summary>
+                    <ul class="user-menu-list box-decor" id="user-menu-list">
+                        <li><a class="submenu-link" href="/login.html">Вход</a></li>
+                        <li><a class="submenu-link" href="/register.html">Регистрация</a></li>
+                    </ul>
+                </details>
+            </div>
+        </header>
+
+        <div class="content">
+            <aside class="sidebar">
+                <nav>
+                    <ul class="menu" id="ASidePanel">
+                        <li class="menu-title" id="aside-title">Алгоритмы</li>
+                        <li>
+                            <details class="menu-item">
+                                <summary class="menu-summary">Алгоритмы сортировки</summary>
+                                <ul class="submenu">
+                                    <li><a href="/temp.html" class="submenu-link">Быстрая сортировка (Quick Sort)</a></li>
+                                    <li><a href="#" class="submenu-link">Сортировка слиянием (Merge Sort)</a></li>
+                                    <li><a href="#" class="submenu-link">Пузырьковая сортировка (Bubble Sort)</a></li>
+                                    <li><a href="#" class="submenu-link">Сортировка вставками (Insertion Sort)</a></li>
+                                    <li><a href="#" class="submenu-link">Сортировка выбором (Selection Sort)</a></li>
+                                    <li><a href="#" class="submenu-link">Пирамидальная сортировка (Heap Sort)</a></li>
+                                    <li><a href="#" class="submenu-link">Поразрядная сортировка (Radix Sort)</a></li>
+                                </ul>
+                            </details>
+                        </li>
+                        <li>
+                            <details class="menu-item">
+                                <summary class="menu-summary">Алгоритмы поиска</summary>
+                                <ul class="submenu">
+                                    <li><a href="#" class="submenu-link">Линейный поиск (Linear Search)</a></li>
+                                    <li><a href="#" class="submenu-link">Бинарный поиск (Binary Search)</a></li>
+                                    <li><a href="#" class="submenu-link">Поиск в глубину (DFS)</a></li>
+                                    <li><a href="#" class="submenu-link">Поиск в ширину (BFS)</a></li>
+                                </ul>
+                            </details>
+                        </li>
+                        <li class="menu-title"><a href="/gallery.html" class="submenu-link">Галерея</a></li>
+                        <li class="menu-title"><a href="/aboutUs.html" class="submenu-link">О нас</a></li>
+                    </ul>
+                </nav>
+            </aside>
+
+            <main class="main-content">
+                <article>
+                    <h2 class="article-title">О сайте</h2>
+                    <p class="article-text">
+                        Добро пожаловать на сайт logMAT! Здесь вы найдёте подробные объяснения и примеры реализации различных алгоритмов. Мы поможем вам разобраться в сложных темах, таких как сортировка, поиск, графы, динамическое программирование и многое другое.
+                    </p>
+                    <p class="article-text">
+                        Наш сайт предназначен для всех, кто интересуется алгоритмами — от начинающих программистов до опытных разработчиков. Мы стремимся сделать сложные концепции доступными и понятными.
+                    </p>
+                    <p class="article-text">
+                        Используйте меню слева, чтобы выбрать интересующий вас раздел. Каждый алгоритм сопровождается подробным описанием, примерами кода и визуализацией.
+                    </p>
+
+                </article>
+            </main>
+        </div>
+    </div>
+</body>
+</html>
