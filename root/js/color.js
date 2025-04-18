@@ -26,7 +26,7 @@ function changeColorTheme() {
 
 function openMainsidemenu() {
     let obj = document.getElementById("mainsidemenu-detail")
-    if (!obj.hasAttribute("open")) {
+    if (!obj.hasAttribute("open") && window.innerWidth < 1280) {
         console.log("TUT");
         document.body.style.position = 'fixed';
         document.body.style.overflowY = 'hidden';

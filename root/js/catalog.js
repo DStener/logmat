@@ -15,7 +15,6 @@ async function configArticle() {
              <div class="artcile-card box-decor">
                 <img src="/api/ref/file/${json[i]["banner"]}">
                 <h1>${json[i]["header"]}</h1>
-                <p>${"NONE"}</p>
              </div>
              </a>`;
         }

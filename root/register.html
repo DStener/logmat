@@ -6,13 +6,40 @@
     <script src="/js/register.js"></script>
     <link rel="stylesheet" href="/css/styles_old.css">
     <title>Register form</title>
-    <link rel="icon" type="image/x-icon" href="favicon.png">s
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@4.5.0/fonts/remixicon.css"
+          rel="stylesheet" />
+    <link href="/css/tech.css" rel="stylesheet" />
+    <link href="/css/tables.css" rel="stylesheet" />
+    <script src="/js/temp.js"></script>
+    <script src="/js/catalog.js"></script>
+    <script src="/js/color.js"></script>
+    <link rel="icon" type="image/x-icon" href="favicon.png">
 </head>
 <body>
-    <div class="out-box background-landscape">
-        <form class="dialog" id="register_dialog">
+    <header>
+        <label id="logo">
+            <details class="menu" id="mainsidemenu-detail" onclick="openMainsidemenu()">
+                <summary class="ri-char-font mainsidemenu-summary"></summary>
+                <ul class="menu-list mainsidemenu">
+                    <li><a class="submenu-link height-link" href="/">Главная</a></li>
+                    <li><a class="submenu-link height-link" href="/catalog.html">Каталог</a></li>
+                    <li><a class="submenu-link height-link" href="/aboutus.html">О нас</a></li>
+                </ul>
+            </details>
 
-            <a href="/" class="logo"><i><b>log</b>Mat</i></a>
+            <img src="/favicon.png" alt="Логотип logMAT" class="logo-img">
+            <p>logMat</p>
+        </label>
+
+        <div class="header-right">
+            <label id="color-switcher"><input type="checkbox" onchange="changeColorTheme()"><span></span></label>
+        </div>
+    </header>
+
+    <div class="out-box">
+        <form class="dialog box-decor" id="register_dialog">
+
+            <a href="/" class="logo"></a>
             <h2>Регистрация</h2>
 
             <label for="username">Имя пользователя</label>
@@ -32,7 +59,7 @@
             <input type="date" name="birthday" id="birthday" required />
 
             <hr>
-             
+
             <h3>CAPTCHA</h3>
             <label for="answer" id="captcha">Загрузка...</label>
             <input type="text" name="answer" id="answer" required />

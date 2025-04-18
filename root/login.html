@@ -6,35 +6,67 @@
     <script src="/js/login.js"></script>
     <link rel="stylesheet" href="/css/styles_old.css">
     <title>LogMat - Login</title>
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@4.5.0/fonts/remixicon.css"
+          rel="stylesheet" />
+    <link href="/css/tech.css" rel="stylesheet" />
+    <link href="/css/tables.css" rel="stylesheet" />
+    <script src="/js/temp.js"></script>
+    <script src="/js/catalog.js"></script>
+    <script src="/js/color.js"></script>
     <link rel="icon" type="image/x-icon" href="favicon.png">
 </head>
 <body>
-    <div class="out-box background-landscape">
-        <!-- <form class="dialog" action="/api/auth/login" method="POST"> -->
-        <form class="dialog" id="login_dialog">
-            
+    <header>
+        <label id="logo">
+            <details class="menu" id="mainsidemenu-detail" onclick="openMainsidemenu()">
+                <summary class="ri-char-font mainsidemenu-summary"></summary>
+                <ul class="menu-list mainsidemenu">
+                    <li><a class="submenu-link height-link" href="/">Главная</a></li>
+                    <li><a class="submenu-link height-link" href="/catalog.html">Каталог</a></li>
+                    <li><a class="submenu-link height-link" href="/aboutus.html">О нас</a></li>
+                </ul>
+            </details>
 
-            <a href="/" class="logo"><i><b>log</b >Mat</i></a>
+            <img src="/favicon.png" alt="Логотип logMAT" class="logo-img">
+            <p>logMat</p>
+        </label>
+
+        <div class="header-right">
+            <label id="color-switcher"><input type="checkbox" onchange="changeColorTheme()"><span></span></label>
+        </div>
+    </header>
+
+    <div class="out-box">
+        <!-- <form class="dialog" action="/api/auth/login" method="POST"> -->
+        <form class="dialog box-decor" id="login_dialog">
+
+
+            <a href="/" class="logo"></a>
             <h2>Вход</h2>
 
             <label for="username" id="username_txt">Имя пользователя</label>
-            <input type="text" name="username" id="username" required/>
+            <input type="text" name="username" id="username" required />
 
             <label for="password" id="password_txt" style="display: none;">Пароль</label>
-            <input type="hidden" name="password" id="password" required/>
+            <input type="hidden" name="password" id="password" required />
 
             <label for="code" id="code_txt" style="display: none;">Ключ 2FA</label>
-            <input type="hidden" name="code" id="code" length="6" required/>
+            <input type="hidden" name="code" id="code" length="6" required />
 
-            <lable class="error_message" id="err_mes"style="display: none;">ERROR</lable>
-            
+            <lable class="error_message" id="err_mes" style="display: none;">ERROR</lable>
+
             <div class="btn-line">
-                <input class="previous" type="button" style="display: none;" value="← Назад"/>
-                <input class="next" type="submit" value="Далее →"/>
+                <input class="previous" type="button" style="display: none;" value="← Назад" />
+                <input class="next" type="submit" value="Далее →" />
             </div>
             <a href="/register.html" class="link">Регистрация</a>
 
         </form>
     </div>
+    <footer>
+        <p id="footer-text">
+            @ 2025 logMat.
+        </p>
+    </footer>
 </body>
 </html>

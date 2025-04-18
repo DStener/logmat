@@ -1,11 +1,4 @@
-* {
-    padding: 0px;
-    margin: 0px;
-    font-family: sans-serif;
-    box-sizing: border-box;
-}
-
-.out-box {
+﻿.out-box {
     width: 100%;
     height: 100%;
     position: fixed;
@@ -30,13 +23,20 @@
     padding-bottom: 3px;
 }
 
-.background-landscape {
+/*.background-landscape {
     background:  
-        linear-gradient(rgba(0, 0, 0, 0.3),  rgba(0, 0, 0, 0.7)), 
+        linear-gradient(rgba(0, 0, 0, 0.6),  rgba(0, 0, 0, 0.7)), 
         url("/img/background_test.jpg");
     background-size: no-repeat;
     background-position: center;
     background-size: cover; 
+}*/
+
+.background-landscape {
+    background: linear-gradient(var(--main-background-color), rgba(128, 128, 128, 0.1)), url("/img/background_test.jpg");
+    background-size: no-repeat;
+    background-position: center;
+    background-size: cover;
 }
 
 input 
@@ -63,7 +63,7 @@ input[type="button"], input[type="submit"] {
     margin-top: 20px;
     padding-left: 0px;
     
-    color:rgb(46, 46, 46);
+/*    color:rgb(46, 46, 46);*/
 }
 input[type="button"]:hover, input[type="submit"]:hover {
     /* color:black; */
@@ -92,16 +92,13 @@ input[type="number"]:focus {
 
 .dialog {
     width: 363px;
-    background: whitesmoke;
+    background: var(--additional-background-color);
     display: flex;
     flex-direction: column;
     padding: 20px;
     gap: 5px;
-
-
-    border-radius: 7px;
-    box-shadow: 7px 7px 30px rgba(1, 1, 1, 0.7);
-
+/*    border-radius: 7px;*/
+/*    box-shadow: 7px 7px 30px rgba(1, 1, 1, 0.7);*/
     h2 {
        padding: 10px 0px;
     }
