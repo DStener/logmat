@@ -592,3 +592,7 @@ footer {
         flex-direction: column;
     }
 }
+.img-we {
+    width: 100%;
+    padding-bottom: 1rem;
+}
