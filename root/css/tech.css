@@ -17,6 +17,17 @@
         color 0.3s;
 }
 
+.padding-contenet {
+    padding: 20px;
+    border-radius: 0.5rem;
+}
+
+#not-gallaty-found {
+    color: gray;
+    font-size: 1.4rem;
+    max-width: min-content !important;
+}
+
 .ri-char-font {
     font-family: 'remixicon' !important;
     font-style: normal;

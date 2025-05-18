@@ -1,0 +1,72 @@
+﻿<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>logMAT - Сайт про алгоритмы</title>
+    
+    <script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0/dist/fancybox/fancybox.umd.js"></script>
+    <link
+          rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0/dist/fancybox/fancybox.css"
+    />
+
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@4.5.0/fonts/remixicon.css"
+          rel="stylesheet" />
+    <link href="/css/tech.css" rel="stylesheet" />
+    <link href="/css/tables.css" rel="stylesheet" />
+    <script src="/js/temp.js"></script>
+    <script src="/js/color.js"></script>
+    <link rel="icon" type="image/x-icon" href="favicon.png">
+
+    <script src="/js/userinfo.js"></script>
+    <script src="/js/gallery.js"></script>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <label id="logo" class="hide-p">
+                <img src="/favicon.png" alt="Логотип logMAT" class="logo-img">
+                <p>logMat</p>
+                <a href="/">Главная</a>
+                <a href="/">О нас</a>
+            </label>
+
+            <div class="header-right">
+                <label id="color-switcher"><input type="checkbox" onchange="changeColorTheme()"><span></span></label>
+
+                <details class="user-menu">
+
+                    <summary class="user-name hide-p" id="user-name">
+                        <img src="https://avatars.mds.yandex.net/i?id=9028b32c2dbca7fbe65309f1fb7141cf_l-4957727-images-thumbs&amp;n=13" alt="Аватар пользователя" class="user-avatar">
+                        <p>Гость</p>
+                    </summary>
+                    <ul class="user-menu-list box-decor" id="user-menu-list">
+                        <li><a class="submenu-link" href="/login.html">Вход</a></li>
+                        <li><a class="submenu-link" href="/register.html">Регистрация</a></li>
+                    </ul>
+                </details>
+            </div>
+        </header>
+
+        <div class="content" style="margin-top: 0px;">
+            <main class="main-content padding-contenet">
+                <article>
+                    <h2 class="article-title">Галерея</h2>
+                    <div id="gallery-block">
+                    
+                        <label id="not-gallaty-found">Здесь пока нет никаких фотографий</label>
+                    </div>
+                </article>
+            </main>
+        </div>
+    </div>
+
+    <footer>
+        <p id="footer-text">
+            @ 2025 logMat.
+        </p>
+    </footer>
+
+</body>
+</html>
